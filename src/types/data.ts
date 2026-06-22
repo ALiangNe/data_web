@@ -1,16 +1,5 @@
 import { DATA_CENTER_TABLES } from '@/configs/data'
 
-export interface AuthProvider {
-    id: string
-    userId: string
-    provider: string
-    userProviderId: string
-    email: string | null
-    emailVerified: boolean
-    createdAt: string
-    updatedAt: string
-}
-
 export interface Bot {
     id: string
     ownerId: string
@@ -36,20 +25,6 @@ export interface ChatHistory {
     updatedAt: string
 }
 
-export interface ChatTopic {
-    id: string
-    summary: string
-    embedding: number[]
-    participants: string[]
-    soulId: string
-    conversationId: string
-    startedAt: string
-    endedAt: string
-    metadata: Record<string, unknown>
-    createdAt: string
-    updatedAt: string
-}
-
 export interface Knowledge {
     id: string
     document: string
@@ -64,24 +39,6 @@ export interface McpCapability {
     document: string
     embedding: number[]
     metadata: Record<string, unknown>
-    createdAt: string
-    updatedAt: string
-}
-
-export interface Media {
-    id: string
-    ownerId: string
-    mimeType: string
-    storageKey: string
-    sizeBytes: number
-    metadata: {
-        width?: number
-        height?: number
-        durationMs?: number
-        [key: string]: unknown
-    }
-    status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'DELETED'
-    reason: string | null
     createdAt: string
     updatedAt: string
 }
@@ -132,17 +89,6 @@ export interface UserBehaviorLog {
     clientIp: string | null
     metadata: Record<string, unknown>
     createdAt: string
-}
-
-export interface UserMemory {
-    id: string
-    memory: string
-    embedding: number[]
-    userId: string
-    soulId: string
-    metadata: Record<string, unknown>
-    createdAt: string
-    updatedAt: string
 }
 
 export type DataTableKey = keyof typeof DATA_CENTER_TABLES

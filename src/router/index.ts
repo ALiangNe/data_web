@@ -23,7 +23,7 @@ router.beforeEach((to) => {
     }
 
     if (to.meta.guestOnly && isAuthed) {
-        return { name: 'AuthProvidersView' }
+        return { name: 'UsersView' }
     }
 })
 

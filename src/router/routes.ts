@@ -26,29 +26,9 @@ export const routes: RouteRecordRaw[] = [
                 component: () => import('@/views/users/UsersView.vue'),
             },
             {
-                path: 'user-memories',
-                name: 'UserMemoriesView',
-                component: () => import('@/views/user-memories/UserMemoriesView.vue'),
-            },
-            {
-                path: 'auth-providers',
-                name: 'AuthProvidersView',
-                component: () => import('@/views/auth-providers/AuthProvidersView.vue'),
-            },
-            {
                 path: 'bots',
                 name: 'BotsView',
                 component: () => import('@/views/bots/BotsView.vue'),
-            },
-            {
-                path: 'chat-histories',
-                name: 'ChatHistoriesView',
-                component: () => import('@/views/chat-histories/ChatHistoriesView.vue'),
-            },
-            {
-                path: 'chat-topics',
-                name: 'ChatTopicsView',
-                component: () => import('@/views/chat-topics/ChatTopicsView.vue'),
             },
             {
                 path: 'knowledge',
@@ -59,11 +39,6 @@ export const routes: RouteRecordRaw[] = [
                 path: 'mcp-capabilities',
                 name: 'McpCapabilitiesView',
                 component: () => import('@/views/mcp-capabilities/McpCapabilitiesView.vue'),
-            },
-            {
-                path: 'media',
-                name: 'MediaView',
-                component: () => import('@/views/media/MediaView.vue'),
             },
             {
                 path: 'monitor-logs',

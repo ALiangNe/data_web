@@ -21,16 +21,11 @@
 import { RouterLink } from 'vue-router'
 
 const APP_NAV = [
-    { name: 'AuthProvidersView', label: 'AuthProviders' },
     { name: 'BotsView', label: 'Bots' },
-    { name: 'ChatHistoriesView', label: 'ChatHistories' },
-    { name: 'ChatTopicsView', label: 'ChatTopics' },
     { name: 'KnowledgeView', label: 'Knowledge' },
     { name: 'McpCapabilitiesView', label: 'McpCapabilities' },
-    { name: 'MediaView', label: 'Media' },
     { name: 'MonitorLogsView', label: 'MonitorLogs' },
     { name: 'UserBehaviorLogsView', label: 'UserBehaviorLogs' },
-    { name: 'UserMemoriesView', label: 'UserMemories' },
     { name: 'UsersView', label: 'Users' },
 ] as const
 </script>
