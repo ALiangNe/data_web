@@ -46,6 +46,7 @@ const selectedDate = ref('')
 const chatActiveDates = ref<string[]>([])
 const chatDatesLoading = ref(false)
 const chatUserId = ref('')
+const chatSoulId = ref('')
 const chatMessages = ref<ChatHistory[]>([])
 const chatMessagesLoading = ref(false)
 const tableActions = [{ key: 'viewChat', label: 'ViewChat' }]
@@ -118,6 +119,7 @@ const openChatModal = async (payload: { key: string; row: Record<string, string>
     if (payload.key !== 'viewChat') return
 
     chatUserId.value = payload.row.id
+    chatSoulId.value = payload.row.soulId
     selectedDate.value = new Intl.DateTimeFormat('en-CA', {
         timeZone: 'Asia/Shanghai',
         year: 'numeric',
@@ -152,13 +154,14 @@ const openChatModal = async (payload: { key: string; row: Record<string, string>
 }
 
 const fetchChatMessages = async (date: string) => {
-    if (!chatUserId.value || !date) return
+    if (!chatUserId.value || !chatSoulId.value || !date) return
 
     chatMessagesLoading.value = true
     chatMessages.value = []
 
     const params = {
         userId: chatUserId.value,
+        soulId: chatSoulId.value,
         date,
     }
 
@@ -219,6 +222,7 @@ const closeChatModal = () => {
     chatActiveDates.value = []
     chatDatesLoading.value = false
     chatUserId.value = ''
+    chatSoulId.value = ''
     chatMessages.value = []
     chatMessagesLoading.value = false
 }

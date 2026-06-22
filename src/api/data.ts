@@ -66,6 +66,6 @@ export const getChatActiveDates = async (params: { userId: string; currentTime: 
     return apiClient.post<any, string[]>('/data/getChatActiveDates', params, baseURL)
 }
 
-export const getChatHistoriesByDate = async (params: { userId: string; date: string }): Promise<ChatHistory[]> => {
+export const getChatHistoriesByDate = async (params: { userId: string; soulId: string; date: string }): Promise<ChatHistory[]> => {
     return apiClient.post<any, ChatHistory[]>('/data/getChatHistoriesByDate', params, baseURL)
 }
