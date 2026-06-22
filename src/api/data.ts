@@ -62,6 +62,10 @@ export const getUserMemories = async (params: DataListQuery<UserMemory, DataCent
     return apiClient.post<any, DataListResult<UserMemory>>('/data/getUserMemories', params, baseURL)
 }
 
+export const getUserMemoriesByUserId = async (params: { userId: string; soulId: string }): Promise<string> => {
+    return apiClient.post<any, string>('/data/getUserMemoriesByUserId', params, baseURL)
+}
+
 export const getChatActiveDates = async (params: { userId: string; currentTime: string }): Promise<string[]> => {
     return apiClient.post<any, string[]>('/data/getChatActiveDates', params, baseURL)
 }

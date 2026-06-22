@@ -1,27 +1,63 @@
 <template>
     <div class="data-list-view">
-        <DataFilter v-model:filter-values="filterValues" :fields="filterFields" :loading="loading" @search="search"
-            @reset="resetFilters" />
-        <DataTable :columns="columns" :rows="rows" :sortable-fields="sortableFields" :sort-field="sortField"
-            :sort-order="sortOrder" :loading="loading" :actions="tableActions" @sort-column="onSortColumn"
-            @action="openChatModal" />
-        <DataPagination :page="page" :page-size="pageSize" :page-size-options="pageSizeOptions" :total="total"
-            :loading="loading" @update:page-size="onPageSizeChange" @prev="prevPage" @next="nextPage" />
-        <DataModal :open="chatModalOpen" @close="closeChatModal">
-            <ChatHistoryList v-model:date="selectedDate" :dates-loading="chatDatesLoading" :disabled-date="disabledDate"
-                :loading="chatMessagesLoading" :messages="chatMessages" />
+        <DataFilter
+            v-model:filter-values="filterValues"
+            :fields="filterFields"
+            :loading="loading"
+            @search="search"
+            @reset="resetFilters"
+        />
+        <DataTable
+            :columns="columns"
+            :rows="rows"
+            :sortable-fields="sortableFields"
+            :sort-field="sortField"
+            :sort-order="sortOrder"
+            :loading="loading"
+            :actions="tableActions"
+            @sort-column="onSortColumn"
+            @action="onTableAction"
+        />
+        <DataPagination
+            :page="page"
+            :page-size="pageSize"
+            :page-size-options="pageSizeOptions"
+            :total="total"
+            :loading="loading"
+            @update:page-size="onPageSizeChange"
+            @prev="prevPage"
+            @next="nextPage"
+        />
+        <DataModal
+            :open="modalOpen"
+            @close="closeModal"
+        >
+            <ChatHistoryList
+                v-if="modalType === 'chat'"
+                v-model:date="selectedDate"
+                :dates-loading="chatDatesLoading"
+                :disabled-date="disabledDate"
+                :loading="chatMessagesLoading"
+                :messages="chatMessages"
+            />
+            <UserMemoryPanel
+                v-else-if="modalType === 'memory'"
+                :loading="userMemoryLoading"
+                :memory="userMemory"
+            />
         </DataModal>
     </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { getChatActiveDates, getChatHistoriesByDate, getUsers } from '@/api/data'
+import { getChatActiveDates, getChatHistoriesByDate, getUserMemoriesByUserId, getUsers } from '@/api/data'
 import ChatHistoryList from '@/components/data/ChatHistoryList.vue'
 import DataFilter from '@/components/data/DataFilter.vue'
 import DataModal from '@/components/data/DataModal.vue'
 import DataPagination from '@/components/data/DataPagination.vue'
 import DataTable from '@/components/data/DataTable.vue'
+import UserMemoryPanel from '@/components/data/UserMemoryPanel.vue'
 import { useAlert } from '@/composables'
 import { DATA_CENTER_TABLES } from '@/configs/data'
 import { ApiError } from '@/types/api'
@@ -41,7 +77,8 @@ const pageSize = ref(20)
 const total = ref(0)
 const rows = ref<Record<string, string>[]>([])
 const loading = ref(false)
-const chatModalOpen = ref(false)
+const modalOpen = ref(false)
+const modalType = ref<'chat' | 'memory' | null>(null)
 const selectedDate = ref('')
 const chatActiveDates = ref<string[]>([])
 const chatDatesLoading = ref(false)
@@ -49,7 +86,12 @@ const chatUserId = ref('')
 const chatSoulId = ref('')
 const chatMessages = ref<ChatHistory[]>([])
 const chatMessagesLoading = ref(false)
-const tableActions = [{ key: 'viewChat', label: 'ViewChat' }]
+const userMemory = ref('')
+const userMemoryLoading = ref(false)
+const tableActions = [
+    { key: 'viewChat', label: 'ViewChat' },
+    { key: 'viewMemory', label: 'ViewMemory' },
+]
 const columns = computed(() => rows.value[0]
     ? Object.keys(rows.value[0]).filter(key => key !== 'createdAt' && key !== 'updatedAt' && key !== 'password')
     : [])
@@ -115,9 +157,17 @@ const fetchData = async () => {
     loading.value = false
 }
 
-const openChatModal = async (payload: { key: string; row: Record<string, string> }) => {
-    if (payload.key !== 'viewChat') return
+const onTableAction = (payload: { key: string; row: Record<string, string> }) => {
+    if (payload.key === 'viewChat') {
+        openChatModal(payload)
+        return
+    }
+    if (payload.key === 'viewMemory') {
+        openMemoryModal(payload)
+    }
+}
 
+const openChatModal = async (payload: { key: string; row: Record<string, string> }) => {
     chatUserId.value = payload.row.id
     chatSoulId.value = payload.row.soulId
     selectedDate.value = new Intl.DateTimeFormat('en-CA', {
@@ -126,7 +176,8 @@ const openChatModal = async (payload: { key: string; row: Record<string, string>
         month: '2-digit',
         day: '2-digit',
     }).format(new Date())
-    chatModalOpen.value = true
+    modalType.value = 'chat'
+    modalOpen.value = true
     chatDatesLoading.value = true
     chatActiveDates.value = []
     chatMessages.value = []
@@ -146,11 +197,41 @@ const openChatModal = async (payload: { key: string; row: Record<string, string>
             : 'Failed to load chat dates. Please try again.'
         show(message, 'error')
         chatDatesLoading.value = false
+        closeModal()
         return
     }
 
     chatActiveDates.value = dates
     chatDatesLoading.value = false
+}
+
+const openMemoryModal = async (payload: { row: Record<string, string> }) => {
+    modalType.value = 'memory'
+    modalOpen.value = true
+    userMemoryLoading.value = true
+    userMemory.value = ''
+
+    const params = {
+        userId: payload.row.id,
+        soulId: payload.row.soulId,
+    }
+
+    let memory: string
+    try {
+        memory = await getUserMemoriesByUserId(params)
+    } catch (error) {
+        console.error('UsersView fetchUserMemories failed:', error)
+        const message = error instanceof ApiError && error.message
+            ? error.message
+            : 'Failed to load user memory. Please try again.'
+        show(message, 'error')
+        userMemoryLoading.value = false
+        closeModal()
+        return
+    }
+
+    userMemory.value = Array.isArray(memory) ? (memory[0] ?? '') : memory
+    userMemoryLoading.value = false
 }
 
 const fetchChatMessages = async (date: string) => {
@@ -216,8 +297,9 @@ const onPageSizeChange = (value: number) => {
     fetchData()
 }
 
-const closeChatModal = () => {
-    chatModalOpen.value = false
+const closeModal = () => {
+    modalOpen.value = false
+    modalType.value = null
     selectedDate.value = ''
     chatActiveDates.value = []
     chatDatesLoading.value = false
@@ -225,6 +307,8 @@ const closeChatModal = () => {
     chatSoulId.value = ''
     chatMessages.value = []
     chatMessagesLoading.value = false
+    userMemory.value = ''
+    userMemoryLoading.value = false
 }
 
 const onSortColumn = (col: string) => {
@@ -245,7 +329,7 @@ onMounted(() => {
 })
 
 watch(selectedDate, (date) => {
-    if (!chatModalOpen.value) return
+    if (!modalOpen.value || modalType.value !== 'chat') return
     chatMessages.value = []
     if (!date) return
     fetchChatMessages(date)
