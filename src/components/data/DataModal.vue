@@ -12,18 +12,6 @@
                 </button>
             </div>
             <div class="data-modal__body">
-                <el-date-picker
-                    v-if="date !== undefined"
-                    class="data-modal__date-picker"
-                    :model-value="date"
-                    type="date"
-                    format="YYYY-MM-DD"
-                    value-format="YYYY-MM-DD"
-                    placeholder="Select date"
-                    :disabled="datesLoading"
-                    :disabled-date="disabledDate"
-                    @update:model-value="onDateChange"
-                />
                 <slot />
             </div>
         </div>
@@ -31,23 +19,13 @@
 </template>
 
 <script setup lang="ts">
-import { ElDatePicker } from 'element-plus'
-
 defineProps<{
     open: boolean
-    date?: string
-    datesLoading?: boolean
-    disabledDate?: (time: Date) => boolean
 }>()
 
 const emit = defineEmits<{
     (e: 'close'): void
-    (e: 'update:date', value: string): void
 }>()
-
-const onDateChange = (value: string | null) => {
-    emit('update:date', value ?? '')
-}
 </script>
 
 <style scoped lang="scss">
@@ -108,11 +86,6 @@ const onDateChange = (value: string | null) => {
 .data-modal__body {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
     padding: 1.25rem;
-}
-
-.data-modal__date-picker {
-    width: 100%;
 }
 </style>

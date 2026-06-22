@@ -1,44 +1,15 @@
 <template>
     <div class="data-list-view">
-        <DataFilter
-            v-model:filter-values="filterValues"
-            :fields="filterFields"
-            :loading="loading"
-            @search="search"
-            @reset="resetFilters"
-        />
-        <DataTable
-            :columns="columns"
-            :rows="rows"
-            :sortable-fields="sortableFields"
-            :sort-field="sortField"
-            :sort-order="sortOrder"
-            :loading="loading"
-            :actions="tableActions"
-            @sort-column="onSortColumn"
-            @action="openChatModal"
-        />
-        <DataPagination
-            :page="page"
-            :page-size="pageSize"
-            :page-size-options="pageSizeOptions"
-            :total="total"
-            :loading="loading"
-            @update:page-size="onPageSizeChange"
-            @prev="prevPage"
-            @next="nextPage"
-        />
-        <DataModal
-            v-model:date="selectedDate"
-            :open="chatModalOpen"
-            :dates-loading="chatDatesLoading"
-            :disabled-date="disabledDate"
-            @close="closeChatModal"
-        >
-            <ChatHistoryList
-                :loading="chatMessagesLoading"
-                :messages="chatMessages"
-            />
+        <DataFilter v-model:filter-values="filterValues" :fields="filterFields" :loading="loading" @search="search"
+            @reset="resetFilters" />
+        <DataTable :columns="columns" :rows="rows" :sortable-fields="sortableFields" :sort-field="sortField"
+            :sort-order="sortOrder" :loading="loading" :actions="tableActions" @sort-column="onSortColumn"
+            @action="openChatModal" />
+        <DataPagination :page="page" :page-size="pageSize" :page-size-options="pageSizeOptions" :total="total"
+            :loading="loading" @update:page-size="onPageSizeChange" @prev="prevPage" @next="nextPage" />
+        <DataModal :open="chatModalOpen" @close="closeChatModal">
+            <ChatHistoryList v-model:date="selectedDate" :dates-loading="chatDatesLoading" :disabled-date="disabledDate"
+                :loading="chatMessagesLoading" :messages="chatMessages" />
         </DataModal>
     </div>
 </template>

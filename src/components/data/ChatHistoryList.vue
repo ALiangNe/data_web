@@ -1,35 +1,60 @@
 <template>
     <div class="chat-history-list">
-        <p v-if="loading" class="chat-history-list__status">Loading...</p>
-        <p v-else-if="messages.length === 0" class="chat-history-list__status">No chat records for this date.</p>
-        <ul v-else class="chat-history-list__messages">
-            <li
-                v-for="(message, index) in messages"
-                :key="message.id"
-                class="chat-history-list__item"
-                :class="{ 'chat-history-list__item--continued': !shouldShowTime(index) }"
-            >
-                <time v-if="shouldShowTime(index)" class="chat-history-list__time">{{ message.createdAt }}</time>
-                <div
-                    class="chat-history-list__message"
-                    :class="message.role === 'user'
-                        ? 'chat-history-list__message--user'
-                        : 'chat-history-list__message--assistant'"
+        <el-date-picker
+            class="chat-history-list__date-picker"
+            :model-value="date"
+            type="date"
+            format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD"
+            placeholder="Select date"
+            :disabled="datesLoading"
+            :disabled-date="disabledDate"
+            @update:model-value="onDateChange"
+        />
+        <div class="chat-history-list__content">
+            <p v-if="loading" class="chat-history-list__status">Loading...</p>
+            <p v-else-if="messages.length === 0" class="chat-history-list__status">No chat records for this date.</p>
+            <ul v-else class="chat-history-list__messages">
+                <li
+                    v-for="(message, index) in messages"
+                    :key="message.id"
+                    class="chat-history-list__item"
+                    :class="{ 'chat-history-list__item--continued': !shouldShowTime(index) }"
                 >
-                    <p class="chat-history-list__content">{{ message.content }}</p>
-                </div>
-            </li>
-        </ul>
+                    <time v-if="shouldShowTime(index)" class="chat-history-list__time">{{ message.createdAt }}</time>
+                    <div
+                        class="chat-history-list__message"
+                        :class="message.role === 'user'
+                            ? 'chat-history-list__message--user'
+                            : 'chat-history-list__message--assistant'"
+                    >
+                        <p class="chat-history-list__content-text">{{ message.content }}</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { ElDatePicker } from 'element-plus'
 import type { ChatHistory } from '@/types/data'
 
 const props = defineProps<{
+    date: string
+    datesLoading?: boolean
+    disabledDate?: (time: Date) => boolean
     loading: boolean
     messages: ChatHistory[]
 }>()
+
+const emit = defineEmits<{
+    (e: 'update:date', value: string): void
+}>()
+
+const onDateChange = (value: string | null) => {
+    emit('update:date', value ?? '')
+}
 
 const shouldShowTime = (index: number) => {
     if (index === 0) return true
@@ -39,6 +64,16 @@ const shouldShowTime = (index: number) => {
 
 <style scoped lang="scss">
 .chat-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.chat-history-list__date-picker {
+    width: 100%;
+}
+
+.chat-history-list__content {
     display: flex;
     flex-direction: column;
     height: 28rem;
@@ -114,7 +149,7 @@ const shouldShowTime = (index: number) => {
     }
 }
 
-.chat-history-list__content {
+.chat-history-list__content-text {
     margin: 0;
     white-space: pre-wrap;
     word-break: break-word;
@@ -122,5 +157,4 @@ const shouldShowTime = (index: number) => {
     line-height: 1.65;
     color: var(--color-text);
 }
-
 </style>
