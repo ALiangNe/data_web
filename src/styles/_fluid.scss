@@ -1,0 +1,5 @@
+@mixin fluid-font($minWidth, $maxWidth, $minValue, $maxValue) {
+  @media (#{$minWidth}px <= width < #{$maxWidth}px) {
+    font-size: calc(#{$minValue}px + (#{$maxValue} - #{$minValue}) * ((100vw - #{$minWidth}px) / (#{$maxWidth} - #{$minWidth})));
+  }
+}

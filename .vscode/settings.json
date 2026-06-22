@@ -1,0 +1,21 @@
+{
+  "vue.format.template.enabled": false,
+  "[vue]": {
+    "editor.formatOnSave": false
+  },
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always",
+    "source.organizeImports": "always"
+  },
+  "eslint.run": "onSave",
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "vue"
+  ]
+}

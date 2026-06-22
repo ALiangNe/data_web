@@ -1,0 +1,59 @@
+@use './fluid' as *;
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    @include fluid-font(480, 1024, 14, 15);
+    @include fluid-font(1024, 1920, 15, 16);
+    @include fluid-font(1920, 2560, 16, 17);
+    @media (width >= 2560px) {
+        font-size: 18px;
+    }
+}
+
+html, body, #app {
+    height: 100%;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+p {
+    margin: 0;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+::selection {
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary);
+}
+
+.data-list-view {
+    padding: var(--content-padding);
+    box-sizing: border-box;
+    max-width: 100%;
+}
