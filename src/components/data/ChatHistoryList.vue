@@ -139,7 +139,7 @@ const shouldShowTime = (index: number) => {
     &--user {
         align-self: flex-end;
         margin-inline-start: auto;
-        text-align: right;
+        text-align: left;
     }
 
     &--assistant {

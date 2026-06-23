@@ -66,18 +66,14 @@
 <script setup lang="ts">
 import type { DataTimeRangeFieldValues } from '@/types/data'
 
-const props = withDefaults(defineProps<{
+const props = defineProps<{
     fields: string[]
     filterValues: Record<string, string>
-    timeRangeFields?: string[]
-    timeRangeValues?: Record<string, DataTimeRangeFieldValues>
-    showTimeRange?: boolean
+    timeRangeFields: string[]
+    timeRangeValues: Record<string, DataTimeRangeFieldValues>
+    showTimeRange: boolean
     loading: boolean
-}>(), {
-    timeRangeFields: () => [],
-    timeRangeValues: () => ({}),
-    showTimeRange: false,
-})
+}>()
 
 const emit = defineEmits<{
     (e: 'update:filterValues', value: Record<string, string>): void

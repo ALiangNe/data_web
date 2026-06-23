@@ -3,6 +3,9 @@
         <DataFilter
             v-model:filter-values="filterValues"
             :fields="filterFields"
+            :time-range-fields="[]"
+            :time-range-values="{}"
+            :show-time-range="false"
             :loading="loading"
             @search="search"
             @reset="resetFilters"
@@ -51,7 +54,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { getChatActiveDates, getChatHistoriesByDate, getUserMemoriesByUserId, getUsers } from '@/api/data'
+import { getChatActiveDates, getChatHistories, getUserMemory, getUsers } from '@/api/data'
 import ChatHistoryList from '@/components/data/ChatHistoryList.vue'
 import DataFilter from '@/components/data/DataFilter.vue'
 import DataModal from '@/components/data/DataModal.vue'
@@ -218,7 +221,7 @@ const openMemoryModal = async (payload: { row: Record<string, string> }) => {
 
     let memory: string
     try {
-        memory = await getUserMemoriesByUserId(params)
+        memory = await getUserMemory(params)
     } catch (error) {
         console.error('UsersView fetchUserMemories failed:', error)
         const message = error instanceof ApiError && error.message
@@ -248,7 +251,7 @@ const fetchChatMessages = async (date: string) => {
 
     let messages: ChatHistory[]
     try {
-        messages = await getChatHistoriesByDate(params)
+        messages = await getChatHistories(params)
     } catch (error) {
         console.error('UsersView fetchChatMessages failed:', error)
         const message = error instanceof ApiError && error.message

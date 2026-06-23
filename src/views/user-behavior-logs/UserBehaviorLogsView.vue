@@ -1,9 +1,9 @@
 <template>
     <div class="data-list-view">
         <DataFilter
-            v-model:filter-values="filterValues"
             v-model:time-range-values="timeRangeValues"
-            :fields="filterFields"
+            :fields="[]"
+            :filter-values="{}"
             :time-range-fields="timeRangeFields"
             :loading="loading"
             show-time-range
@@ -47,10 +47,8 @@ const { show } = useAlert()
 
 const table = DATA_CENTER_TABLES.userBehaviorLogs
 const pageSizeOptions = [5, 10, 20]
-const filterFields = table.filter
 const sortableFields = table.sortFields
 const timeRangeFields = table.timeRangeFields
-const filterValues = ref<Record<string, string>>({})
 const timeRangeValues = ref<Record<string, DataTimeRangeFieldValues>>({})
 const sortField = ref<DataCenterSortFieldFor<'userBehaviorLogs'>>(table.sortFields[0])
 const sortOrder = ref<'asc' | 'desc'>('desc')
@@ -63,13 +61,6 @@ const columns = computed(() => rows.value[0] ? Object.keys(rows.value[0]) : [])
 
 const fetchData = async () => {
     loading.value = true
-
-    const filters: Record<string, string> = {}
-    for (const [key, rawValue] of Object.entries(filterValues.value)) {
-        const v = rawValue.trim()
-        if (!v) continue
-        filters[key] = v
-    }
 
     const timeRangeFilters: Record<string, [string, string]> = {}
     for (const [field, range] of Object.entries(timeRangeValues.value)) {
@@ -86,11 +77,9 @@ const fetchData = async () => {
     let data
     try {
         data = await getUserBehaviorLogs({
-            ...filters,
             ...timeRangeFilters,
             page: page.value,
             pageSize: pageSize.value,
-            sortBy: sortField.value,
             order: sortOrder.value,
         })
     } catch (error) {
@@ -111,7 +100,11 @@ const fetchData = async () => {
         for (const [key, value] of Object.entries(row)) {
             if (value == null) formatted[key] = '-'
             else if (key === 'createdAt') formatted[key] = new Date(value as string).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
-            else if (key === 'metadata') formatted[key] = JSON.stringify(value)
+            else if (Array.isArray(value)) {
+                formatted[key] = value.length
+                    ? value.map((item) => `${item.value} (${item.count})`).join(', ')
+                    : '-'
+            }
             else formatted[key] = String(value)
         }
         return formatted
@@ -133,7 +126,6 @@ const search = () => {
 }
 
 const resetFilters = () => {
-    filterValues.value = {}
     timeRangeValues.value = {}
     sortField.value = table.sortFields[0]
     sortOrder.value = 'desc'

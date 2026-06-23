@@ -9,7 +9,8 @@ import type {
     McpCapability,
     MonitorLog,
     User,
-    UserBehaviorLog,
+    UserBehaviorLogsQuery,
+    UserBehaviorSessionAggregate,
 } from '@/types/data'
 
 const baseURL = { baseURL: import.meta.env.VITE_DATA_API_BASE_URL }
@@ -34,18 +35,18 @@ export const getUsers = async (params: DataListQuery<User, DataCenterSortFieldFo
     return apiClient.post<any, DataListResult<User>>('/data/getUsers', params, baseURL)
 }
 
-export const getUserBehaviorLogs = async (params: DataListQuery<UserBehaviorLog, DataCenterSortFieldFor<'userBehaviorLogs'>>): Promise<DataListResult<UserBehaviorLog>> => {
-    return apiClient.post<any, DataListResult<UserBehaviorLog>>('/data/getUserBehaviorLogs', params, baseURL)
+export const getUserBehaviorLogs = async (params: UserBehaviorLogsQuery): Promise<DataListResult<UserBehaviorSessionAggregate>> => {
+    return apiClient.post<any, DataListResult<UserBehaviorSessionAggregate>>('/data/getUserBehaviorLogs', params, baseURL)
 }
 
-export const getUserMemoriesByUserId = async (params: { userId: string; soulId: string }): Promise<string> => {
-    return apiClient.post<any, string>('/data/getUserMemoriesByUserId', params, baseURL)
+export const getUserMemory = async (params: { userId: string; soulId: string }): Promise<string> => {
+    return apiClient.post<any, string>('/data/getUserMemory', params, baseURL)
 }
 
 export const getChatActiveDates = async (params: { userId: string; currentTime: string }): Promise<string[]> => {
     return apiClient.post<any, string[]>('/data/getChatActiveDates', params, baseURL)
 }
 
-export const getChatHistoriesByDate = async (params: { userId: string; soulId: string; date: string }): Promise<ChatHistory[]> => {
-    return apiClient.post<any, ChatHistory[]>('/data/getChatHistoriesByDate', params, baseURL)
+export const getChatHistories = async (params: { userId: string; soulId: string; date: string }): Promise<ChatHistory[]> => {
+    return apiClient.post<any, ChatHistory[]>('/data/getChatHistories', params, baseURL)
 }

@@ -73,22 +73,33 @@ export interface User {
     updatedAt: string
 }
 
-export interface UserBehaviorLog {
-    deviceId: string
+export interface UserBehaviorValueCount {
+    value: string
+    count: number
+}
+
+export interface UserBehaviorSessionAggregate {
     sessionId: string
-    userId: string | null
-    platform: string
-    userAgent: string
-    screenSize: string | null
-    language: string | null
-    timezone: string | null
-    referrer: string | null
-    utmSource: string | null
-    eventType: string
-    eventName: string
-    clientIp: string | null
-    metadata: Record<string, unknown>
+    deviceId: string
+    userIds: UserBehaviorValueCount[]
+    platforms: UserBehaviorValueCount[]
+    userAgents: UserBehaviorValueCount[]
+    screenSizes: UserBehaviorValueCount[]
+    languages: UserBehaviorValueCount[]
+    timezones: UserBehaviorValueCount[]
+    referrers: UserBehaviorValueCount[]
+    utmSources: UserBehaviorValueCount[]
+    eventTypes: UserBehaviorValueCount[]
+    eventNames: UserBehaviorValueCount[]
+    clientIps: UserBehaviorValueCount[]
     createdAt: string
+}
+
+export type UserBehaviorLogsQuery = {
+    createdAt?: [string, string]
+    page: number
+    pageSize: number
+    order?: 'asc' | 'desc'
 }
 
 export type DataTableKey = keyof typeof DATA_CENTER_TABLES
