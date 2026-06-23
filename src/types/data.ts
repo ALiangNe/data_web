@@ -78,7 +78,7 @@ export interface UserBehaviorValueCount {
     count: number
 }
 
-export interface UserBehaviorSessionAggregate {
+export interface UserBehaviorLogAggregate {
     sessionId: string
     deviceId: string
     userIds: UserBehaviorValueCount[]

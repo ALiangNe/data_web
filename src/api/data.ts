@@ -10,7 +10,7 @@ import type {
     MonitorLog,
     User,
     UserBehaviorLogsQuery,
-    UserBehaviorSessionAggregate,
+    UserBehaviorLogAggregate,
 } from '@/types/data'
 
 const baseURL = { baseURL: import.meta.env.VITE_DATA_API_BASE_URL }
@@ -35,8 +35,8 @@ export const getUsers = async (params: DataListQuery<User, DataCenterSortFieldFo
     return apiClient.post<any, DataListResult<User>>('/data/getUsers', params, baseURL)
 }
 
-export const getUserBehaviorLogs = async (params: UserBehaviorLogsQuery): Promise<DataListResult<UserBehaviorSessionAggregate>> => {
-    return apiClient.post<any, DataListResult<UserBehaviorSessionAggregate>>('/data/getUserBehaviorLogs', params, baseURL)
+export const getUserBehaviorLogs = async (params: UserBehaviorLogsQuery): Promise<DataListResult<UserBehaviorLogAggregate>> => {
+    return apiClient.post<any, DataListResult<UserBehaviorLogAggregate>>('/data/getUserBehaviorLogs', params, baseURL)
 }
 
 export const getUserMemory = async (params: { userId: string; soulId: string }): Promise<string> => {
