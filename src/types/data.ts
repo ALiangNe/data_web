@@ -78,10 +78,7 @@ export interface UserBehaviorValueCount {
     count: number
 }
 
-export interface UserBehaviorLogAggregate {
-    sessionId: string
-    deviceId: string
-    userIds: UserBehaviorValueCount[]
+export interface UserBehaviorLogAggregateBase {
     platforms: UserBehaviorValueCount[]
     userAgents: UserBehaviorValueCount[]
     screenSizes: UserBehaviorValueCount[]
@@ -95,7 +92,37 @@ export interface UserBehaviorLogAggregate {
     createdAt: string
 }
 
+export interface UserBehaviorLogSessionAggregate extends UserBehaviorLogAggregateBase {
+    sessionId: string
+    deviceIds: UserBehaviorValueCount[]
+    userIds: UserBehaviorValueCount[]
+}
+
+export interface UserBehaviorLogDeviceAggregate extends UserBehaviorLogAggregateBase {
+    deviceId: string
+    sessionIds: UserBehaviorValueCount[]
+    userIds: UserBehaviorValueCount[]
+}
+
+export interface UserBehaviorLogUserAggregate extends UserBehaviorLogAggregateBase {
+    userId: string
+    sessionIds: UserBehaviorValueCount[]
+    deviceIds: UserBehaviorValueCount[]
+}
+
+export type UserBehaviorLogAggregateBy =
+    | 'session_id'
+    | 'device_id'
+    | 'user_id'
+
+export type UserBehaviorLogAggregate =
+    | UserBehaviorLogSessionAggregate
+    | UserBehaviorLogDeviceAggregate
+    | UserBehaviorLogUserAggregate
+
 export type UserBehaviorLogsQuery = {
+    aggregateBy: UserBehaviorLogAggregateBy
+    userId?: string
     createdAt?: [string, string]
     page: number
     pageSize: number
@@ -107,6 +134,12 @@ export type DataTableKey = keyof typeof DATA_CENTER_TABLES
 export type DataCenterSortFieldFor<K extends DataTableKey> = (typeof DATA_CENTER_TABLES)[K]['sortFields'][number]
 
 export type DataCenterSortField = DataCenterSortFieldFor<DataTableKey>
+
+export type DataSelectFieldConfig = {
+    label: string
+    default: string
+    options: { label: string; value: string }[]
+}
 
 /* Single time field range filter values. */
 export type DataTimeRangeFieldValues = {

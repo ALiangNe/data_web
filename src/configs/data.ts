@@ -21,6 +21,18 @@ export const DATA_CENTER_TABLES = {
         timeRangeFields: ['startTimeMs'],
     },
     userBehaviorLogs: {
+        filter: ['userId'],
+        selectFields: {
+            aggregateBy: {
+                label: 'aggregateBy',
+                default: 'session_id' as const,
+                options: [
+                    { label: 'sessionId', value: 'session_id' },
+                    { label: 'deviceId', value: 'device_id' },
+                    { label: 'userId', value: 'user_id' },
+                ],
+            },
+        },
         sortFields: ['createdAt'],
         timeRangeFields: ['createdAt'],
     },

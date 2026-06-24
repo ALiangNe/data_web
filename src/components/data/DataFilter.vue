@@ -14,6 +14,24 @@
                     />
                 </label>
 
+                <template v-if="selectFields">
+                    <label v-for="(config, key) in selectFields" :key="key" class="data-filter__field">
+                        <span class="data-filter__label">{{ config.label }}</span>
+                        <ElSelect
+                            :model-value="selectValues![key]"
+                            :disabled="loading"
+                            @update:model-value="updateSelect(key, $event)"
+                        >
+                            <ElOption
+                                v-for="option in config.options"
+                                :key="option.value"
+                                :label="option.label"
+                                :value="option.value"
+                            />
+                        </ElSelect>
+                    </label>
+                </template>
+
                 <div v-if="showTimeRange" class="data-filter__row-break" />
 
                 <template v-if="showTimeRange">
@@ -54,7 +72,11 @@
                     >
                         Reset
                     </button>
-                    <button type="submit" class="data-filter__button data-filter__button--submit" :disabled="loading">
+                    <button
+                        type="submit"
+                        class="data-filter__button data-filter__button--submit"
+                        :disabled="loading"
+                    >
                         {{ loading ? 'Querying…' : 'Query' }}
                     </button>
                 </div>
@@ -64,11 +86,14 @@
 </template>
 
 <script setup lang="ts">
-import type { DataTimeRangeFieldValues } from '@/types/data'
+import { ElOption, ElSelect } from 'element-plus'
+import type { DataSelectFieldConfig, DataTimeRangeFieldValues } from '@/types/data'
 
 const props = defineProps<{
     fields: string[]
     filterValues: Record<string, string>
+    selectFields?: Record<string, DataSelectFieldConfig>
+    selectValues?: Record<string, string>
     timeRangeFields: string[]
     timeRangeValues: Record<string, DataTimeRangeFieldValues>
     showTimeRange: boolean
@@ -77,6 +102,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'update:filterValues', value: Record<string, string>): void
+    (e: 'update:selectValues', value: Record<string, string>): void
     (e: 'update:timeRangeValues', value: Record<string, DataTimeRangeFieldValues>): void
     (e: 'search'): void
     (e: 'reset'): void
@@ -90,6 +116,13 @@ const openPicker = (event: MouseEvent) => {
 const updateField = (key: string, value: string) => {
     emit('update:filterValues', {
         ...props.filterValues,
+        [key]: value,
+    })
+}
+
+const updateSelect = (key: string, value: string) => {
+    emit('update:selectValues', {
+        ...props.selectValues!,
         [key]: value,
     })
 }
@@ -133,6 +166,10 @@ const updateTimeRange = (field: string, key: keyof DataTimeRangeFieldValues, val
     flex-direction: column;
     gap: 0.375rem;
     min-width: 0;
+
+    :deep(.el-select) {
+        width: 100%;
+    }
 }
 
 .data-filter__label {
