@@ -73,41 +73,45 @@ export interface User {
     updatedAt: string
 }
 
+export interface UserBehaviorValue {
+    value: string
+}
+
 export interface UserBehaviorValueCount {
     value: string
     count: number
 }
 
 export interface UserBehaviorLogAggregateBase {
-    platforms: UserBehaviorValueCount[]
-    userAgents: UserBehaviorValueCount[]
-    screenSizes: UserBehaviorValueCount[]
-    languages: UserBehaviorValueCount[]
-    timezones: UserBehaviorValueCount[]
-    referrers: UserBehaviorValueCount[]
-    utmSources: UserBehaviorValueCount[]
+    platforms: UserBehaviorValue[]
+    userAgents: UserBehaviorValue[]
+    screenSizes: UserBehaviorValue[]
+    languages: UserBehaviorValue[]
+    timezones: UserBehaviorValue[]
+    referrers: UserBehaviorValue[]
+    utmSources: UserBehaviorValue[]
+    clientIps: UserBehaviorValue[]
     eventTypes: UserBehaviorValueCount[]
     eventNames: UserBehaviorValueCount[]
-    clientIps: UserBehaviorValueCount[]
     createdAt: string
 }
 
 export interface UserBehaviorLogSessionAggregate extends UserBehaviorLogAggregateBase {
     sessionId: string
-    deviceIds: UserBehaviorValueCount[]
-    userIds: UserBehaviorValueCount[]
+    deviceIds: UserBehaviorValue[]
+    userIds: UserBehaviorValue[]
 }
 
 export interface UserBehaviorLogDeviceAggregate extends UserBehaviorLogAggregateBase {
     deviceId: string
-    sessionIds: UserBehaviorValueCount[]
-    userIds: UserBehaviorValueCount[]
+    sessionIds: UserBehaviorValue[]
+    userIds: UserBehaviorValue[]
 }
 
 export interface UserBehaviorLogUserAggregate extends UserBehaviorLogAggregateBase {
     userId: string
-    sessionIds: UserBehaviorValueCount[]
-    deviceIds: UserBehaviorValueCount[]
+    sessionIds: UserBehaviorValue[]
+    deviceIds: UserBehaviorValue[]
 }
 
 export type UserBehaviorLogAggregateBy =

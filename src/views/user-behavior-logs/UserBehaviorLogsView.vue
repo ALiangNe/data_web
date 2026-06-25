@@ -119,7 +119,12 @@ const fetchData = async () => {
             else if (key === 'createdAt') formatted[key] = new Date(value as string).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
             else if (Array.isArray(value)) {
                 formatted[key] = value.length
-                    ? value.map((item) => `${item.value} (${item.count})`).join(', ')
+                    ? value.map((item: { value: string, count?: number }) => {
+                        if (key === 'eventTypes' || key === 'eventNames') {
+                            return `${item.value} (${item.count})`
+                        }
+                        return item.value
+                    }).join(', ')
                     : '-'
             }
             else formatted[key] = String(value)
