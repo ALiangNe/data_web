@@ -136,6 +136,7 @@ const emit = defineEmits<{
     max-width: 18rem;
     color: var(--color-text);
     word-break: break-word;
+    white-space: pre-line;
     font-variant-numeric: tabular-nums;
 }
 

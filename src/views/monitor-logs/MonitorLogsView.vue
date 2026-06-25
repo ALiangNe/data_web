@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { getMonitorLogs } from '@/api/data'
 import DataFilter from '@/components/data/DataFilter.vue'
 import DataPagination from '@/components/data/DataPagination.vue'
@@ -59,18 +59,16 @@ const pageSize = ref(20)
 const total = ref(0)
 const rows = ref<Record<string, string>[]>([])
 const loading = ref(false)
-const columns = computed(() => rows.value[0] ? Object.keys(rows.value[0]) : [])
+const columns = ['startTimeMs', 'botId', 'soulId', 'service', 'env', 'instanceId', 'traceId', 'spanId', 'parentSpanId', 'name', 'status', 'durationMs', 'error', 'meta']
 
 const fetchData = async () => {
     loading.value = true
 
-    const filters: Record<string, unknown> = {}
+    const filters: Record<string, string> = {}
     for (const [key, rawValue] of Object.entries(filterValues.value)) {
         const v = rawValue.trim()
         if (!v) continue
-
-        if (key === 'instanceId' && Number.isFinite(Number(v))) filters[key] = Number(v)
-        else filters[key] = v
+        filters[key] = v
     }
 
     const timeRangeFilters: Record<string, [string, string]> = {}
@@ -112,6 +110,7 @@ const fetchData = async () => {
         const formatted: Record<string, string> = {}
         for (const [key, value] of Object.entries(row)) {
             if (value == null) formatted[key] = '-'
+            else if (key === 'startTimeMs') formatted[key] = new Date(Number(value)).toLocaleString()
             else if (key === 'meta' || key === 'error') formatted[key] = JSON.stringify(value)
             else formatted[key] = String(value)
         }

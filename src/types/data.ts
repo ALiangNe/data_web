@@ -44,6 +44,9 @@ export interface McpCapability {
 }
 
 export interface MonitorLog {
+    startTimeMs: number
+    botId: string | null
+    soulId: string | null
     service: string
     env: string
     instanceId: number
@@ -51,13 +54,10 @@ export interface MonitorLog {
     spanId: string
     parentSpanId: string | null
     name: string
-    startTimeMs: number
-    durationMs: number
     status: string
-    botId: string | null
-    soulId: string | null
-    meta: Record<string, unknown>
+    durationMs: number
     error: Record<string, unknown> | null
+    meta: Record<string, unknown>
 }
 
 export interface User {

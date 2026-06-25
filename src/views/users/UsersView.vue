@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { getChatActiveDates, getChatHistories, getUserMemory, getUsers } from '@/api/data'
 import ChatHistoryList from '@/components/data/ChatHistoryList.vue'
 import DataFilter from '@/components/data/DataFilter.vue'
@@ -95,12 +95,9 @@ const tableActions = [
     { key: 'viewChat', label: 'ViewChat' },
     { key: 'viewMemory', label: 'ViewMemory' },
 ]
-const columns = computed(() => rows.value[0]
-    ? Object.keys(rows.value[0]).filter(key => key !== 'createdAt' && key !== 'updatedAt' && key !== 'password')
-    : [])
+const columns = [...filterFields, 'providers']
 
 const disabledDate = (time: Date) => !chatActiveDates.value.includes(new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Asia/Shanghai',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -144,7 +141,8 @@ const fetchData = async () => {
         const formatted: Record<string, string> = {}
         for (const [key, value] of Object.entries(row)) {
             if (value == null) formatted[key] = '-'
-            else if (key === 'createdAt' || key === 'updatedAt') formatted[key] = new Date(value as string).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
+            else if (key === 'createdAt' || key === 'updatedAt') formatted[key] = new Date(value as string).toLocaleString()
+            else if (Array.isArray(value)) formatted[key] = value.length ? value.join(', ') : '-'
             else formatted[key] = String(value)
         }
         return formatted
@@ -174,7 +172,6 @@ const openChatModal = async (payload: { key: string; row: Record<string, string>
     chatUserId.value = payload.row.id
     chatSoulId.value = payload.row.soulId
     selectedDate.value = new Intl.DateTimeFormat('en-CA', {
-        timeZone: 'Asia/Shanghai',
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -264,7 +261,7 @@ const fetchChatMessages = async (date: string) => {
 
     chatMessages.value = messages.map((message) => ({
         ...message,
-        createdAt: new Date(message.createdAt).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }),
+        createdAt: new Date(message.createdAt).toLocaleString(),
     }))
     chatMessagesLoading.value = false
 }

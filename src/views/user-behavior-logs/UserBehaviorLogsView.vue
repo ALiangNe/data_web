@@ -54,9 +54,7 @@ const filterFields = table.filter
 const timeRangeFields = table.timeRangeFields
 const selectFields = table.selectFields
 const filterValues = ref<Record<string, string>>({})
-const selectValues = ref<{ aggregateBy: UserBehaviorLogAggregateBy }>({
-    aggregateBy: selectFields.aggregateBy.default,
-})
+const selectValues = ref<{ aggregateBy: UserBehaviorLogAggregateBy }>({ aggregateBy: selectFields.aggregateBy.default })
 const timeRangeValues = ref<Record<string, DataTimeRangeFieldValues>>({})
 const sortField = ref<DataCenterSortFieldFor<'userBehaviorLogs'>>(table.sortFields[0])
 const sortOrder = ref<'asc' | 'desc'>('desc')
@@ -116,7 +114,7 @@ const fetchData = async () => {
         const formatted: Record<string, string> = {}
         for (const [key, value] of Object.entries(row)) {
             if (value == null) formatted[key] = '-'
-            else if (key === 'createdAt') formatted[key] = new Date(value as string).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })
+            else if (key === 'createdAt') formatted[key] = new Date(value as string).toLocaleString()
             else if (Array.isArray(value)) {
                 formatted[key] = value.length
                     ? value.map((item: { value: string, count?: number }) => {
@@ -124,7 +122,7 @@ const fetchData = async () => {
                             return `${item.value} (${item.count})`
                         }
                         return item.value
-                    }).join(', ')
+                    }).join(',\n')
                     : '-'
             }
             else formatted[key] = String(value)

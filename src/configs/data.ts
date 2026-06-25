@@ -16,7 +16,7 @@ export const DATA_CENTER_TABLES = {
         timeRangeFields: ['createdAt', 'updatedAt'],
     },
     monitorLogs: {
-        filter: ['service', 'env', 'instanceId', 'traceId', 'spanId', 'parentSpanId', 'name', 'status', 'botId', 'soulId', 'meta', 'error'],
+        filter: ['traceId'],
         sortFields: ['startTimeMs', 'durationMs'],
         timeRangeFields: ['startTimeMs'],
     },
