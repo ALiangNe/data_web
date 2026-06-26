@@ -23,7 +23,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(row, index) in rows" :key="index" class="data-table__row">
+                <tr
+                    v-for="(row, index) in rows"
+                    :key="index"
+                    class="data-table__row"
+                    :class="{ 'data-table__row--clickable': clickable }"
+                    @click="clickable ? emit('rowClick', row) : undefined"
+                >
                     <td v-for="col in columns" :key="col" class="data-table__cell">
                         {{ row[col] }}
                     </td>
@@ -55,6 +61,7 @@ defineProps<{
     sortField: string
     sortOrder: 'asc' | 'desc'
     loading: boolean
+    clickable?: boolean
     actions?: {
         key: string
         label: string
@@ -63,6 +70,7 @@ defineProps<{
 
 const emit = defineEmits<{
     (e: 'sortColumn', col: string): void
+    (e: 'rowClick', row: Record<string, string>): void
     (e: 'action', payload: { key: string; row: Record<string, string> }): void
 }>()
 </script>
@@ -175,6 +183,10 @@ const emit = defineEmits<{
 
 .data-table__row:hover .data-table__cell {
     background: var(--color-table-row-hover);
+}
+
+.data-table__row--clickable {
+    cursor: pointer;
 }
 
 .data-table__row:last-child .data-table__cell {

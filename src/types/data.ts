@@ -1,6 +1,6 @@
 import { DATA_CENTER_TABLES } from '@/configs/data'
 
-export interface Bot {
+export type Bot = {
     id: string
     ownerId: string
     platform: string
@@ -12,7 +12,7 @@ export interface Bot {
     updatedAt: string
 }
 
-export interface ChatHistory {
+export type ChatHistory = {
     id: string
     role: string
     content: string
@@ -25,7 +25,7 @@ export interface ChatHistory {
     updatedAt: string
 }
 
-export interface Knowledge {
+export type Knowledge = {
     id: string
     document: string
     embedding: number[]
@@ -34,7 +34,7 @@ export interface Knowledge {
     updatedAt: string
 }
 
-export interface McpCapability {
+export type McpCapability = {
     id: string
     document: string
     embedding: number[]
@@ -43,24 +43,47 @@ export interface McpCapability {
     updatedAt: string
 }
 
-export interface MonitorLog {
-    startTimeMs: number
-    botId: string | null
-    soulId: string | null
+export type MonitorSpan = {
+    spanId: string
+    parentSpanId: string
     service: string
     env: string
-    instanceId: number
-    traceId: string
-    spanId: string
-    parentSpanId: string | null
+    instanceId: string
+    botId?: string
+    soulId?: string
     name: string
     status: string
+    startTimeMs: number
     durationMs: number
-    error: Record<string, unknown> | null
-    meta: Record<string, unknown>
+    error?: string | null
+    meta?: Record<string, unknown>
 }
 
-export interface User {
+export type MonitorTrace = {
+    traceId: string
+    startTimeMs: number
+    chain: string[]
+    serviceCount: number
+    durationMs: number
+    status: 'ok' | 'error'
+}
+
+export type MonitorTraceDetail = {
+    traceId: string
+    spans: MonitorSpan[]
+}
+
+export type MonitorLogsTracesQuery = {
+    traceId?: string
+    startTimeStart?: string
+    startTimeEnd?: string
+    page: number
+    pageSize: number
+    sortBy?: 'startTimeMs'
+    order?: 'asc' | 'desc'
+}
+
+export type User = {
     id: string
     username: string
     password: string | null
@@ -73,16 +96,16 @@ export interface User {
     updatedAt: string
 }
 
-export interface UserBehaviorValue {
+export type UserBehaviorValue = {
     value: string
 }
 
-export interface UserBehaviorValueCount {
+export type UserBehaviorValueCount = {
     value: string
     count: number
 }
 
-export interface UserBehaviorLogAggregateBase {
+export type UserBehaviorLogAggregateBase = {
     platforms: UserBehaviorValue[]
     userAgents: UserBehaviorValue[]
     screenSizes: UserBehaviorValue[]
@@ -96,19 +119,19 @@ export interface UserBehaviorLogAggregateBase {
     createdAt: string
 }
 
-export interface UserBehaviorLogSessionAggregate extends UserBehaviorLogAggregateBase {
+export type UserBehaviorLogSessionAggregate = UserBehaviorLogAggregateBase & {
     sessionId: string
     deviceIds: UserBehaviorValue[]
     userIds: UserBehaviorValue[]
 }
 
-export interface UserBehaviorLogDeviceAggregate extends UserBehaviorLogAggregateBase {
+export type UserBehaviorLogDeviceAggregate = UserBehaviorLogAggregateBase & {
     deviceId: string
     sessionIds: UserBehaviorValue[]
     userIds: UserBehaviorValue[]
 }
 
-export interface UserBehaviorLogUserAggregate extends UserBehaviorLogAggregateBase {
+export type UserBehaviorLogUserAggregate = UserBehaviorLogAggregateBase & {
     userId: string
     sessionIds: UserBehaviorValue[]
     deviceIds: UserBehaviorValue[]
@@ -145,10 +168,13 @@ export type DataSelectFieldConfig = {
     options: { label: string; value: string }[]
 }
 
+type A = typeof DATA_CENTER_TABLES['users']['sortFields']
+
 /* Single time field range filter values. */
 export type DataTimeRangeFieldValues = {
     startTime: string
     endTime: string
+    a:A
 }
 
 /* Data center API pagination list response. */

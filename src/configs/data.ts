@@ -17,7 +17,7 @@ export const DATA_CENTER_TABLES = {
     },
     monitorLogs: {
         filter: ['traceId'],
-        sortFields: ['startTimeMs', 'durationMs'],
+        sortFields: ['startTimeMs'],
         timeRangeFields: ['startTimeMs'],
     },
     userBehaviorLogs: {

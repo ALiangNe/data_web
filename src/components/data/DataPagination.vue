@@ -68,6 +68,7 @@ const onPageSizeChange = (event: Event) => {
 <style scoped lang="scss">
 .data-pagination {
     margin-top: 1rem;
+    margin-bottom: 1rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     background: var(--color-surface);
