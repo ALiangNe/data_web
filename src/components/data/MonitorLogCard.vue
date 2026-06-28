@@ -71,10 +71,6 @@ const stepStatus = (row: Record<string, string>): 'success' | 'error' =>
 .monitor-log-card {
     overflow: auto;
     width: 100%;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-surface);
-    box-shadow: var(--shadow-sm);
 }
 
 .monitor-log-card__list {
@@ -166,7 +162,7 @@ const stepStatus = (row: Record<string, string>): 'success' | 'error' =>
 .monitor-log-card__empty,
 .monitor-log-card__status {
     margin: 0;
-    padding: 2rem 1.5rem;
+    padding: 2rem 0;
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--color-text-secondary);
