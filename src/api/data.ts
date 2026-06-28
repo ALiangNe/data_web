@@ -28,7 +28,7 @@ export const getMcpCapabilities = async (params: DataListQuery<McpCapability, Da
 }
 
 export const getMonitorLogsTrace = async (traceId: string): Promise<MonitorTraceDetail | null> => {
-    return apiClient.get<any, MonitorTraceDetail | null>(`/data/getMonitorLogs/traces/${traceId}`, baseURL)
+    return apiClient.post<any, MonitorTraceDetail | null>('/data/getMonitorLogsTrace', { traceId }, baseURL)
 }
 
 export const getUsers = async (params: DataListQuery<User, DataCenterSortFieldFor<'users'>>): Promise<DataListResult<User>> => {
