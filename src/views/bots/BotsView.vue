@@ -55,7 +55,7 @@ const timeRangeValues = ref<Record<string, DataTimeRangeFieldValues>>({})
 const sortField = ref<DataCenterSortFieldFor<'bots'>>(table.sortFields[0])
 const sortOrder = ref<'asc' | 'desc'>('desc')
 const page = ref(1)
-const pageSize = ref(20)
+const pageSize = ref(10)
 const total = ref(0)
 const rows = ref<Record<string, string>[]>([])
 const loading = ref(false)
@@ -127,6 +127,7 @@ const fetchData = async () => {
     }
 
     loading.value = false
+    show('Data loaded successfully.', 'success')
 }
 
 const search = () => {

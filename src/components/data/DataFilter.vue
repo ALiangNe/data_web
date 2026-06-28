@@ -4,13 +4,12 @@
             <div class="data-filter__grid">
                 <label v-for="field in fields" :key="field" class="data-filter__field">
                     <span class="data-filter__label">{{ field }}</span>
-                    <input
-                        class="data-filter__input"
-                        type="text"
-                        :name="field"
-                        :value="filterValues[field] ?? ''"
+                    <ElInput
+                        :model-value="filterValues[field] ?? ''"
                         :placeholder="field"
-                        @input="updateField(field, ($event.target as HTMLInputElement).value)"
+                        :disabled="loading"
+                        clearable
+                        @update:model-value="updateField(field, $event)"
                     />
                 </label>
 
@@ -79,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElDatePicker, ElOption, ElSelect } from 'element-plus'
+import { ElDatePicker, ElInput, ElOption, ElSelect } from 'element-plus'
 import type { DataSelectFieldConfig, DataTimeRangeFieldValues } from '@/types/data'
 
 const props = defineProps<{
@@ -104,7 +103,7 @@ const emit = defineEmits<{
 const updateField = (key: string, value: string) => {
     emit('update:filterValues', {
         ...props.filterValues,
-        [key]: value,
+        [key]: value ?? '',
     })
 }
 
@@ -152,6 +151,10 @@ const updateTimeRange = (field: string, value: DataTimeRangeFieldValues) => {
     gap: 0.375rem;
     min-width: 0;
 
+    :deep(.el-input) {
+        width: 100%;
+    }
+
     :deep(.el-select) {
         width: 100%;
     }
@@ -169,32 +172,6 @@ const updateTimeRange = (field: string, value: DataTimeRangeFieldValues) => {
     font-size: 0.75rem;
     font-weight: 500;
     color: var(--color-text-secondary);
-}
-
-.data-filter__input {
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    background: var(--color-surface);
-    font: inherit;
-    font-size: 0.8125rem;
-    color: var(--color-text);
-    transition: border-color 150ms ease, box-shadow 150ms ease;
-
-    &::placeholder {
-        color: var(--color-text-muted);
-    }
-
-    &:hover {
-        border-color: var(--color-border-strong);
-    }
-
-    &:focus {
-        outline: none;
-        border-color: var(--color-primary);
-        box-shadow: var(--focus-ring);
-    }
 }
 
 .data-filter__actions {

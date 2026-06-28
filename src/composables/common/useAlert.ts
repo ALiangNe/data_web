@@ -1,29 +1,21 @@
-import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
 
-export type AlertType = 'info' | 'error'
-
-const visible = ref(false)
-const message = ref('')
-const type = ref<AlertType>('info')
+export type AlertType = 'info' | 'error' | 'success'
 
 export const useAlert = () => {
     const show = (text: string, alertType: AlertType = 'info') => {
-        message.value = text
-        type.value = alertType
-        visible.value = true
+        const options = { message: text, showClose: true }
+
+        if (alertType === 'error') {
+            ElMessage.error(options)
+            return
+        }
+        if (alertType === 'success') {
+            ElMessage.success(options)
+            return
+        }
+        ElMessage.info(options)
     }
 
-    const close = () => {
-        visible.value = false
-        message.value = ''
-        type.value = 'info'
-    }
-
-    return {
-        visible,
-        message,
-        type,
-        show,
-        close,
-    }
+    return { show }
 }

@@ -1,8 +1,8 @@
 <template>
     <section class="monitor-log-card">
-        <p v-if="!hasQueried" class="monitor-log-card__empty">Enter a TraceId and click Query.</p>
-        <p v-else-if="loading" class="monitor-log-card__loading">Loading...</p>
-        <p v-else-if="!rows.length" class="monitor-log-card__empty">No spans found.</p>
+        <p v-if="loading" class="monitor-log-card__status">Loading...</p>
+        <p v-else-if="!hasQueried" class="monitor-log-card__empty">Enter a TraceId and click Query.</p>
+        <p v-else-if="!rows.length" class="monitor-log-card__empty">No data</p>
 
         <div v-else class="monitor-log-card__list">
             <ElSteps
@@ -69,7 +69,12 @@ const stepStatus = (row: Record<string, string>): 'success' | 'error' =>
 
 <style scoped lang="scss">
 .monitor-log-card {
+    overflow: auto;
     width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
 }
 
 .monitor-log-card__list {
@@ -159,16 +164,11 @@ const stepStatus = (row: Record<string, string>): 'success' | 'error' =>
 }
 
 .monitor-log-card__empty,
-.monitor-log-card__loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 12rem;
+.monitor-log-card__status {
     margin: 0;
-    border: 1px dashed var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-surface);
-    font-size: 0.8125rem;
+    padding: 2rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
     color: var(--color-text-secondary);
     text-align: center;
 }

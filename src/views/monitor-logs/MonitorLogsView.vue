@@ -63,6 +63,7 @@ const fetchData = async () => {
     if (!data || !Array.isArray(data.spans) || data.spans.length === 0) {
         rows.value = []
         loading.value = false
+        show('Query successful.', 'success')
         return
     }
 
@@ -101,6 +102,7 @@ const fetchData = async () => {
     }))
 
     loading.value = false
+    show('Query successful.', 'success')
 }
 
 const search = () => {

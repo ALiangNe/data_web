@@ -17,6 +17,7 @@ const { show } = useAlert()
 const onSubmit = async (email: string, password: string) => {
     try {
         await login(email, password)
+        show('Login successful.', 'success')
         await router.push({ name: 'BotsView' })
     } catch (error) {
         const message = error instanceof ApiError && error.message
