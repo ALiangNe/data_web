@@ -2,23 +2,14 @@
     <section class="data-filter">
         <form class="data-filter__form" @submit.prevent="emit('search')">
             <div class="data-filter__input-grid">
-                <label v-for="field in fields" :key="field" class="data-filter__field">
-                    <span class="data-filter__label">{{ field }}</span>
-                    <ElInput
-                        :model-value="filterValues[field] ?? ''"
-                        :placeholder="field"
-                        :disabled="loading"
-                        clearable
-                        @update:model-value="updateField(field, $event)"
-                    />
-                </label>
-
                 <template v-if="selectFields">
                     <label v-for="(config, key) in selectFields" :key="key" class="data-filter__field">
                         <span class="data-filter__label">{{ config.label }}</span>
                         <ElSelect
                             :model-value="selectValues![key]"
+                            :placeholder="config.label"
                             :disabled="loading"
+                            clearable
                             @update:model-value="updateSelect(key, $event)"
                         >
                             <ElOption
@@ -30,9 +21,20 @@
                         </ElSelect>
                     </label>
                 </template>
+
+                <label v-for="field in fields" :key="field" class="data-filter__field">
+                    <span class="data-filter__label">{{ field }}</span>
+                    <ElInput
+                        :model-value="filterValues[field] ?? ''"
+                        :placeholder="field"
+                        :disabled="loading"
+                        clearable
+                        @update:model-value="updateField(field, $event)"
+                    />
+                </label>
             </div>
 
-            <div v-if="showTimeRange" class="data-filter__time-grid">
+            <div v-if="showTimeRange && timeRangeFields" class="data-filter__time-grid">
                 <label
                     v-for="field in timeRangeFields"
                     :key="field"
@@ -42,7 +44,7 @@
                     <ElDatePicker
                         class="data-filter__datetime"
                         type="datetimerange"
-                        :model-value="timeRangeValues[field] ?? null"
+                        :model-value="timeRangeValues?.[field] ?? null"
                         :disabled="loading"
                         format="YYYY-MM-DD HH:mm:ss"
                         value-format="YYYY-MM-DD HH:mm:ss"
@@ -84,9 +86,9 @@ const props = defineProps<{
     filterValues: Record<string, string>
     selectFields?: Record<string, DataSelectFieldConfig>
     selectValues?: Record<string, string>
-    timeRangeFields: string[]
-    timeRangeValues: Record<string, DataTimeRangeFieldValues>
-    showTimeRange: boolean
+    timeRangeFields?: string[]
+    timeRangeValues?: Record<string, DataTimeRangeFieldValues>
+    showTimeRange?: boolean
     loading: boolean
 }>()
 
@@ -114,7 +116,7 @@ const updateSelect = (key: string, value: string) => {
 
 const updateTimeRange = (field: string, value: DataTimeRangeFieldValues) => {
     emit('update:timeRangeValues', {
-        ...props.timeRangeValues,
+        ...(props.timeRangeValues ?? {}),
         [field]: value,
     })
 }

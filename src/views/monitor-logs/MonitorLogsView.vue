@@ -3,9 +3,6 @@
         <DataFilter
             v-model:filter-values="filterValues"
             :fields="filterFields"
-            :time-range-fields="[]"
-            :time-range-values="{}"
-            :show-time-range="false"
             :loading="loading"
             @search="search"
             @reset="resetFilters"

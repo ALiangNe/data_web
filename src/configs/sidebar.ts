@@ -1,6 +1,6 @@
 export const DATA_CONSOLE_PERMISSIONS: Record<number, string[]> = {
-    1: ['bots', 'knowledge', 'mcp-capabilities', 'monitor-logs', 'user-behavior-logs', 'users'],
-    5: ['bots', 'knowledge', 'mcp-capabilities', 'monitor-logs', 'user-behavior-logs', 'users'],
+    1: ['bots', 'knowledge', 'mcp-capabilities', 'monitor-logs', 'user-behavior-logs', 'users', 'data-lookup'],
+    5: ['bots', 'knowledge', 'mcp-capabilities', 'monitor-logs', 'user-behavior-logs', 'users', 'data-lookup'],
 }
 
 export const APP_SIDEBAR = [
@@ -10,6 +10,7 @@ export const APP_SIDEBAR = [
     { name: 'MonitorLogsView', label: 'MonitorLogs', permission: 'monitor-logs' },
     { name: 'UserBehaviorLogsView', label: 'UserBehaviorLogs', permission: 'user-behavior-logs' },
     { name: 'UsersView', label: 'Users', permission: 'users' },
+    { name: 'DataLookupView', label: 'DataLookup', permission: 'data-lookup' },
 ] as const
 
 export const resolveDefaultRoute = (role: number) => {

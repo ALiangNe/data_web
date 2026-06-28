@@ -11,6 +11,8 @@ import type {
     User,
     UserBehaviorLogsQuery,
     UserBehaviorLogAggregate,
+    DataLookupQuery,
+    DataLookupResult,
 } from '@/types/data'
 
 const baseURL = { baseURL: import.meta.env.VITE_DATA_API_BASE_URL }
@@ -49,4 +51,8 @@ export const getChatActiveDates = async (params: { userId: string; currentTime: 
 
 export const getChatHistories = async (params: { userId: string; soulId: string; date: string }): Promise<ChatHistory[]> => {
     return apiClient.post<any, ChatHistory[]>('/data/getChatHistories', params, baseURL)
+}
+
+export const getDataLookup = async (params: DataLookupQuery): Promise<DataLookupResult[]> => {
+    return apiClient.post<any, DataLookupResult[]>('/data/getDataLookup', params, baseURL)
 }

@@ -6,7 +6,7 @@
                 <tr>
                     <th v-for="col in columns" :key="col" class="data-table__head">
                         <button
-                            v-if="sortableFields.includes(col)"
+                            v-if="sortableFields?.includes(col)"
                             type="button"
                             class="data-table__sort"
                             :disabled="loading"
@@ -57,9 +57,9 @@
 defineProps<{
     columns: string[]
     rows: Record<string, string>[]
-    sortableFields: string[]
-    sortField: string
-    sortOrder: 'asc' | 'desc'
+    sortableFields?: string[]
+    sortField?: string
+    sortOrder?: 'asc' | 'desc'
     loading: boolean
     clickable?: boolean
     actions?: {

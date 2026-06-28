@@ -41,3 +41,18 @@ export const DATA_CENTER_TABLES = {
         timeRangeFields: ['createdAt', 'updatedAt'],
     },
 }
+
+/* Per-table entity configuration for data lookup */
+export const DATA_LOOKUP_TABLES = {
+    authProviders: {},
+    bots: {},
+    chatHistories: {},
+    chatTopics: {},
+    knowledge: {},
+    mcpCapabilities: {},
+    media: {},
+    monitorLogs: {},
+    users: {},
+    userBehaviorLogs: {},
+    userMemories: {},
+} as const

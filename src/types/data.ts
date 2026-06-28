@@ -1,4 +1,4 @@
-import { DATA_CENTER_TABLES } from '@/configs/data'
+import { DATA_CENTER_TABLES, DATA_LOOKUP_TABLES } from '@/configs/data'
 
 export type Bot = {
     id: string
@@ -167,3 +167,12 @@ export type DataListQuery<T, S extends DataCenterSortField = DataCenterSortField
     sortBy?: S
     order?: 'asc' | 'desc'
 }
+
+export type DataLookupEntity = keyof typeof DATA_LOOKUP_TABLES
+
+export interface DataLookupQuery {
+    entity: DataLookupEntity
+    ids: string[]
+}
+
+export type DataLookupResult = Record<string, unknown>

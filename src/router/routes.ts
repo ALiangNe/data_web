@@ -56,6 +56,12 @@ export const routes: RouteRecordRaw[] = [
                 meta: { permission: 'user-behavior-logs' },
                 component: () => import('@/views/user-behavior-logs/UserBehaviorLogsView.vue'),
             },
+            {
+                path: 'data-lookup',
+                name: 'DataLookupView',
+                meta: { permission: 'data-lookup' },
+                component: () => import('@/views/data-lookup/DataLookupView.vue'),
+            },
         ],
     },
     {
