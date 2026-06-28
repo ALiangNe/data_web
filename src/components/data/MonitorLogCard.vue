@@ -1,7 +1,6 @@
 <template>
     <section class="monitor-log-card">
         <p v-if="loading" class="monitor-log-card__status">Loading...</p>
-        <p v-else-if="!hasQueried" class="monitor-log-card__empty">Enter a TraceId and click Query.</p>
         <p v-else-if="!rows.length" class="monitor-log-card__empty">No data</p>
 
         <div v-else class="monitor-log-card__list">
@@ -49,7 +48,6 @@ const props = defineProps<{
     columns: string[]
     rows: Record<string, string>[]
     loading: boolean
-    hasQueried: boolean
 }>()
 
 const rowGroups = computed(() => {

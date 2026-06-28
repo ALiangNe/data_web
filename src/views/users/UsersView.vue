@@ -42,6 +42,7 @@
                 :disabled-date="disabledDate"
                 :loading="chatMessagesLoading"
                 :messages="chatMessages"
+                @panel-change="onChatPanelChange"
             />
             <UserMemoryPanel
                 v-else-if="modalType === 'memory'"
@@ -84,6 +85,7 @@ const modalOpen = ref(false)
 const modalType = ref<'chat' | 'memory' | null>(null)
 const selectedDate = ref('')
 const chatActiveDates = ref<string[]>([])
+const chatActiveMonth = ref('')
 const chatDatesLoading = ref(false)
 const chatUserId = ref('')
 const chatSoulId = ref('')
@@ -96,12 +98,14 @@ const tableActions = [
     { key: 'viewMemory', label: 'ViewMemory' },
 ]
 const columns = [...filterFields, 'providers']
-
-const disabledDate = (time: Date) => !chatActiveDates.value.includes(new Intl.DateTimeFormat('en-CA', {
+const chatDateFormatter = new Intl.DateTimeFormat('en-CA', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-}).format(time))
+    timeZone: 'Asia/Shanghai',
+})
+
+const disabledDate = (time: Date) => !chatActiveDates.value.includes(chatDateFormatter.format(time))
 
 const fetchData = async () => {
     loading.value = true
@@ -172,38 +176,63 @@ const onTableAction = (payload: { key: string; row: Record<string, string> }) =>
 const openChatModal = async (payload: { key: string; row: Record<string, string> }) => {
     chatUserId.value = payload.row.id
     chatSoulId.value = payload.row.soulId
-    selectedDate.value = new Intl.DateTimeFormat('en-CA', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-    }).format(new Date())
+    selectedDate.value = chatDateFormatter.format(new Date())
     modalType.value = 'chat'
     modalOpen.value = true
-    chatDatesLoading.value = true
+    chatActiveMonth.value = ''
     chatActiveDates.value = []
     chatMessages.value = []
 
-    const params = {
-        userId: chatUserId.value,
-        currentTime: new Date().toISOString(),
-    }
+    const monthKey = chatDateFormatter.format(new Date()).slice(0, 7)
+    chatDatesLoading.value = true
 
-    let dates: string[]
     try {
-        dates = await getChatActiveDates(params)
+        chatActiveDates.value = await getChatActiveDates({
+            userId: chatUserId.value,
+            currentTime: new Date(`${monthKey}-10T00:00:00+08:00`).toISOString(),
+        })
+        chatActiveMonth.value = monthKey
     } catch (error) {
         console.error('UsersView fetchChatActiveDates failed:', error)
         const message = error instanceof ApiError && error.message
             ? error.message
             : 'Failed to load chat dates. Please try again.'
         show(message, 'error')
-        chatDatesLoading.value = false
         closeModal()
         return
+    } finally {
+        chatDatesLoading.value = false
     }
+}
 
-    chatActiveDates.value = dates
-    chatDatesLoading.value = false
+const onChatPanelChange = async (date: Date) => {
+    if (!modalOpen.value || modalType.value !== 'chat' || !chatUserId.value) return
+
+    const monthKey = chatDateFormatter.format(date).slice(0, 7)
+    if (selectedDate.value && !selectedDate.value.startsWith(monthKey)) {
+        selectedDate.value = ''
+        chatMessages.value = []
+    }
+    if (monthKey === chatActiveMonth.value) return
+
+    chatDatesLoading.value = true
+    chatActiveDates.value = []
+
+    try {
+        chatActiveDates.value = await getChatActiveDates({
+            userId: chatUserId.value,
+            currentTime: new Date(`${monthKey}-10T00:00:00+08:00`).toISOString(),
+        })
+        chatActiveMonth.value = monthKey
+    } catch (error) {
+        console.error('UsersView fetchChatActiveDates failed:', error)
+        const message = error instanceof ApiError && error.message
+            ? error.message
+            : 'Failed to load chat dates. Please try again.'
+        show(message, 'error')
+    } finally {
+        chatDatesLoading.value = false
+    }
 }
 
 const openMemoryModal = async (payload: { row: Record<string, string> }) => {
@@ -303,6 +332,7 @@ const closeModal = () => {
     modalType.value = null
     selectedDate.value = ''
     chatActiveDates.value = []
+    chatActiveMonth.value = ''
     chatDatesLoading.value = false
     chatUserId.value = ''
     chatSoulId.value = ''

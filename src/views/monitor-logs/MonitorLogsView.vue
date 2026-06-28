@@ -11,7 +11,6 @@
             :columns="columns"
             :rows="rows"
             :loading="loading"
-            :has-queried="hasQueried"
         />
     </div>
 </template>
@@ -34,14 +33,12 @@ const columns = ['traceId', 'spanId', 'parentSpanId', 'env', 'service', 'instanc
 const filterValues = ref<Record<string, string>>({})
 const rows = ref<Record<string, string>[]>([])
 const loading = ref(false)
-const hasQueried = ref(false)
 
 const fetchData = async () => {
     const id = (filterValues.value.traceId ?? '').trim()
     if (!id || loading.value) return
 
     loading.value = true
-    hasQueried.value = true
 
     let data
     try {
@@ -109,6 +106,5 @@ const search = () => {
 const resetFilters = () => {
     filterValues.value = {}
     rows.value = []
-    hasQueried.value = false
 }
 </script>
