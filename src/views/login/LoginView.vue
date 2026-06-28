@@ -7,18 +7,22 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useAlert, useAuth } from '@/composables'
+import { resolveDefaultRoute } from '@/configs/sidebar'
+import { useUserStore } from '@/stores'
 import LoginForm from '@/components/auth/LoginForm.vue'
 import { ApiError } from '@/types/api'
 
 const router = useRouter()
 const { login } = useAuth()
 const { show } = useAlert()
+const userStore = useUserStore()
 
 const onSubmit = async (email: string, password: string) => {
     try {
         await login(email, password)
         show('Login successful.', 'success')
-        await router.push({ name: 'BotsView' })
+        const name = resolveDefaultRoute(userStore.user!.role) ?? 'BotsView'
+        await router.push({ name: name })
     } catch (error) {
         const message = error instanceof ApiError && error.message
             ? error.message

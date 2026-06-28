@@ -23,31 +23,37 @@ export const routes: RouteRecordRaw[] = [
             {
                 path: 'users',
                 name: 'UsersView',
+                meta: { permission: 'users' },
                 component: () => import('@/views/users/UsersView.vue'),
             },
             {
                 path: 'bots',
                 name: 'BotsView',
+                meta: { permission: 'bots' },
                 component: () => import('@/views/bots/BotsView.vue'),
             },
             {
                 path: 'knowledge',
                 name: 'KnowledgeView',
+                meta: { permission: 'knowledge' },
                 component: () => import('@/views/knowledge/KnowledgeView.vue'),
             },
             {
                 path: 'mcp-capabilities',
                 name: 'McpCapabilitiesView',
+                meta: { permission: 'mcp-capabilities' },
                 component: () => import('@/views/mcp-capabilities/McpCapabilitiesView.vue'),
             },
             {
                 path: 'monitor-logs',
                 name: 'MonitorLogsView',
+                meta: { permission: 'monitor-logs' },
                 component: () => import('@/views/monitor-logs/MonitorLogsView.vue'),
             },
             {
                 path: 'user-behavior-logs',
                 name: 'UserBehaviorLogsView',
+                meta: { permission: 'user-behavior-logs' },
                 component: () => import('@/views/user-behavior-logs/UserBehaviorLogsView.vue'),
             },
         ],

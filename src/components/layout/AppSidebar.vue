@@ -5,7 +5,7 @@
         </div>
         <nav class="app-sidebar__nav">
             <RouterLink
-                v-for="item in APP_NAV"
+                v-for="item in sidebarItems"
                 :key="item.name"
                 :to="{ name: item.name }"
                 class="app-sidebar__link"
@@ -18,16 +18,19 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { APP_SIDEBAR, DATA_CONSOLE_PERMISSIONS } from '@/configs/sidebar'
+import { useUserStore } from '@/stores'
 
-const APP_NAV = [
-    { name: 'BotsView', label: 'Bots' },
-    { name: 'KnowledgeView', label: 'Knowledge' },
-    { name: 'McpCapabilitiesView', label: 'McpCapabilities' },
-    { name: 'MonitorLogsView', label: 'MonitorLogs' },
-    { name: 'UserBehaviorLogsView', label: 'UserBehaviorLogs' },
-    { name: 'UsersView', label: 'Users' },
-] as const
+const userStore = useUserStore()
+
+const sidebarItems = computed(() => {
+    const role = userStore.user?.role
+    if (role == null) return []
+    const permissions = DATA_CONSOLE_PERMISSIONS[role] ?? []
+    return APP_SIDEBAR.filter(item => permissions.includes(item.permission))
+})
 </script>
 
 <style scoped lang="scss">
