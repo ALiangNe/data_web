@@ -73,13 +73,15 @@ const fetchData = async () => {
 
     const timeRangeFilters: Record<string, [string, string]> = {}
     for (const [field, range] of Object.entries(timeRangeValues.value)) {
-        const start = (range.startTime ?? '').trim()
-        const end = (range.endTime ?? '').trim()
-        if (!start && !end) continue
+        if (!range) continue
+        const [start, end] = range
+        const startTrim = start.trim()
+        const endTrim = end.trim()
+        if (!startTrim && !endTrim) continue
 
         timeRangeFilters[field] = [
-            start ? new Date(start).toISOString() : '',
-            end ? new Date(end).toISOString() : '',
+            startTrim ? new Date(startTrim).toISOString() : '',
+            endTrim ? new Date(endTrim).toISOString() : '',
         ]
     }
 

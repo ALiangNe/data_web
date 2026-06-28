@@ -7,9 +7,7 @@ import type {
     DataListResult,
     Knowledge,
     McpCapability,
-    MonitorTrace,
     MonitorTraceDetail,
-    MonitorLogsTracesQuery,
     User,
     UserBehaviorLogsQuery,
     UserBehaviorLogAggregate,
@@ -29,12 +27,8 @@ export const getMcpCapabilities = async (params: DataListQuery<McpCapability, Da
     return apiClient.post<any, DataListResult<McpCapability>>('/data/getMcpCapabilities', params, baseURL)
 }
 
-export const getMonitorLogsTraces = async (params: MonitorLogsTracesQuery): Promise<DataListResult<MonitorTrace>> => {
-    return apiClient.get<any, DataListResult<MonitorTrace>>('/data/getMonitorLogs/traces', { ...baseURL, params })
-}
-
-export const getMonitorLogsTrace = async (traceId: string): Promise<MonitorTraceDetail> => {
-    return apiClient.get<any, MonitorTraceDetail>(`/data/getMonitorLogs/traces/${traceId}`, baseURL)
+export const getMonitorLogsTrace = async (traceId: string): Promise<MonitorTraceDetail | null> => {
+    return apiClient.get<any, MonitorTraceDetail | null>(`/data/getMonitorLogs/traces/${traceId}`, baseURL)
 }
 
 export const getUsers = async (params: DataListQuery<User, DataCenterSortFieldFor<'users'>>): Promise<DataListResult<User>> => {

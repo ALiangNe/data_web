@@ -35,32 +35,25 @@
                 <div v-if="showTimeRange" class="data-filter__row-break" />
 
                 <template v-if="showTimeRange">
-                    <template v-for="field in timeRangeFields" :key="field">
-                        <label class="data-filter__field">
-                            <span class="data-filter__label">{{ field }} start</span>
-                            <input
-                                class="data-filter__input data-filter__input--datetime"
-                                :class="{ 'data-filter__input--empty': !timeRangeValues[field]?.startTime }"
-                                type="datetime-local"
-                                :name="`${field}-start`"
-                                :value="timeRangeValues[field]?.startTime ?? ''"
-                                @click="openPicker"
-                                @input="updateTimeRange(field, 'startTime', ($event.target as HTMLInputElement).value)"
-                            />
-                        </label>
-                        <label class="data-filter__field">
-                            <span class="data-filter__label">{{ field }} end</span>
-                            <input
-                                class="data-filter__input data-filter__input--datetime"
-                                :class="{ 'data-filter__input--empty': !timeRangeValues[field]?.endTime }"
-                                type="datetime-local"
-                                :name="`${field}-end`"
-                                :value="timeRangeValues[field]?.endTime ?? ''"
-                                @click="openPicker"
-                                @input="updateTimeRange(field, 'endTime', ($event.target as HTMLInputElement).value)"
-                            />
-                        </label>
-                    </template>
+                    <label
+                        v-for="field in timeRangeFields"
+                        :key="field"
+                        class="data-filter__field data-filter__field--datetime"
+                    >
+                        <span class="data-filter__label">{{ field }}</span>
+                        <ElDatePicker
+                            class="data-filter__datetime"
+                            type="datetimerange"
+                            :model-value="timeRangeValues[field] ?? null"
+                            :disabled="loading"
+                            format="YYYY-MM-DD HH:mm:ss"
+                            value-format="YYYY-MM-DD HH:mm:ss"
+                            range-separator="-"
+                            start-placeholder="Start"
+                            end-placeholder="End"
+                            @update:model-value="updateTimeRange(field, $event)"
+                        />
+                    </label>
                 </template>
 
                 <div class="data-filter__actions">
@@ -86,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElOption, ElSelect } from 'element-plus'
+import { ElDatePicker, ElOption, ElSelect } from 'element-plus'
 import type { DataSelectFieldConfig, DataTimeRangeFieldValues } from '@/types/data'
 
 const props = defineProps<{
@@ -108,11 +101,6 @@ const emit = defineEmits<{
     (e: 'reset'): void
 }>()
 
-const openPicker = (event: MouseEvent) => {
-    const input = event.currentTarget as HTMLInputElement
-    input.showPicker?.()
-}
-
 const updateField = (key: string, value: string) => {
     emit('update:filterValues', {
         ...props.filterValues,
@@ -122,18 +110,15 @@ const updateField = (key: string, value: string) => {
 
 const updateSelect = (key: string, value: string) => {
     emit('update:selectValues', {
-        ...props.selectValues!,
+        ...(props.selectValues ?? {}),
         [key]: value,
     })
 }
 
-const updateTimeRange = (field: string, key: keyof DataTimeRangeFieldValues, value: string) => {
+const updateTimeRange = (field: string, value: DataTimeRangeFieldValues) => {
     emit('update:timeRangeValues', {
         ...props.timeRangeValues,
-        [field]: {
-            ...props.timeRangeValues[field],
-            [key]: value,
-        },
+        [field]: value,
     })
 }
 </script>
@@ -170,6 +155,14 @@ const updateTimeRange = (field: string, key: keyof DataTimeRangeFieldValues, val
     :deep(.el-select) {
         width: 100%;
     }
+
+    &--datetime {
+        grid-column: span 2;
+
+        :deep(.el-date-editor) {
+            width: 100%;
+        }
+    }
 }
 
 .data-filter__label {
@@ -193,25 +186,6 @@ const updateTimeRange = (field: string, key: keyof DataTimeRangeFieldValues, val
         color: var(--color-text-muted);
     }
 
-    &--empty {
-        color: var(--color-text-muted);
-
-        &::-webkit-datetime-edit,
-        &::-webkit-datetime-edit-fields-wrapper,
-        &::-webkit-datetime-edit-text,
-        &::-webkit-datetime-edit-month-field,
-        &::-webkit-datetime-edit-day-field,
-        &::-webkit-datetime-edit-year-field,
-        &::-webkit-datetime-edit-hour-field,
-        &::-webkit-datetime-edit-minute-field {
-            color: var(--color-text-muted);
-        }
-    }
-
-    &:not(.data-filter__input--empty) {
-        color: var(--color-text);
-    }
-
     &:hover {
         border-color: var(--color-border-strong);
     }
@@ -220,10 +194,6 @@ const updateTimeRange = (field: string, key: keyof DataTimeRangeFieldValues, val
         outline: none;
         border-color: var(--color-primary);
         box-shadow: var(--focus-ring);
-    }
-
-    &--datetime {
-        cursor: pointer;
     }
 }
 

@@ -46,39 +46,22 @@ export type McpCapability = {
 export type MonitorSpan = {
     spanId: string
     parentSpanId: string
-    service: string
     env: string
+    service: string
     instanceId: string
-    botId?: string
-    soulId?: string
     name: string
     status: string
+    botId?: string | null
+    soulId?: string | null
     startTimeMs: number
     durationMs: number
     error?: string | null
     meta?: Record<string, unknown>
 }
 
-export type MonitorTrace = {
-    traceId: string
-    startTimeMs: number
-    chain: string[]
-    serviceCount: number
-    durationMs: number
-    status: 'ok' | 'error'
-}
-
 export type MonitorTraceDetail = {
     traceId: string
     spans: MonitorSpan[]
-}
-
-export type MonitorLogsTracesQuery = {
-    traceId?: string
-    page: number
-    pageSize: number
-    sortBy?: 'startTimeMs'
-    order?: 'asc' | 'desc'
 }
 
 export type User = {
@@ -166,14 +149,8 @@ export type DataSelectFieldConfig = {
     options: { label: string; value: string }[]
 }
 
-type A = typeof DATA_CENTER_TABLES['users']['sortFields']
-
-/* Single time field range filter values. */
-export type DataTimeRangeFieldValues = {
-    startTime: string
-    endTime: string
-    a:A
-}
+/* DateTimePicker datetimerange value for a single time field. */
+export type DataTimeRangeFieldValues = [string, string] | null
 
 /* Data center API pagination list response. */
 export type DataListResult<T> = {
