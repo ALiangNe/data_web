@@ -1,14 +1,45 @@
 <template>
     <div class="data-list-view">
-        <DataFilter v-model:filter-values="filterValues" v-model:time-range-values="timeRangeValues"
-            :fields="filterFields" :time-range-fields="timeRangeFields" :loading="loading" show-time-range
-            @search="search" @reset="resetFilters" />
-        <DataTable :columns="traceColumns" :rows="traceRows" :sortable-fields="sortableFields" :sort-field="sortField"
-            :sort-order="sortOrder" :loading="loading" clickable @sort-column="onSortColumn" @row-click="selectTrace" />
-        <DataPagination :page="page" :page-size="pageSize" :page-size-options="pageSizeOptions" :total="total"
-            :loading="loading" @update:page-size="onPageSizeChange" @prev="prevPage" @next="nextPage" />
-        <DataTable v-if="selectedTraceId" :columns="spanColumns" :rows="spanRows" :sortable-fields="[]" sort-field=""
-            sort-order="desc" :loading="spanLoading" />
+        <DataFilter
+            v-model:filter-values="filterValues"
+            :fields="filterFields"
+            :time-range-fields="[]"
+            :time-range-values="{}"
+            :show-time-range="false"
+            :loading="loading"
+            @search="search"
+            @reset="resetFilters"
+        />
+        <DataTable
+            :columns="traceColumns"
+            :rows="traceRows"
+            :sortable-fields="sortableFields"
+            :sort-field="sortField"
+            :sort-order="sortOrder"
+            :loading="loading"
+            clickable
+            @sort-column="onSortColumn"
+            @row-click="selectTrace"
+        />
+        <DataPagination
+            :page="page"
+            :page-size="pageSize"
+            :page-size-options="pageSizeOptions"
+            :total="total"
+            :loading="loading"
+            @update:page-size="onPageSizeChange"
+            @prev="prevPage"
+            @next="nextPage"
+        />
+        <DataTable
+            v-if="selectedTraceId"
+            :columns="spanColumns"
+            :rows="spanRows"
+            :sortable-fields="[]"
+            sort-field=""
+            sort-order="desc"
+            :loading="spanLoading"
+        />
     </div>
 </template>
 
@@ -21,7 +52,7 @@ import DataTable from '@/components/data/DataTable.vue'
 import { useAlert } from '@/composables'
 import { DATA_CENTER_TABLES } from '@/configs/data'
 import { ApiError } from '@/types/api'
-import type { DataCenterSortFieldFor, DataTimeRangeFieldValues, MonitorLogsTracesQuery } from '@/types/data'
+import type { DataCenterSortFieldFor, MonitorLogsTracesQuery } from '@/types/data'
 
 const { show } = useAlert()
 
@@ -29,11 +60,9 @@ const table = DATA_CENTER_TABLES.monitorLogs
 const pageSizeOptions = [5, 10, 20]
 const filterFields = table.filter
 const sortableFields = table.sortFields
-const timeRangeFields = table.timeRangeFields
-const traceColumns = ['traceId', 'chain', 'serviceCount', 'durationMs', 'status','startTimeMs']
+const traceColumns = ['traceId', 'chain', 'serviceCount', 'durationMs', 'status', 'startTimeMs']
 const spanColumns = ['spanId', 'parentSpanId', 'env', 'service', 'instanceId', 'name', 'status', 'botId', 'soulId', 'startTimeMs', 'durationMs', 'error', 'meta']
 const filterValues = ref<Record<string, string>>({})
-const timeRangeValues = ref<Record<string, DataTimeRangeFieldValues>>({})
 const sortField = ref<DataCenterSortFieldFor<'monitorLogs'>>(table.sortFields[0])
 const sortOrder = ref<'asc' | 'desc'>('desc')
 const page = ref(1)
@@ -59,12 +88,6 @@ const fetchTraces = async () => {
 
     const traceId = (filterValues.value.traceId ?? '').trim()
     if (traceId) params.traceId = traceId
-
-    const range = timeRangeValues.value.startTimeMs
-    const start = (range?.startTime ?? '').trim()
-    const end = (range?.endTime ?? '').trim()
-    if (start) params.startTimeStart = String(new Date(start).getTime())
-    if (end) params.startTimeEnd = String(new Date(end).getTime())
 
     let data
     try {
@@ -162,7 +185,6 @@ const search = () => {
 
 const resetFilters = () => {
     filterValues.value = {}
-    timeRangeValues.value = {}
     sortField.value = table.sortFields[0]
     sortOrder.value = 'desc'
     page.value = 1

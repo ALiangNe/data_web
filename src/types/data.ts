@@ -75,8 +75,6 @@ export type MonitorTraceDetail = {
 
 export type MonitorLogsTracesQuery = {
     traceId?: string
-    startTimeStart?: string
-    startTimeEnd?: string
     page: number
     pageSize: number
     sortBy?: 'startTimeMs'
