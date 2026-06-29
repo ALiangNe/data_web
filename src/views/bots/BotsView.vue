@@ -25,9 +25,8 @@
             :page-size-options="pageSizeOptions"
             :total="total"
             :loading="loading"
+            @update:page="onPageChange"
             @update:page-size="onPageSizeChange"
-            @prev="prevPage"
-            @next="nextPage"
         />
     </div>
 </template>
@@ -144,15 +143,10 @@ const resetFilters = () => {
     fetchData()
 }
 
-const prevPage = () => {
-    if (page.value <= 1 || loading.value) return
-    page.value -= 1
-    fetchData()
-}
-
-const nextPage = () => {
-    if (page.value * pageSize.value >= total.value || loading.value) return
-    page.value += 1
+const onPageChange = (value: number) => {
+    if (loading.value) return
+    if (value > page.value && page.value * pageSize.value >= total.value) return
+    page.value = value
     fetchData()
 }
 
