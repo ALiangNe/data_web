@@ -29,7 +29,6 @@ import type { DataLookupEntity, DataSelectFieldConfig } from '@/types/data'
 
 const { show } = useAlert()
 
-const filterFields = ['ids']
 const selectFields: Record<string, DataSelectFieldConfig> = {
     entity: {
         label: 'entity',
@@ -46,6 +45,12 @@ const rows = ref<Record<string, string>[]>([])
 const loading = ref(false)
 const columns = computed(() => rows.value[0] ? Object.keys(rows.value[0]) : [])
 
+const filterFields = computed(() => {
+    if (selectValues.value.entity === 'monitorLogs') return ['spanId']
+    if (selectValues.value.entity === 'userBehaviorLogs') return ['userId']
+    return ['ids']
+})
+
 const fetchData = async () => {
     const entity = selectValues.value.entity.trim()
     if (!entity) {
@@ -53,9 +58,9 @@ const fetchData = async () => {
         return
     }
 
-    const ids = (filterValues.value.ids ?? '').split(',').map((value) => value.trim()).filter(Boolean)
+    const ids = (filterValues.value[filterFields.value[0]] ?? '').split(',').map((v) => v.trim()).filter(Boolean)
     if (ids.length === 0) {
-        show('Please enter at least one ID.', 'error')
+        show(`Please enter at least one ${filterFields.value[0]}.`, 'error')
         return
     }
 

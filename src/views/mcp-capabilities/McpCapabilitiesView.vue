@@ -113,7 +113,7 @@ const fetchData = async () => {
         for (const [key, value] of Object.entries(row)) {
             if (value == null) formatted[key] = '-'
             else if (key === 'createdAt' || key === 'updatedAt') formatted[key] = new Date(value as string).toLocaleString()
-            else if (key === 'embedding') formatted[key] = `Array[${(value as number[]).length}]`
+            else if (key === 'embedding') formatted[key] = `Array[${(Array.isArray(value) ? value : JSON.parse(String(value))).length}]`
             else if (key === 'metadata') formatted[key] = JSON.stringify(value)
             else formatted[key] = String(value)
         }
