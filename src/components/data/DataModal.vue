@@ -1,6 +1,10 @@
 <template>
     <div v-if="open" class="data-modal" @click.self="emit('close')">
-        <div class="data-modal__panel" role="dialog" aria-modal="true">
+        <div
+            class="data-modal__panel"
+            role="dialog"
+            aria-modal="true"
+        >
             <div class="data-modal__header">
                 <button
                     type="button"

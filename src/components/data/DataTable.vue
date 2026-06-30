@@ -5,8 +5,13 @@
             <thead>
                 <tr>
                     <th v-for="col in columns" :key="col" class="data-table__head">
-                        <button v-if="sortableFields?.includes(col)" type="button" class="data-table__sort"
-                            :disabled="loading" @click="emit('sortColumn', col)">
+                        <button
+                            v-if="sortableFields?.includes(col)"
+                            type="button"
+                            class="data-table__sort"
+                            :disabled="loading"
+                            @click="emit('sortColumn', col)"
+                        >
                             <span class="data-table__sort-field">{{ col }}</span>
                             <span v-if="col === sortField" class="data-table__sort-icon">
                                 {{ sortOrder === 'desc' ? '↓' : '↑' }}
@@ -18,16 +23,25 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(row, index) in rows" :key="index" class="data-table__row"
+                <tr
+                    v-for="(row, index) in rows"
+                    :key="index"
+                    class="data-table__row"
                     :class="{ 'data-table__row--clickable': clickable }"
-                    @click="clickable ? emit('rowClick', row) : undefined">
+                    @click="clickable ? emit('rowClick', row) : undefined"
+                >
                     <td v-for="col in columns" :key="col" class="data-table__cell">
                         {{ row[col] }}
                     </td>
                     <td v-if="actions?.length" class="data-table__cell">
                         <div class="data-table__actions">
-                            <button v-for="action in actions" :key="action.key" type="button" class="data-table__action"
-                                @click="emit('action', { key: action.key, row })">
+                            <button
+                                v-for="action in actions"
+                                :key="action.key"
+                                type="button"
+                                class="data-table__action"
+                                @click="emit('action', { key: action.key, row })"
+                            >
                                 {{ action.label }}
                             </button>
                         </div>
