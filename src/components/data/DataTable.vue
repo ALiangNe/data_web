@@ -145,20 +145,21 @@ const emit = defineEmits<{
     align-items: center;
     justify-content: center;
     padding: 0.375rem 0.75rem;
-    border: 1px solid var(--color-primary);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
-    background: var(--color-primary);
+    background: var(--color-surface);
     font: inherit;
     font-size: 0.75rem;
     font-weight: 500;
-    color: #fff;
+    color: var(--color-text-secondary);
     white-space: nowrap;
     cursor: pointer;
-    transition: background 150ms ease, border-color 150ms ease;
+    transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
 
     &:hover:not(:disabled) {
-        background: var(--color-primary-hover);
-        border-color: var(--color-primary-hover);
+        background: var(--color-hover);
+        border-color: var(--color-border-strong);
+        color: var(--color-text);
     }
 
     &:disabled {
