@@ -4,7 +4,11 @@
         <table v-else-if="columns.length" class="data-table__grid">
             <thead>
                 <tr>
-                    <th v-for="col in columns" :key="col" class="data-table__head">
+                    <th
+                        v-for="col in columns"
+                        :key="col"
+                        class="data-table__head"
+                    >
                         <button
                             v-if="sortableFields?.includes(col)"
                             type="button"
@@ -30,8 +34,20 @@
                     :class="{ 'data-table__row--clickable': clickable }"
                     @click="clickable ? emit('rowClick', row) : undefined"
                 >
-                    <td v-for="col in columns" :key="col" class="data-table__cell">
-                        {{ row[col] }}
+                    <td
+                        v-for="col in columns"
+                        :key="col"
+                        class="data-table__cell"
+                    >
+                        <ElTooltip
+                            :content="row[col]"
+                            placement="top"
+                            :show-after="300"
+                            :disabled="!row[col]"
+                            popper-class="data-table__tooltip"
+                        >
+                            <div class="data-table__cell-content">{{ row[col] }}</div>
+                        </ElTooltip>
                     </td>
                     <td v-if="actions?.length" class="data-table__cell">
                         <div class="data-table__actions">
@@ -54,6 +70,8 @@
 </template>
 
 <script setup lang="ts">
+import { ElTooltip } from 'element-plus'
+
 defineProps<{
     columns: string[]
     rows: Record<string, string>[]
@@ -143,9 +161,18 @@ const emit = defineEmits<{
     vertical-align: top;
     max-width: 18rem;
     color: var(--color-text);
-    word-break: break-word;
-    white-space: pre-line;
     font-variant-numeric: tabular-nums;
+}
+
+.data-table__cell-content {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 10;
+    line-clamp: 10;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 .data-table__actions {
@@ -202,5 +229,11 @@ const emit = defineEmits<{
     font-weight: 500;
     color: var(--color-text-secondary);
     text-align: center;
+}
+
+:global(.data-table__tooltip) {
+    max-width: 24rem;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 </style>
