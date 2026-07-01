@@ -4,16 +4,32 @@ export const DATA_CONSOLE_PERMISSIONS: Record<number, string[]> = {
 }
 
 export const APP_SIDEBAR = [
-    { name: 'BotsView', label: 'Bots', permission: 'bots' },
-    { name: 'KnowledgeView', label: 'Knowledge', permission: 'knowledge' },
-    { name: 'McpCapabilitiesView', label: 'McpCapabilities', permission: 'mcp-capabilities' },
-    { name: 'MonitorLogsView', label: 'MonitorLogs', permission: 'monitor-logs' },
-    { name: 'UserBehaviorLogsView', label: 'UserBehaviorLogs', permission: 'user-behavior-logs' },
-    { name: 'UsersView', label: 'Users', permission: 'users' },
-    { name: 'DataLookupView', label: 'DataLookup', permission: 'data-lookup' },
+    {
+        key: 'management',
+        label: 'Management',
+        children: [
+            { name: 'BotsView', label: 'Bots', permission: 'bots' },
+            { name: 'KnowledgeView', label: 'Knowledge', permission: 'knowledge' },
+            { name: 'McpCapabilitiesView', label: 'MCP Capabilities', permission: 'mcp-capabilities' },
+            { name: 'UserBehaviorLogsView', label: 'User Behavior Logs', permission: 'user-behavior-logs' },
+            { name: 'UsersView', label: 'Users', permission: 'users' },
+        ],
+    },
+    {
+        key: 'developer-tools',
+        label: 'Developer Tools',
+        children: [
+            { name: 'MonitorLogsView', label: 'Monitor Logs', permission: 'monitor-logs' },
+            { name: 'DataLookupView', label: 'Data Lookup', permission: 'data-lookup' },
+        ],
+    },
 ] as const
 
+// TODO: 逻辑不该写在config中
 export const resolveDefaultRoute = (role: number) => {
     const permissions = DATA_CONSOLE_PERMISSIONS[role] ?? []
-    return APP_SIDEBAR.find(item => permissions.includes(item.permission))?.name
+    for (const group of APP_SIDEBAR) {
+        const item = group.children.find((child) => permissions.includes(child.permission))
+        if (item) return item.name
+    }
 }

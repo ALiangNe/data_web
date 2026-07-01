@@ -3,33 +3,48 @@
         <div class="app-sidebar__brand">
             <span class="app-sidebar__title">Data Console</span>
         </div>
-        <nav class="app-sidebar__nav">
-            <RouterLink
-                v-for="item in sidebarItems"
-                :key="item.name"
-                :to="{ name: item.name }"
-                class="app-sidebar__link"
-                active-class="app-sidebar__link--active"
+        <ElMenu
+            v-if="groups.length"
+            class="app-sidebar__menu"
+            :default-openeds="groups.map((g) => g.key)"
+            router
+        >
+            <ElSubMenu
+                v-for="group in groups"
+                :key="group.key"
+                :index="group.key"
             >
-                {{ item.label }}
-            </RouterLink>
-        </nav>
+                <template #title>{{ group.label }}</template>
+                <ElMenuItem
+                    v-for="item in group.children"
+                    :key="item.name"
+                    :index="`/${item.permission}`"
+                >
+                    {{ item.label }}
+                </ElMenuItem>
+            </ElSubMenu>
+        </ElMenu>
     </aside>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RouterLink } from 'vue-router'
+import { ElMenu, ElMenuItem, ElSubMenu } from 'element-plus'
 import { APP_SIDEBAR, DATA_CONSOLE_PERMISSIONS } from '@/configs/sidebar'
 import { useUserStore } from '@/stores'
 
 const userStore = useUserStore()
 
-const sidebarItems = computed(() => {
+const groups = computed(() => {
     const role = userStore.user?.role
     if (role == null) return []
     const permissions = DATA_CONSOLE_PERMISSIONS[role] ?? []
-    return APP_SIDEBAR.filter(item => permissions.includes(item.permission))
+    return APP_SIDEBAR
+        .map((group) => ({
+            ...group,
+            children: group.children.filter((item) => permissions.includes(item.permission)),
+        }))
+        .filter((group) => group.children.length > 0)
 })
 </script>
 
@@ -62,28 +77,38 @@ const sidebarItems = computed(() => {
     color: var(--color-text);
 }
 
-.app-sidebar__nav {
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
+.app-sidebar__menu {
+    --el-menu-bg-color: transparent;
+    --el-menu-hover-bg-color: var(--color-hover);
+    --el-menu-active-color: var(--color-primary);
+    --el-menu-text-color: var(--color-text-secondary);
+    --el-menu-hover-text-color: var(--color-text);
+
+    flex: 1;
     padding: 0.5rem 0.75rem 0;
-}
+    border-right: none;
 
-.app-sidebar__link {
-    padding: 0.5rem 0.75rem;
-    border-radius: var(--radius-sm);
-    font-size: 0.8125rem;
-    font-weight: 500;
-    line-height: 1.3;
-    color: var(--color-text-secondary);
-    transition: background 150ms ease, color 150ms ease;
-
-    &:hover {
-        background: var(--color-hover);
+    :deep(.el-sub-menu__title) {
+        height: auto;
+        padding: 0.5rem 0.75rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        line-height: 1.3;
         color: var(--color-text);
     }
 
-    &--active {
+    :deep(.el-menu-item) {
+        height: auto;
+        min-height: 2rem;
+        padding: 0.5rem 0.75rem 0.5rem 1.5rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        line-height: 1.3;
+    }
+
+    :deep(.el-menu-item.is-active) {
         background: var(--color-primary-soft);
         color: var(--color-primary);
         font-weight: 600;
