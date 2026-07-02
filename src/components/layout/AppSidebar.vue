@@ -3,23 +3,10 @@
         <div class="app-sidebar__brand">
             <span class="app-sidebar__title">Data Console</span>
         </div>
-        <ElMenu
-            v-if="groups.length"
-            class="app-sidebar__menu"
-            :default-openeds="groups.map((g) => g.key)"
-            router
-        >
-            <ElSubMenu
-                v-for="group in groups"
-                :key="group.key"
-                :index="group.key"
-            >
+        <ElMenu v-if="groups.length" class="app-sidebar__menu" :default-openeds="groups.map((g) => g.key)" router>
+            <ElSubMenu v-for="group in groups" :key="group.key" :index="group.key">
                 <template #title>{{ group.label }}</template>
-                <ElMenuItem
-                    v-for="item in group.children"
-                    :key="item.name"
-                    :index="`/${item.permission}`"
-                >
+                <ElMenuItem v-for="item in group.children" :key="item.name" :index="`/${item.permission}`">
                     {{ item.label }}
                 </ElMenuItem>
             </ElSubMenu>

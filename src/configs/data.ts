@@ -26,8 +26,8 @@ export const DATA_CENTER_TABLES = {
                 label: 'aggregateBy',
                 default: 'session_id' as const,
                 options: [
-                    { label: 'sessionId', value: 'session_id' },
                     { label: 'deviceId', value: 'device_id' },
+                    { label: 'sessionId', value: 'session_id' },
                     { label: 'userId', value: 'user_id' },
                 ],
             },

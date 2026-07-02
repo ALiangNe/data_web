@@ -32,6 +32,7 @@
         />
         <DataModal
             :open="modalOpen"
+            :title="modalTitle"
             @close="closeModal"
         >
             <ChatHistoryList
@@ -53,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { getChatActiveDates, getChatHistories, getUserMemory, getUsers } from '@/api/data'
 import ChatHistoryList from '@/components/data/ChatHistoryList.vue'
 import DataFilter from '@/components/data/DataFilter.vue'
@@ -96,6 +97,11 @@ const tableActions = [
     { key: 'viewChat', label: 'ViewChat' },
     { key: 'viewMemory', label: 'ViewMemory' },
 ]
+const modalTitle = computed(() => {
+    if (modalType.value === 'chat') return 'ViewChat'
+    if (modalType.value === 'memory') return 'ViewMemory'
+    return ''
+})
 const columns = [...filterFields, 'providers']
 const chatDateFormatter = new Intl.DateTimeFormat('en-CA', {
     year: 'numeric',

@@ -1,17 +1,9 @@
 <template>
     <div v-if="open" class="data-modal" @click.self="emit('close')">
-        <div
-            class="data-modal__panel"
-            role="dialog"
-            aria-modal="true"
-        >
+        <div class="data-modal__panel" role="dialog" aria-modal="true">
             <div class="data-modal__header">
-                <button
-                    type="button"
-                    class="data-modal__close"
-                    aria-label="Close"
-                    @click="emit('close')"
-                >
+                <h2 v-if="title" class="data-modal__title">{{ title }}</h2>
+                <button type="button" class="data-modal__close" aria-label="Close" @click="emit('close')">
                     ×
                 </button>
             </div>
@@ -25,6 +17,7 @@
 <script setup lang="ts">
 defineProps<{
     open: boolean
+    title?: string
 }>()
 
 const emit = defineEmits<{
@@ -57,14 +50,29 @@ const emit = defineEmits<{
 }
 
 .data-modal__header {
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    padding: 1rem 1.25rem;
+    justify-content: center;
+    padding: 0.625rem 3rem;
     border-bottom: 1px solid var(--color-border);
 }
 
+.data-modal__title {
+    margin: 0;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.3;
+    text-align: center;
+    color: var(--color-text-secondary);
+}
+
 .data-modal__close {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    flex-shrink: 0;
+    transform: translateY(-50%);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -90,6 +98,6 @@ const emit = defineEmits<{
 .data-modal__body {
     display: flex;
     flex-direction: column;
-    padding: 1.25rem;
+    padding: 0.875rem 1.25rem 1.25rem;
 }
 </style>
