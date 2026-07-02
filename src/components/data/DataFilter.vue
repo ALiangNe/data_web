@@ -3,39 +3,81 @@
         <form class="data-filter__form" @submit.prevent="emit('search')">
             <div class="data-filter__input-grid">
                 <template v-if="selectFields">
-                    <label v-for="(config, key) in selectFields" :key="key" class="data-filter__field">
+                    <label
+                        v-for="(config, key) in selectFields"
+                        :key="key"
+                        class="data-filter__field"
+                    >
                         <span class="data-filter__label">{{ config.label }}</span>
-                        <ElSelect :model-value="selectValues![key]" :placeholder="config.label" :disabled="loading"
-                            clearable @update:model-value="updateSelect(key, $event)">
-                            <ElOption v-for="option in config.options" :key="option.value" :label="option.label"
-                                :value="option.value" />
+                        <ElSelect
+                            :model-value="selectValues![key]"
+                            :placeholder="config.label"
+                            :disabled="loading"
+                            clearable
+                            @update:model-value="updateSelect(key, $event)"
+                        >
+                            <ElOption
+                                v-for="option in config.options"
+                                :key="option.value"
+                                :label="option.label"
+                                :value="option.value"
+                            />
                         </ElSelect>
                     </label>
                 </template>
 
-                <label v-for="field in fields" :key="field" class="data-filter__field">
+                <label
+                    v-for="field in fields"
+                    :key="field"
+                    class="data-filter__field"
+                >
                     <span class="data-filter__label">{{ field }}</span>
-                    <ElInput :model-value="filterValues[field] ?? ''" :placeholder="field" :disabled="loading" clearable
-                        @update:model-value="updateField(field, $event)" />
+                    <ElInput
+                        :model-value="filterValues[field] ?? ''"
+                        :placeholder="field"
+                        :disabled="loading"
+                        clearable
+                        @update:model-value="updateField(field, $event)"
+                    />
                 </label>
             </div>
 
             <div v-if="showTimeRange && timeRangeFields" class="data-filter__time-grid">
-                <label v-for="field in timeRangeFields" :key="field" class="data-filter__field">
+                <label
+                    v-for="field in timeRangeFields"
+                    :key="field"
+                    class="data-filter__field"
+                >
                     <span class="data-filter__label">{{ field }}</span>
-                    <ElDatePicker class="data-filter__datetime" type="datetimerange"
-                        :model-value="timeRangeValues?.[field] ?? null" :disabled="loading" format="YYYY-MM-DD HH:mm:ss"
-                        value-format="YYYY-MM-DD HH:mm:ss" range-separator="-" start-placeholder="Start"
-                        end-placeholder="End" @update:model-value="updateTimeRange(field, $event)" />
+                    <ElDatePicker
+                        class="data-filter__datetime"
+                        type="datetimerange"
+                        :model-value="timeRangeValues?.[field] ?? null"
+                        :disabled="loading"
+                        format="YYYY-MM-DD HH:mm:ss"
+                        value-format="YYYY-MM-DD HH:mm:ss"
+                        range-separator="-"
+                        start-placeholder="Start"
+                        end-placeholder="End"
+                        @update:model-value="updateTimeRange(field, $event)"
+                    />
                 </label>
             </div>
 
             <div class="data-filter__actions">
-                <button type="button" class="data-filter__button data-filter__button--reset" :disabled="loading"
-                    @click="emit('reset')">
+                <button
+                    type="button"
+                    class="data-filter__button data-filter__button--reset"
+                    :disabled="loading"
+                    @click="emit('reset')"
+                >
                     Reset
                 </button>
-                <button type="submit" class="data-filter__button data-filter__button--submit" :disabled="loading">
+                <button
+                    type="submit"
+                    class="data-filter__button data-filter__button--submit"
+                    :disabled="loading"
+                >
                     {{ loading ? 'Querying…' : 'Query' }}
                 </button>
             </div>
