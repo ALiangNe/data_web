@@ -1,8 +1,8 @@
 <template>
     <aside class="app-sidebar" aria-label="主导航">
-        <div class="app-sidebar__brand">
+        <RouterLink :to="{ name: 'DashboardView' }" class="app-sidebar__brand">
             <span class="app-sidebar__title">Data Console</span>
-        </div>
+        </RouterLink>
         <ElMenu v-if="groups.length" class="app-sidebar__menu" :default-openeds="groups.map((g) => g.key)" router>
             <ElSubMenu v-for="group in groups" :key="group.key" :index="group.key">
                 <template #title>{{ group.label }}</template>
@@ -16,6 +16,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { RouterLink } from 'vue-router'
 import { ElMenu, ElMenuItem, ElSubMenu } from 'element-plus'
 import { APP_SIDEBAR, DATA_CONSOLE_PERMISSIONS } from '@/configs/sidebar'
 import { useUserStore } from '@/stores'
@@ -54,6 +55,12 @@ const groups = computed(() => {
     padding: 0 1.5rem;
     box-sizing: border-box;
     border-bottom: 1px solid var(--color-border);
+    text-decoration: none;
+    color: inherit;
+
+    &:hover .app-sidebar__title {
+        color: var(--color-primary);
+    }
 }
 
 .app-sidebar__title {

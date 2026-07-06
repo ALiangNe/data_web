@@ -21,6 +21,11 @@ export const routes: RouteRecordRaw[] = [
         meta: { requiresAuth: true },
         children: [
             {
+                path: 'dashboard',
+                name: 'DashboardView',
+                component: () => import('@/views/dashboard/DashboardView.vue'),
+            },
+            {
                 path: 'users',
                 name: 'UsersView',
                 meta: { permission: 'users' },

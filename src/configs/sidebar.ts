@@ -16,7 +16,7 @@ export const APP_SIDEBAR = [
         label: 'Robot',
         children: [
             { name: 'BotsView', label: 'Bots', permission: 'bots' },
-            { name: 'SoftwareView', label: 'Software Packages', permission: 'software' },
+            // { name: 'SoftwareView', label: 'Software Packages', permission: 'software' },
             // { name: 'OtaReleasesView', label: 'OTA Releases', permission: 'ota-releases' },
         ],
     },
@@ -38,11 +38,3 @@ export const APP_SIDEBAR = [
         ],
     },
 ] as const
-
-export const resolveDefaultRoute = (role: number) => {
-    const permissions = DATA_CONSOLE_PERMISSIONS[role] ?? []
-    for (const group of APP_SIDEBAR) {
-        const item = group.children.find((child) => permissions.includes(child.permission))
-        if (item) return item.name
-    }
-}

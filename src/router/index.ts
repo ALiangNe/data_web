@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuth } from '@/composables'
-import { DATA_CONSOLE_PERMISSIONS, resolveDefaultRoute } from '@/configs/sidebar'
+import { DATA_CONSOLE_PERMISSIONS } from '@/configs/sidebar'
 import { useUserStore } from '@/stores'
 import { routes } from './routes'
 
@@ -28,16 +28,14 @@ router.beforeEach((to) => {
     const role = userStore.user?.role
 
     if (to.meta.guestOnly && isAuthed) {
-        const name = role != null ? resolveDefaultRoute(role) : 'BotsView'
-        return { name: name ?? 'BotsView' }
+        return { name: 'DashboardView' }
     }
 
     const permission = to.meta.permission as string | undefined
     if (permission && role != null) {
         const allowed = DATA_CONSOLE_PERMISSIONS[role] ?? []
         if (!allowed.includes(permission)) {
-            const name = resolveDefaultRoute(role)
-            if (name) return { name: name }
+            return { name: 'DashboardView' }
         }
     }
 })
