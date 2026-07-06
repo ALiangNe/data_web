@@ -96,7 +96,7 @@ const userMemoryLoading = ref(false)
 const tableActions = [
     { key: 'viewChat', label: 'ViewChat' },
     { key: 'viewMemory', label: 'ViewMemory' },
-    { key: 'EditRole', label: 'EditRole' },
+    // { key: 'EditRole', label: 'EditRole' },
 ]
 const modalTitle = computed(() => {
     if (modalType.value === 'chat') return 'ViewChat'
