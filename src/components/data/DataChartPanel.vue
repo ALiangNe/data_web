@@ -1,48 +1,126 @@
 <template>
     <section class="data-chart-panel">
         <div class="data-chart-panel__stats">
-            <article v-for="item in stats" :key="item.label" class="data-chart-panel__stat">
-                <span class="data-chart-panel__stat-label">{{ item.label }}</span>
-                <strong class="data-chart-panel__stat-value">{{ loading ? '-' : item.value }}</strong>
+            <article class="data-chart-panel__stat">
+                <span class="data-chart-panel__stat-label">Total Users</span>
+                <strong class="data-chart-panel__stat-value">{{ totalUsers }}</strong>
+            </article>
+            <article class="data-chart-panel__stat">
+                <span class="data-chart-panel__stat-label">Today's New Users</span>
+                <strong class="data-chart-panel__stat-value">{{ todayNew }}</strong>
+            </article>
+            <article class="data-chart-panel__stat">
+                <span class="data-chart-panel__stat-label">Total Visitors</span>
+                <strong class="data-chart-panel__stat-value">{{ totalVisitors }}</strong>
+            </article>
+            <article class="data-chart-panel__stat">
+                <span class="data-chart-panel__stat-label">Total Visits</span>
+                <strong class="data-chart-panel__stat-value">{{ totalVisits }}</strong>
             </article>
         </div>
 
-        <article class="data-chart-panel__panel">
-            <header class="data-chart-panel__header">
-                <h2 class="data-chart-panel__title">New Users</h2>
-                <span class="data-chart-panel__meta">Last 7 days</span>
-            </header>
-            <div ref="chartRef" class="data-chart-panel__chart" />
-        </article>
+        <div class="data-chart-panel__row">
+            <article class="data-chart-panel__panel">
+                <header class="data-chart-panel__header">
+                    <h2 class="data-chart-panel__title">New Users</h2>
+                    <span class="data-chart-panel__meta">Last 7 days</span>
+                </header>
+                <div ref="userChartRef" class="data-chart-panel__chart" />
+            </article>
+
+            <article class="data-chart-panel__panel">
+                <header class="data-chart-panel__header">
+                    <h2 class="data-chart-panel__title">Media Clicks</h2>
+                    <span class="data-chart-panel__meta">Last 7 days</span>
+                </header>
+                <div ref="mediaChartRef" class="data-chart-panel__chart" />
+            </article>
+        </div>
+
+        <div class="data-chart-panel__row">
+            <article class="data-chart-panel__panel">
+                <header class="data-chart-panel__header">
+                    <h2 class="data-chart-panel__title">Visits</h2>
+                    <span class="data-chart-panel__meta">Last 7 days</span>
+                </header>
+                <div ref="visitChartRef" class="data-chart-panel__chart" />
+            </article>
+
+            <article class="data-chart-panel__panel">
+                <header class="data-chart-panel__header">
+                    <h2 class="data-chart-panel__title">Regions</h2>
+                    <span class="data-chart-panel__meta">Last 7 days</span>
+                </header>
+                <div ref="regionChartRef" class="data-chart-panel__chart" />
+            </article>
+        </div>
     </section>
 </template>
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { BarChart } from 'echarts/charts'
-import { GridComponent, TooltipComponent } from 'echarts/components'
+import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'
 import { use, init, type ECharts } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 
-use([BarChart, GridComponent, TooltipComponent, CanvasRenderer])
+use([BarChart, GridComponent, LegendComponent, TooltipComponent, CanvasRenderer])
 
 const props = defineProps<{
-    stats: {
-        label: string
-        value: string
-    }[]
-    labels: string[]
-    values: number[]
     loading: boolean
+    totalUsers: string
+    todayNew: string
+    totalVisitors: string
+    totalVisits: string
+    userChartLabels: string[]
+    userChartValues: number[]
+    visitChartLabels: string[]
+    visitDeviceValues: number[]
+    visitSessionValues: number[]
+    regionLabels: string[]
+    regionValues: number[]
+    mediaChartLabels: string[]
+    mediaChartValues: number[]
 }>()
 
-const chartRef = ref<HTMLDivElement | null>(null)
-const chart = ref<ECharts | null>(null)
+const userChartRef = ref<HTMLDivElement | null>(null)
+const mediaChartRef = ref<HTMLDivElement | null>(null)
+const visitChartRef = ref<HTMLDivElement | null>(null)
+const regionChartRef = ref<HTMLDivElement | null>(null)
+const userChart = ref<ECharts | null>(null)
+const mediaChart = ref<ECharts | null>(null)
+const visitChart = ref<ECharts | null>(null)
+const regionChart = ref<ECharts | null>(null)
 
 const getCssVar = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim()
 
-const chartOption = computed(() => ({
-    color: [getCssVar('--color-primary')],
+const chartColors = computed(() => [
+    getCssVar('--color-primary'),
+    getCssVar('--color-text-secondary'),
+])
+
+const baseTextStyle = computed(() => ({
+    color: getCssVar('--color-text-secondary'),
+    fontFamily: getCssVar('--font-sans'),
+}))
+
+const buildCategoryAxis = (labels: string[]) => ({
+    type: 'category' as const,
+    data: labels,
+    axisTick: { show: false },
+    axisLine: { lineStyle: { color: getCssVar('--color-border') } },
+    axisLabel: { interval: 0 },
+})
+
+const buildValueAxis = () => ({
+    type: 'value' as const,
+    minInterval: 1,
+    axisLine: { show: false },
+    splitLine: { lineStyle: { color: getCssVar('--color-border') } },
+})
+
+const userChartOption = computed(() => ({
+    color: [chartColors.value[0]],
     grid: {
         top: 24,
         right: 16,
@@ -50,64 +128,160 @@ const chartOption = computed(() => ({
         left: 44,
         containLabel: true,
     },
-    tooltip: {
-        trigger: 'axis',
-    },
-    textStyle: {
-        color: getCssVar('--color-text-secondary'),
-        fontFamily: getCssVar('--font-sans'),
-    },
-    xAxis: {
-        type: 'category',
-        data: props.labels,
-        axisTick: { show: false },
-        axisLine: { lineStyle: { color: getCssVar('--color-border') } },
-        axisLabel: { interval: 0 },
-    },
-    yAxis: {
-        type: 'value',
-        minInterval: 1,
-        axisLine: { show: false },
-        splitLine: { lineStyle: { color: getCssVar('--color-border') } },
-    },
+    tooltip: { trigger: 'axis' },
+    textStyle: baseTextStyle.value,
+    xAxis: buildCategoryAxis(props.userChartLabels),
+    yAxis: buildValueAxis(),
     series: [
         {
             type: 'bar',
-            data: props.values,
+            data: props.userChartValues,
             barMaxWidth: 28,
-            itemStyle: {
-                borderRadius: [4, 4, 0, 0],
-            },
+            itemStyle: { borderRadius: [4, 4, 0, 0] },
         },
     ],
 }))
 
-const renderChart = () => {
-    if (props.loading || !chartRef.value) return
+const visitChartOption = computed(() => ({
+    color: chartColors.value,
+    grid: {
+        top: 40,
+        right: 16,
+        bottom: 32,
+        left: 44,
+        containLabel: true,
+    },
+    legend: {
+        top: 0,
+        right: 0,
+    },
+    tooltip: { trigger: 'axis' },
+    textStyle: baseTextStyle.value,
+    xAxis: buildCategoryAxis(props.visitChartLabels),
+    yAxis: buildValueAxis(),
+    series: [
+        {
+            name: 'Visitors',
+            type: 'bar',
+            data: props.visitDeviceValues,
+            barMaxWidth: 28,
+            itemStyle: { borderRadius: [4, 4, 0, 0] },
+        },
+        {
+            name: 'Visits',
+            type: 'bar',
+            data: props.visitSessionValues,
+            barMaxWidth: 28,
+            itemStyle: { borderRadius: [4, 4, 0, 0] },
+        },
+    ],
+}))
 
-    if (!chart.value) {
-        chart.value = init(chartRef.value)
+const regionChartOption = computed(() => ({
+    color: [chartColors.value[0]],
+    grid: {
+        top: 24,
+        right: 16,
+        bottom: 32,
+        left: 44,
+        containLabel: true,
+    },
+    tooltip: { trigger: 'axis' },
+    textStyle: baseTextStyle.value,
+    xAxis: buildCategoryAxis(props.regionLabels),
+    yAxis: buildValueAxis(),
+    series: [
+        {
+            type: 'bar',
+            data: props.regionValues,
+            barMaxWidth: 28,
+            itemStyle: { borderRadius: [4, 4, 0, 0] },
+        },
+    ],
+}))
+
+const mediaChartOption = computed(() => ({
+    color: [chartColors.value[0]],
+    grid: {
+        top: 24,
+        right: 16,
+        bottom: 32,
+        left: 44,
+        containLabel: true,
+    },
+    tooltip: { trigger: 'axis' },
+    textStyle: baseTextStyle.value,
+    xAxis: buildCategoryAxis(props.mediaChartLabels),
+    yAxis: buildValueAxis(),
+    series: [
+        {
+            type: 'bar',
+            data: props.mediaChartValues,
+            barMaxWidth: 28,
+            itemStyle: { borderRadius: [4, 4, 0, 0] },
+        },
+    ],
+}))
+
+const renderCharts = () => {
+    if (props.loading) return
+
+    if (userChartRef.value) {
+        if (!userChart.value) {
+            userChart.value = init(userChartRef.value)
+        }
+        userChart.value.setOption(userChartOption.value, { notMerge: true })
     }
 
-    chart.value.setOption(chartOption.value, { notMerge: true })
+    if (mediaChartRef.value) {
+        if (!mediaChart.value) {
+            mediaChart.value = init(mediaChartRef.value)
+        }
+        mediaChart.value.setOption(mediaChartOption.value, { notMerge: true })
+    }
+
+    if (visitChartRef.value) {
+        if (!visitChart.value) {
+            visitChart.value = init(visitChartRef.value)
+        }
+        visitChart.value.setOption(visitChartOption.value, { notMerge: true })
+    }
+
+    if (regionChartRef.value) {
+        if (!regionChart.value) {
+            regionChart.value = init(regionChartRef.value)
+        }
+        regionChart.value.setOption(regionChartOption.value, { notMerge: true })
+    }
 }
 
 watch(
-    () => [chartOption.value, props.loading] as const,
+    () => [userChartOption.value, mediaChartOption.value, visitChartOption.value, regionChartOption.value, props.loading] as const,
     () => {
-        renderChart()
+        renderCharts()
     },
     { deep: true, flush: 'post' },
 )
 
 onMounted(() => {
-    renderChart()
-    window.addEventListener('resize', () => chart.value?.resize())
+    renderCharts()
+    window.addEventListener('resize', () => {
+        userChart.value?.resize()
+        mediaChart.value?.resize()
+        visitChart.value?.resize()
+        regionChart.value?.resize()
+    })
 })
 
 onBeforeUnmount(() => {
-    chart.value?.dispose()
-    chart.value = null
+    userChart.value?.dispose()
+    mediaChart.value?.dispose()
+    visitChart.value?.dispose()
+    regionChart.value?.dispose()
+    userChart.value = null
+    mediaChart.value = null
+    visitChart.value = null
+    regionChart.value = null
 })
 </script>
 
@@ -119,6 +293,12 @@ onBeforeUnmount(() => {
 }
 
 .data-chart-panel__stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.data-chart-panel__row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
@@ -179,6 +359,10 @@ onBeforeUnmount(() => {
 
 @media (width <=640px) {
     .data-chart-panel__stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .data-chart-panel__row {
         grid-template-columns: 1fr;
     }
 }

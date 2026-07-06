@@ -1,47 +1,54 @@
 <template>
     <div class="dashboard-view">
-        <DataChartPanel
-            :stats="stats"
-            :labels="chartLabels"
-            :values="chartValues"
-            :loading="loading"
-        />
+        <DataChartPanel :loading="loading" :total-users="totalUsers" :today-new="todayNew"
+            :user-chart-labels="userChartLabels" :user-chart-values="userChartValues" :total-visitors="totalVisitors"
+            :total-visits="totalVisits" :visit-chart-labels="visitChartLabels" :visit-device-values="visitDeviceValues"
+            :visit-session-values="visitSessionValues" :region-labels="regionLabels" :region-values="regionValues"
+            :media-chart-labels="mediaChartLabels" :media-chart-values="mediaChartValues" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { getUsers } from '@/api/data'
+import { onMounted, ref } from 'vue'
+import { getUserBehaviorStats, getUsers } from '@/api/data'
 import DataChartPanel from '@/components/data/DataChartPanel.vue'
+import { MEDIA_PLATFORMS } from '@/configs/data'
 import { useAlert } from '@/composables'
 import { ApiError } from '@/types/api'
-import type { DataListResult, User } from '@/types/data'
+import type { DataListResult, User, UserBehaviorStatsResult } from '@/types/data'
 
 const { show } = useAlert()
 
 const loading = ref(false)
-const totalUsers = ref(0)
-const todayNew = ref(0)
-const chartLabels = ref<string[]>([])
-const chartValues = ref<number[]>([])
-
-const stats = computed(() => [
-    {
-        label: 'Total Users',
-        value: totalUsers.value.toLocaleString(),
-    },
-    {
-        label: 'Today\'s New Users',
-        value: todayNew.value.toLocaleString(),
-    },
-])
+const totalUsers = ref('0')
+const todayNew = ref('0')
+const totalVisitors = ref('0')
+const totalVisits = ref('0')
+const userChartLabels = ref<string[]>([])
+const userChartValues = ref<number[]>([])
+const visitChartLabels = ref<string[]>([])
+const visitDeviceValues = ref<number[]>([])
+const visitSessionValues = ref<number[]>([])
+const regionLabels = ref<string[]>([])
+const regionValues = ref<number[]>([])
+const mediaChartLabels = ref<string[]>([])
+const mediaChartValues = ref<number[]>([])
 
 const fetchData = async () => {
     loading.value = true
-    totalUsers.value = 0
-    todayNew.value = 0
-    chartLabels.value = []
-    chartValues.value = []
+    totalUsers.value = '0'
+    todayNew.value = '0'
+    totalVisitors.value = '0'
+    totalVisits.value = '0'
+    userChartLabels.value = []
+    userChartValues.value = []
+    visitChartLabels.value = []
+    visitDeviceValues.value = []
+    visitSessionValues.value = []
+    regionLabels.value = []
+    regionValues.value = []
+    mediaChartLabels.value = []
+    mediaChartValues.value = []
 
     const todayStart = new Date()
     todayStart.setHours(0, 0, 0, 0)
@@ -55,10 +62,8 @@ const fetchData = async () => {
 
     const rangeEnd = new Date(todayStart)
     rangeEnd.setDate(rangeEnd.getDate() + 1)
-    const recentCreatedAt: [string, string] = [
-        days[0].toISOString(),
-        rangeEnd.toISOString(),
-    ]
+    const recentCreatedAt = [days[0].toISOString(), rangeEnd.toISOString()] as [string, string]
+    const chartLabels = days.map((day) => day.toLocaleDateString())
 
     let totalData: DataListResult<User>
     try {
@@ -86,18 +91,68 @@ const fetchData = async () => {
         return
     }
 
-    const counts = new Map<number, number>()
+    let behaviorData: UserBehaviorStatsResult
+    try {
+        behaviorData = await getUserBehaviorStats({ createdAt: recentCreatedAt })
+    } catch (error) {
+        console.error('DashboardView behavior stats fetch failed:', error)
+        const message = error instanceof ApiError && error.message
+            ? error.message
+            : 'Failed to load data. Please try again.'
+        show(message, 'error')
+        loading.value = false
+        return
+    }
+
+    const userCounts = new Map<number, number>()
     for (const user of recentData.list) {
         const day = new Date(user.createdAt)
         day.setHours(0, 0, 0, 0)
         const key = day.getTime()
-        counts.set(key, (counts.get(key) ?? 0) + 1)
+        userCounts.set(key, (userCounts.get(key) ?? 0) + 1)
     }
 
-    totalUsers.value = totalData.total
-    todayNew.value = counts.get(days[days.length - 1].getTime()) ?? 0
-    chartLabels.value = days.map((day) => new Date(day).toLocaleDateString())
-    chartValues.value = days.map((day) => counts.get(day.getTime()) ?? 0)
+    const visitDevices = new Map<number, Set<string>>()
+    const visitSessions = new Map<number, number>()
+    for (const session of behaviorData.sessions) {
+        const day = new Date(session.createdAt)
+        day.setHours(0, 0, 0, 0)
+        const key = day.getTime()
+
+        if (!visitDevices.has(key)) {
+            visitDevices.set(key, new Set())
+        }
+        visitDevices.get(key)!.add(session.deviceId)
+        visitSessions.set(key, (visitSessions.get(key) ?? 0) + 1)
+    }
+
+    totalUsers.value = totalData.total.toLocaleString()
+    todayNew.value = (userCounts.get(days[days.length - 1].getTime()) ?? 0).toLocaleString()
+    totalVisits.value = behaviorData.sessionCount.toLocaleString()
+    totalVisitors.value = behaviorData.deviceCount.toLocaleString()
+
+    userChartLabels.value = chartLabels
+    userChartValues.value = days.map((day) => userCounts.get(day.getTime()) ?? 0)
+
+    visitChartLabels.value = chartLabels
+    visitDeviceValues.value = days.map((day) => visitDevices.get(day.getTime())?.size ?? 0)
+    visitSessionValues.value = days.map((day) => visitSessions.get(day.getTime()) ?? 0)
+
+    regionLabels.value = behaviorData.regions.map((item) => item.key)
+    regionValues.value = behaviorData.regions.map((item) => item.count)
+
+    const eventCountMap = new Map(behaviorData.mediaClickEvents.map((item) => [item.eventName, item.count]))
+    mediaChartLabels.value = MEDIA_PLATFORMS.map((platform) => platform.label)
+
+    const mediaValues: number[] = []
+    for (const platform of MEDIA_PLATFORMS) {
+        let count = 0
+        for (const eventName of platform.events) {
+            count += eventCountMap.get(eventName) ?? 0
+        }
+        mediaValues.push(count)
+    }
+    mediaChartValues.value = mediaValues
     loading.value = false
 }
 

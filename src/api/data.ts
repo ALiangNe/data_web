@@ -11,6 +11,7 @@ import type {
     User,
     UserBehaviorLogsQuery,
     UserBehaviorLogAggregate,
+    UserBehaviorStatsResult,
     DataLookupQuery,
     DataLookupResult,
 } from '@/types/data'
@@ -39,6 +40,10 @@ export const getUsers = async (params: DataListQuery<User, DataCenterSortFieldFo
 
 export const getUserBehaviorLogs = async (params: UserBehaviorLogsQuery): Promise<DataListResult<UserBehaviorLogAggregate>> => {
     return apiClient.post<any, DataListResult<UserBehaviorLogAggregate>>('/data/getUserBehaviorLogs', params, baseURL)
+}
+
+export const getUserBehaviorStats = async (params: DataListQuery<{ createdAt: string }> = {}): Promise<UserBehaviorStatsResult> => {
+    return apiClient.post<any, UserBehaviorStatsResult>('/data/getUserBehaviorStats', params, baseURL)
 }
 
 export const getUserMemory = async (params: { userId: string; soulId: string }): Promise<string> => {

@@ -56,3 +56,27 @@ export const DATA_LOOKUP_TABLES = {
     userBehaviorLogs: {},
     userMemories: {},
 } as const
+
+/* Dashboard media click chart platform mapping */
+export const MEDIA_PLATFORMS = [
+    {
+        label: 'Instagram',
+        events: ['nav-Instagram', 'contact-Instagram: @eloi_0606'],
+    },
+    {
+        label: 'X',
+        events: ['nav-X(Twitter)', 'contact-X: @Eloi_0606'],
+    },
+    {
+        label: 'Discord',
+        events: ['nav-Discord', 'contact-Discord: @Animotion Party'],
+    },
+    {
+        label: 'LinkedIn',
+        events: ['nav-LinkedIn', 'contact-Linkedin: @Animotion Robotics'],
+    },
+    {
+        label: 'Medium',
+        events: ['contact-Medium: @Animotion Robotics'],
+    },
+] as const

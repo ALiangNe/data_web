@@ -137,6 +137,23 @@ export type UserBehaviorLogsQuery = {
     order?: 'asc' | 'desc'
 }
 
+export type UserBehaviorStatsResult = {
+    deviceCount: number
+    sessionCount: number
+    sessions: {
+        deviceId: string
+        createdAt: string
+    }[]
+    regions: {
+        key: string
+        count: number
+    }[]
+    mediaClickEvents: {
+        eventName: string
+        count: number
+    }[]
+}
+
 export type DataTableKey = keyof typeof DATA_CENTER_TABLES
 
 export type DataCenterSortFieldFor<K extends DataTableKey> = (typeof DATA_CENTER_TABLES)[K]['sortFields'][number]
