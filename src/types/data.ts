@@ -162,8 +162,8 @@ export type DataListResult<T> = {
 export type DataListQuery<T, S extends DataCenterSortField = DataCenterSortField> = {
     [K in keyof T]?: T[K] | [string, string]
 } & {
-    page: number
-    pageSize: number
+    page?: number
+    pageSize?: number
     sortBy?: S
     order?: 'asc' | 'desc'
 }
