@@ -3,7 +3,7 @@
         <RouterLink :to="{ name: 'DashboardView' }" class="app-sidebar__brand">
             <span class="app-sidebar__title">Data Console</span>
         </RouterLink>
-        <ElMenu v-if="groups.length" class="app-sidebar__menu" :default-openeds="groups.map((g) => g.key)" router>
+        <ElMenu v-if="groups.length" class="app-sidebar__menu" :default-active="route.path" :default-openeds="groups.map((g) => g.key)" router>
             <ElSubMenu v-for="group in groups" :key="group.key" :index="group.key">
                 <template #title>{{ group.label }}</template>
                 <ElMenuItem v-for="item in group.children" :key="item.name" :index="`/${item.permission}`">
@@ -16,12 +16,13 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import { ElMenu, ElMenuItem, ElSubMenu } from 'element-plus'
 import { APP_SIDEBAR, DATA_CONSOLE_PERMISSIONS } from '@/configs/sidebar'
 import { useUserStore } from '@/stores'
 
 const userStore = useUserStore()
+const route = useRoute()
 
 const groups = computed(() => {
     const role = userStore.user?.role

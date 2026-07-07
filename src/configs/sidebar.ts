@@ -16,7 +16,7 @@ export const APP_SIDEBAR = [
         label: 'Robot',
         children: [
             { name: 'BotsView', label: 'Bots', permission: 'bots' },
-            // { name: 'SoftwareView', label: 'Software Packages', permission: 'software' },
+            { name: 'SoftwareView', label: 'Software Packages', permission: 'software' },
             // { name: 'OtaReleasesView', label: 'OTA Releases', permission: 'ota-releases' },
         ],
     },
