@@ -54,7 +54,7 @@ const fetchData = async () => {
     todayStart.setHours(0, 0, 0, 0)
 
     const days: Date[] = []
-    for (let i = 6; i >= 0; i--) {
+    for (let i = 14; i >= 0; i--) {
         const day = new Date(todayStart)
         day.setDate(day.getDate() - i)
         days.push(day)

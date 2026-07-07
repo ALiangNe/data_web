@@ -23,7 +23,7 @@
             <article class="data-chart-panel__panel">
                 <header class="data-chart-panel__header">
                     <h2 class="data-chart-panel__title">New Users</h2>
-                    <span class="data-chart-panel__meta">Last 7 days</span>
+                    <span class="data-chart-panel__meta">Last 15 days</span>
                 </header>
                 <div ref="userChartRef" class="data-chart-panel__chart" />
             </article>
@@ -31,7 +31,7 @@
             <article class="data-chart-panel__panel">
                 <header class="data-chart-panel__header">
                     <h2 class="data-chart-panel__title">Media Clicks</h2>
-                    <span class="data-chart-panel__meta">Last 7 days</span>
+                    <span class="data-chart-panel__meta">Last 15 days</span>
                 </header>
                 <div ref="mediaChartRef" class="data-chart-panel__chart" />
             </article>
@@ -41,7 +41,7 @@
             <article class="data-chart-panel__panel">
                 <header class="data-chart-panel__header">
                     <h2 class="data-chart-panel__title">Visits</h2>
-                    <span class="data-chart-panel__meta">Last 7 days</span>
+                    <span class="data-chart-panel__meta">Last 15 days</span>
                 </header>
                 <div ref="visitChartRef" class="data-chart-panel__chart" />
             </article>
@@ -49,7 +49,7 @@
             <article class="data-chart-panel__panel">
                 <header class="data-chart-panel__header">
                     <h2 class="data-chart-panel__title">Regions</h2>
-                    <span class="data-chart-panel__meta">Last 7 days</span>
+                    <span class="data-chart-panel__meta">Last 15 days</span>
                 </header>
                 <div ref="regionChartRef" class="data-chart-panel__chart" />
             </article>
@@ -104,12 +104,14 @@ const baseTextStyle = computed(() => ({
     fontFamily: getCssVar('--font-sans'),
 }))
 
-const buildCategoryAxis = (labels: string[]) => ({
+const buildCategoryAxis = (labels: string[], rotate = 0) => ({
     type: 'category' as const,
     data: labels,
     axisTick: { show: false },
     axisLine: { lineStyle: { color: getCssVar('--color-border') } },
-    axisLabel: { interval: 0 },
+    axisLabel: rotate
+        ? { interval: 0, rotate, align: 'right' as const, verticalAlign: 'top' as const }
+        : { interval: 0 },
 })
 
 const buildValueAxis = () => ({
@@ -130,7 +132,7 @@ const userChartOption = computed(() => ({
     },
     tooltip: { trigger: 'axis' },
     textStyle: baseTextStyle.value,
-    xAxis: buildCategoryAxis(props.userChartLabels),
+    xAxis: buildCategoryAxis(props.userChartLabels, 30),
     yAxis: buildValueAxis(),
     series: [
         {
@@ -157,7 +159,7 @@ const visitChartOption = computed(() => ({
     },
     tooltip: { trigger: 'axis' },
     textStyle: baseTextStyle.value,
-    xAxis: buildCategoryAxis(props.visitChartLabels),
+    xAxis: buildCategoryAxis(props.visitChartLabels, 30),
     yAxis: buildValueAxis(),
     series: [
         {
