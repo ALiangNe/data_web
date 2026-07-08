@@ -82,16 +82,16 @@ const { show } = useAlert()
 
 const table = DATA_CENTER_TABLES.users
 const roleLabels: Record<number, string> = {
-    0: '超级管理员',
-    1: '技术负责人',
-    2: '开发工程师',
-    3: '预留',
-    4: '预留',
-    5: '普通用户',
-    6: '预留',
-    7: '预留',
-    8: '预留',
-    9: '禁用账号',
+    0: 'Super Admin',
+    1: 'Tech Lead',
+    2: 'Developer',
+    3: 'Reserved',
+    4: 'Reserved',
+    5: 'User',
+    6: 'Reserved',
+    7: 'Reserved',
+    8: 'Reserved',
+    9: 'Disabled',
 }
 const roleOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 const pageSizeOptions = [5, 10, 20]
