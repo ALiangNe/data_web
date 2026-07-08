@@ -35,7 +35,7 @@
             :title="modalTitle"
             @close="closeModal"
         >
-            <ChatHistoryList
+            <ChatHistoryPanel
                 v-if="modalType === 'chat'"
                 v-model:date="selectedDate"
                 :dates-loading="chatDatesLoading"
@@ -49,18 +49,29 @@
                 :loading="userMemoryLoading"
                 :memory="userMemory"
             />
+            <UserPermissionPanel
+                v-else-if="modalType === 'permission'"
+                v-model:selected-role="permissionSelectedRole"
+                :username="permissionUsername"
+                :current-role="permissionCurrentRole"
+                :role-options="roleOptions"
+                :role-labels="roleLabels"
+                :saving="permissionSaving"
+                @submit="submitPermission"
+            />
         </DataModal>
     </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { getChatActiveDates, getChatHistories, getUserMemory, getUsers } from '@/api/data'
-import ChatHistoryList from '@/components/data/ChatHistoryList.vue'
+import { getChatActiveDates, getChatHistories, getUserMemory, getUsers, updateUserPermission } from '@/api/data'
+import ChatHistoryPanel from '@/components/data/ChatHistoryPanel.vue'
 import DataFilter from '@/components/data/DataFilter.vue'
 import DataModal from '@/components/data/DataModal.vue'
 import DataPagination from '@/components/data/DataPagination.vue'
 import DataTable from '@/components/data/DataTable.vue'
+import UserPermissionPanel from '@/components/data/UserPermissionPanel.vue'
 import UserMemoryPanel from '@/components/data/UserMemoryPanel.vue'
 import { useAlert } from '@/composables'
 import { DATA_CENTER_TABLES } from '@/configs/data'
@@ -70,6 +81,19 @@ import type { ChatHistory, DataCenterSortFieldFor, DataListResult, User } from '
 const { show } = useAlert()
 
 const table = DATA_CENTER_TABLES.users
+const roleLabels: Record<number, string> = {
+    0: '超级管理员',
+    1: '技术负责人',
+    2: '开发工程师',
+    3: '预留',
+    4: '预留',
+    5: '普通用户',
+    6: '预留',
+    7: '预留',
+    8: '预留',
+    9: '禁用账号',
+}
+const roleOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 const pageSizeOptions = [5, 10, 20]
 const filterFields = table.filter
 const sortableFields = table.sortFields
@@ -82,7 +106,7 @@ const total = ref(0)
 const rows = ref<Record<string, string>[]>([])
 const loading = ref(false)
 const modalOpen = ref(false)
-const modalType = ref<'chat' | 'memory' | null>(null)
+const modalType = ref<'chat' | 'memory' | 'permission' | null>(null)
 const selectedDate = ref('')
 const chatActiveDates = ref<string[]>([])
 const chatActiveMonth = ref('')
@@ -93,14 +117,20 @@ const chatMessages = ref<ChatHistory[]>([])
 const chatMessagesLoading = ref(false)
 const userMemory = ref('')
 const userMemoryLoading = ref(false)
+const permissionUserId = ref('')
+const permissionUsername = ref('')
+const permissionCurrentRole = ref(0)
+const permissionSelectedRole = ref(0)
+const permissionSaving = ref(false)
 const tableActions = [
     { key: 'viewChat', label: 'ViewChat' },
     { key: 'viewMemory', label: 'ViewMemory' },
-    // { key: 'EditRole', label: 'EditRole' },
+    { key: 'EditPermissions', label: 'EditPermissions' },
 ]
 const modalTitle = computed(() => {
     if (modalType.value === 'chat') return 'ViewChat'
     if (modalType.value === 'memory') return 'ViewMemory'
+    if (modalType.value === 'permission') return 'EditPermissions'
     return ''
 })
 const columns = [...filterFields, 'providers']
@@ -176,6 +206,10 @@ const onTableAction = (payload: { key: string; row: Record<string, string> }) =>
     }
     if (payload.key === 'viewMemory') {
         openMemoryModal(payload)
+        return
+    }
+    if (payload.key === 'EditPermissions') {
+        openPermissionModal(payload)
     }
 }
 
@@ -270,6 +304,41 @@ const openMemoryModal = async (payload: { row: Record<string, string> }) => {
     userMemoryLoading.value = false
 }
 
+const openPermissionModal = (payload: { row: Record<string, string> }) => {
+    permissionUserId.value = payload.row.id
+    permissionUsername.value = payload.row.username
+    permissionCurrentRole.value = Number(payload.row.role)
+    permissionSelectedRole.value = Number(payload.row.role)
+    permissionSaving.value = false
+    modalType.value = 'permission'
+    modalOpen.value = true
+}
+
+const submitPermission = async () => {
+    const params = {
+        userId: permissionUserId.value,
+        role: permissionSelectedRole.value,
+    }
+    permissionSaving.value = true
+
+    try {
+        await updateUserPermission(params)
+    } catch (error) {
+        console.error('UsersView updateUserPermission failed:', error)
+        const message = error instanceof ApiError && error.message
+            ? error.message
+            : 'Failed to update user permission. Please try again.'
+        show(message, 'error')
+        permissionSaving.value = false
+        return
+    }
+
+    permissionSaving.value = false
+    show('Permission updated successfully.', 'success')
+    closeModal()
+    fetchData()
+}
+
 const fetchChatMessages = async (date: string) => {
     if (!chatUserId.value || !chatSoulId.value || !date) return
 
@@ -341,6 +410,11 @@ const closeModal = () => {
     chatMessagesLoading.value = false
     userMemory.value = ''
     userMemoryLoading.value = false
+    permissionUserId.value = ''
+    permissionUsername.value = ''
+    permissionCurrentRole.value = 0
+    permissionSelectedRole.value = 0
+    permissionSaving.value = false
 }
 
 const onSortColumn = (col: string) => {

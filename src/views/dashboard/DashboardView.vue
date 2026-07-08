@@ -1,10 +1,21 @@
 <template>
     <div class="dashboard-view">
-        <DataChartPanel :loading="loading" :total-users="totalUsers" :today-new="todayNew"
-            :user-chart-labels="userChartLabels" :user-chart-values="userChartValues" :total-visitors="totalVisitors"
-            :total-visits="totalVisits" :visit-chart-labels="visitChartLabels" :visit-device-values="visitDeviceValues"
-            :visit-session-values="visitSessionValues" :region-labels="regionLabels" :region-values="regionValues"
-            :media-chart-labels="mediaChartLabels" :media-chart-values="mediaChartValues" />
+        <DataChartPanel
+            :loading="loading"
+            :total-users="totalUsers"
+            :today-new="todayNew"
+            :user-chart-labels="userChartLabels"
+            :user-chart-values="userChartValues"
+            :total-visitors="totalVisitors"
+            :total-visits="totalVisits"
+            :visit-chart-labels="visitChartLabels"
+            :visit-device-values="visitDeviceValues"
+            :visit-session-values="visitSessionValues"
+            :region-labels="regionLabels"
+            :region-values="regionValues"
+            :media-chart-labels="mediaChartLabels"
+            :media-chart-values="mediaChartValues"
+        />
     </div>
 </template>
 
