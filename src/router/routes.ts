@@ -70,6 +70,11 @@ export const routes: RouteRecordRaw[] = [
         ],
     },
     {
+        path: '/error/:status',
+        name: 'ErrorView',
+        component: () => import('@/views/error/ErrorView.vue'),
+    },
+    {
         path: '/:pathMatch(.*)*',
         redirect: { name: 'LoginView' },
     },

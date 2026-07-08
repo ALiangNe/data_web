@@ -1,7 +1,7 @@
 <template>
-    <div class="chat-history-list">
+    <div class="chat-history-panel">
         <el-date-picker
-            class="chat-history-list__date-picker"
+            class="chat-history-panel__date-picker"
             :model-value="date"
             type="date"
             format="YYYY-MM-DD"
@@ -12,24 +12,24 @@
             @update:model-value="onDateChange"
             @panel-change="onPanelChange"
         />
-        <div class="chat-history-list__content">
-            <p v-if="loading" class="chat-history-list__status">Loading...</p>
-            <p v-else-if="messages.length === 0" class="chat-history-list__status">No chat records for this date.</p>
-            <ul v-else class="chat-history-list__messages">
+        <div class="chat-history-panel__content">
+            <p v-if="loading" class="chat-history-panel__status">Loading...</p>
+            <p v-else-if="messages.length === 0" class="chat-history-panel__status">No chat records for this date.</p>
+            <ul v-else class="chat-history-panel__messages">
                 <li
                     v-for="(message, index) in messages"
                     :key="message.id"
-                    class="chat-history-list__item"
-                    :class="{ 'chat-history-list__item--continued': !shouldShowTime(index) }"
+                    class="chat-history-panel__item"
+                    :class="{ 'chat-history-panel__item--continued': !shouldShowTime(index) }"
                 >
-                    <time v-if="shouldShowTime(index)" class="chat-history-list__time">{{ message.createdAt }}</time>
+                    <time v-if="shouldShowTime(index)" class="chat-history-panel__time">{{ message.createdAt }}</time>
                     <div
-                        class="chat-history-list__message"
+                        class="chat-history-panel__message"
                         :class="message.role === 'user'
-                            ? 'chat-history-list__message--user'
-                            : 'chat-history-list__message--assistant'"
+                            ? 'chat-history-panel__message--user'
+                            : 'chat-history-panel__message--assistant'"
                     >
-                        <p class="chat-history-list__content-text">{{ message.content }}</p>
+                        <p class="chat-history-panel__content-text">{{ message.content }}</p>
                     </div>
                 </li>
             </ul>
@@ -69,17 +69,17 @@ const shouldShowTime = (index: number) => {
 </script>
 
 <style scoped lang="scss">
-.chat-history-list {
+.chat-history-panel {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.chat-history-list__date-picker {
+.chat-history-panel__date-picker {
     width: 100%;
 }
 
-.chat-history-list__content {
+.chat-history-panel__content {
     display: flex;
     flex-direction: column;
     height: 28rem;
@@ -96,7 +96,7 @@ const shouldShowTime = (index: number) => {
     }
 }
 
-.chat-history-list__status {
+.chat-history-panel__status {
     display: flex;
     flex: 1;
     align-items: center;
@@ -108,7 +108,7 @@ const shouldShowTime = (index: number) => {
     color: var(--color-text-secondary);
 }
 
-.chat-history-list__messages {
+.chat-history-panel__messages {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -117,7 +117,7 @@ const shouldShowTime = (index: number) => {
     list-style: none;
 }
 
-.chat-history-list__item {
+.chat-history-panel__item {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -127,7 +127,7 @@ const shouldShowTime = (index: number) => {
     }
 }
 
-.chat-history-list__time {
+.chat-history-panel__time {
     align-self: center;
     font-size: 0.75rem;
     font-weight: 500;
@@ -136,7 +136,7 @@ const shouldShowTime = (index: number) => {
     color: var(--color-text-muted);
 }
 
-.chat-history-list__message {
+.chat-history-panel__message {
     max-width: 90%;
     padding: 0.625rem 0.875rem;
     border-radius: var(--radius);
@@ -155,7 +155,7 @@ const shouldShowTime = (index: number) => {
     }
 }
 
-.chat-history-list__content-text {
+.chat-history-panel__content-text {
     margin: 0;
     white-space: pre-wrap;
     word-break: break-word;

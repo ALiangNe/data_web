@@ -45,13 +45,14 @@ const apiClient = axios.create({
 
 // Request interceptor
 apiClient.interceptors.request.use(async config => {
+    let accessToken = null
     try {
-        const accessToken = localStorage.getItem('accessToken')
-        if (accessToken) {
-            config.headers.auth = accessToken
-        }
+        accessToken = localStorage.getItem('accessToken')
     } catch (e) {
-        console.error('[API] Failed to fetch access token:', e)
+        console.warn('[API] Failed to fetch access token:', e)
+    }
+    if (accessToken) {
+        config.headers['Authorization'] = 'Bearer ' + accessToken
     }
     return config
 })
@@ -93,7 +94,7 @@ apiClient.interceptors.response.use(
                 return Promise.reject(new ApiError(status, 500, 'global', errorMsg))
             }
 
-            if (String(config.url ?? '').includes('/auth/refresh')) {
+            if (String(config.url ?? '').includes('/auth/refresh-token')) {
                 return handleRefreshTokenFail(status, errorMsg)
             }
 
@@ -106,7 +107,7 @@ apiClient.interceptors.response.use(
                 return new Promise((resolve, reject) => {
                     requests.push({
                         resolve: (token: string) => {
-                            config.headers.auth = token
+                            config.headers['Authorization'] = 'Bearer ' + token
                             config._retry = true
                             resolve(apiClient(config))
                         },
@@ -139,7 +140,7 @@ apiClient.interceptors.response.use(
             }
             requests = []
             isRefreshing = false
-            config.headers.auth = res.accessToken
+            config.headers['Authorization'] = 'Bearer ' + res.accessToken
             return apiClient(config)
         }
 
@@ -156,4 +157,3 @@ apiClient.interceptors.response.use(
 )
 
 export default apiClient
-
