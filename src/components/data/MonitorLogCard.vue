@@ -59,7 +59,7 @@ const rowGroups = computed(() => {
 })
 
 const stepTitle = (index: number, row: Record<string, string>) =>
-    `${index < 20 ? String.fromCodePoint(0x2460 + index) : `${index + 1}.`} ${row.name || '-'}`
+    `${index < 20 ? String.fromCodePoint(0x2460 + index) : `${index + 1}.`} ${row.eventName || '-'}`
 
 const stepStatus = (row: Record<string, string>): 'success' | 'error' =>
     row.status?.toLowerCase() === 'ok' ? 'success' : 'error'

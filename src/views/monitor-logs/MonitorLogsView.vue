@@ -29,7 +29,7 @@ const { show } = useAlert()
 
 const table = DATA_CENTER_TABLES.monitorLogs
 const filterFields = table.filter
-const columns = ['traceId', 'spanId', 'parentSpanId', 'env', 'service', 'instanceId', 'name', 'status', 'botId', 'soulId', 'startTimeMs', 'durationMs', 'error', 'meta']
+const columns = ['traceId', 'spanId', 'parentSpanId', 'env', 'service', 'instanceId', 'eventName', 'status', 'startTimeMs', 'durationMs', 'error', 'traceAttributes', 'metadata']
 const filterValues = ref<Record<string, string>>({})
 const rows = ref<Record<string, string>[]>([])
 const loading = ref(false)
@@ -63,11 +63,13 @@ const fetchData = async () => {
 
     const childByParent = new Map<string, MonitorSpan>()
     for (const span of data.spans) {
-        childByParent.set(span.parentSpanId, span)
+        if (span.parentSpanId) {
+            childByParent.set(span.parentSpanId, span)
+        }
     }
 
     const ordered: MonitorSpan[] = []
-    let current = data.spans.find((span) => span.parentSpanId === 'root')
+    let current = data.spans.find((span) => !span.parentSpanId || span.parentSpanId === 'root')
     for (let i = 0; i < data.spans.length && current; i++) {
         ordered.push(current)
         current = childByParent.get(current.spanId)
@@ -81,17 +83,18 @@ const fetchData = async () => {
         env: span.env || '-',
         service: span.service || '-',
         instanceId: span.instanceId || '-',
-        name: span.name || '-',
+        eventName: span.eventName || '-',
         status: span.status || '-',
-        botId: span.botId || '-',
-        soulId: span.soulId || '-',
         startTimeMs: Number.isFinite(Number(span.startTimeMs))
             ? new Date(Number(span.startTimeMs)).toLocaleString()
             : '-',
         durationMs: Number.isFinite(Number(span.durationMs)) ? `${span.durationMs}ms` : '-',
         error: span.error || '-',
-        meta: span.meta && typeof span.meta === 'object' && Object.keys(span.meta).length > 0
-            ? JSON.stringify(span.meta, null, 2)
+        traceAttributes: span.traceAttributes && typeof span.traceAttributes === 'object' && Object.keys(span.traceAttributes).length > 0
+            ? JSON.stringify(span.traceAttributes, null, 2)
+            : '-',
+        metadata: span.metadata && typeof span.metadata === 'object' && Object.keys(span.metadata).length > 0
+            ? JSON.stringify(span.metadata, null, 2)
             : '-',
     }))
 
