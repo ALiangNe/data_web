@@ -15,6 +15,7 @@
                     :key="role"
                     :label="formatRole(role)"
                     :value="role"
+                    :disabled="disabledRoles.includes(role)"
                 />
             </ElSelect>
         </label>
@@ -22,7 +23,7 @@
             <button
                 type="button"
                 class="user-permission-panel__button user-permission-panel__button--primary"
-                :disabled="saving"
+                :disabled="saving || submitDisabled"
                 @click="emit('submit')"
             >
                 {{ saving ? 'Saving...' : 'Confirm' }}
@@ -41,6 +42,8 @@ const props = defineProps<{
     roleOptions: number[]
     roleLabels: Record<number, string>
     saving: boolean
+    disabledRoles: number[]
+    submitDisabled: boolean
 }>()
 
 const emit = defineEmits<{

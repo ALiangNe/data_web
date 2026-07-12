@@ -51,12 +51,14 @@
             />
             <UserPermissionPanel
                 v-else-if="modalType === 'permission'"
-                v-model:selected-role="permissionSelectedRole"
-                :username="permissionUsername"
-                :current-role="permissionCurrentRole"
+                v-model:selected-role="targetSelectedRole"
+                :username="targetUsername"
+                :current-role="targetCurrentRole"
                 :role-options="roleOptions"
                 :role-labels="roleLabels"
-                :saving="permissionSaving"
+                :saving="roleEditSaving"
+                :disabled-roles="targetDisabledRoles"
+                :submit-disabled="targetSubmitDisabled"
                 @submit="submitPermission"
             />
         </DataModal>
@@ -75,16 +77,18 @@ import UserPermissionPanel from '@/components/data/UserPermissionPanel.vue'
 import UserMemoryPanel from '@/components/data/UserMemoryPanel.vue'
 import { useAlert } from '@/composables'
 import { DATA_CENTER_TABLES } from '@/configs/data'
+import { useUserStore } from '@/stores'
 import { ApiError } from '@/types/api'
 import type { ChatHistory, DataCenterSortFieldFor, DataListResult, User } from '@/types/data'
 
 const { show } = useAlert()
+const userStore = useUserStore()
 
 const table = DATA_CENTER_TABLES.users
 const roleLabels: Record<number, string> = {
     0: 'Super Admin',
-    1: 'Tech Lead',
-    2: 'Developer',
+    1: 'Platform Developer',
+    2: 'Technical Staff',
     3: 'Reserved',
     4: 'Reserved',
     5: 'User',
@@ -117,21 +121,43 @@ const chatMessages = ref<ChatHistory[]>([])
 const chatMessagesLoading = ref(false)
 const userMemory = ref('')
 const userMemoryLoading = ref(false)
-const permissionUserId = ref('')
-const permissionUsername = ref('')
-const permissionCurrentRole = ref(0)
-const permissionSelectedRole = ref(0)
-const permissionSaving = ref(false)
-const tableActions = [
-    { key: 'viewChat', label: 'ViewChat' },
-    { key: 'viewMemory', label: 'ViewMemory' },
-    { key: 'EditPermissions', label: 'EditPermissions' },
-]
+const targetUserId = ref('')
+const targetUsername = ref('')
+const targetCurrentRole = ref(0)
+const targetSelectedRole = ref(0)
+const roleEditSaving = ref(false)
+const editedByRole = computed(() => userStore.user?.role ?? null)
+const editedByUserId = computed(() => userStore.user?.userId ?? '')
+const tableActions = computed(() => {
+    const actions = [
+        { key: 'viewChat', label: 'ViewChat' },
+        { key: 'viewMemory', label: 'ViewMemory' },
+    ]
+    if (editedByRole.value != null && editedByRole.value <= 2) {
+        actions.push({ key: 'EditPermissions', label: 'EditPermissions' })
+    }
+    return actions
+})
 const modalTitle = computed(() => {
     if (modalType.value === 'chat') return 'ViewChat'
     if (modalType.value === 'memory') return 'ViewMemory'
     if (modalType.value === 'permission') return 'EditPermissions'
     return ''
+})
+const targetIsSelf = computed(() => targetUserId.value === editedByUserId.value)
+const targetEditForbidden = computed(() => {
+    if (editedByRole.value == null) return true
+    return targetCurrentRole.value <= editedByRole.value
+})
+const targetDisabledRoles = computed(() => {
+    if (editedByRole.value == null) return roleOptions
+    if (targetIsSelf.value || targetEditForbidden.value) return roleOptions
+    return roleOptions.filter((role) => role <= editedByRole.value!)
+})
+const targetSubmitDisabled = computed(() => {
+    if (editedByRole.value == null) return true
+    if (targetIsSelf.value || targetEditForbidden.value) return true
+    return targetSelectedRole.value <= editedByRole.value
 })
 const columns = [...filterFields, 'providers']
 const chatDateFormatter = new Intl.DateTimeFormat('en-CA', {
@@ -305,21 +331,23 @@ const openMemoryModal = async (payload: { row: Record<string, string> }) => {
 }
 
 const openPermissionModal = (payload: { row: Record<string, string> }) => {
-    permissionUserId.value = payload.row.id
-    permissionUsername.value = payload.row.username
-    permissionCurrentRole.value = Number(payload.row.role)
-    permissionSelectedRole.value = Number(payload.row.role)
-    permissionSaving.value = false
+    targetUserId.value = payload.row.id
+    targetUsername.value = payload.row.username
+    targetCurrentRole.value = Number(payload.row.role)
+    targetSelectedRole.value = Number(payload.row.role)
+    roleEditSaving.value = false
     modalType.value = 'permission'
     modalOpen.value = true
 }
 
 const submitPermission = async () => {
+    if (targetSubmitDisabled.value) return
+
     const params = {
-        userId: permissionUserId.value,
-        role: permissionSelectedRole.value,
+        userId: targetUserId.value,
+        role: targetSelectedRole.value,
     }
-    permissionSaving.value = true
+    roleEditSaving.value = true
 
     try {
         await updateUserPermission(params)
@@ -329,11 +357,11 @@ const submitPermission = async () => {
             ? error.message
             : 'Failed to update user permission. Please try again.'
         show(message, 'error')
-        permissionSaving.value = false
+        roleEditSaving.value = false
         return
     }
 
-    permissionSaving.value = false
+    roleEditSaving.value = false
     show('Permission updated successfully.', 'success')
     closeModal()
     fetchData()
@@ -410,11 +438,11 @@ const closeModal = () => {
     chatMessagesLoading.value = false
     userMemory.value = ''
     userMemoryLoading.value = false
-    permissionUserId.value = ''
-    permissionUsername.value = ''
-    permissionCurrentRole.value = 0
-    permissionSelectedRole.value = 0
-    permissionSaving.value = false
+    targetUserId.value = ''
+    targetUsername.value = ''
+    targetCurrentRole.value = 0
+    targetSelectedRole.value = 0
+    roleEditSaving.value = false
 }
 
 const onSortColumn = (col: string) => {
