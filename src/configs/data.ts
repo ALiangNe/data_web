@@ -1,7 +1,7 @@
 /* Per-table filter, sort, and time-range configuration */
 export const DATA_CENTER_TABLES = {
     bots: {
-        filter: ['id', 'ownerId', 'platform', 'status', 'metadata'],
+        filter: ['id', 'ownerId', 'model', 'serialNumber', 'manufacturer', 'status', 'metadata'],
         sortFields: ['createdAt', 'updatedAt', 'registeredAt', 'activatedAt'],
         timeRangeFields: ['createdAt', 'updatedAt', 'registeredAt', 'activatedAt'],
     },
@@ -36,7 +36,7 @@ export const DATA_CENTER_TABLES = {
         timeRangeFields: ['createdAt'],
     },
     users: {
-        filter: ['id', 'username', 'email', 'role', 'soulId', 'status'],
+        filter: ['id', 'username', 'email', 'role', 'status'],
         sortFields: ['createdAt', 'updatedAt'],
         timeRangeFields: ['createdAt', 'updatedAt'],
     },
@@ -52,6 +52,7 @@ export const DATA_LOOKUP_TABLES = {
     mcpCapabilities: {},
     media: {},
     monitorLogs: {},
+    souls: {},
     users: {},
     userBehaviorLogs: {},
     userMemories: {},

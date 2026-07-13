@@ -1,6 +1,6 @@
 export const DATA_CONSOLE_PERMISSIONS: Record<number, string[]> = {
-    1: ['users', 'bots', 'software', 'ota-releases', 'user-behavior-logs', 'knowledge', 'mcp-capabilities', 'monitor-logs', 'data-lookup'],
-    5: ['users', 'bots', 'software', 'ota-releases', 'user-behavior-logs', 'knowledge', 'mcp-capabilities', 'monitor-logs', 'data-lookup'],
+    1: ['users', 'bots', 'software', 'user-behavior-logs', 'knowledge', 'mcp-capabilities', 'monitor-logs', 'data-lookup'],
+    5: ['users', 'bots', 'software', 'user-behavior-logs', 'knowledge', 'mcp-capabilities', 'monitor-logs', 'data-lookup'],
 }
 
 export const APP_SIDEBAR = [
@@ -16,8 +16,7 @@ export const APP_SIDEBAR = [
         label: 'Robot',
         children: [
             { name: 'BotsView', label: 'Bots', permission: 'bots' },
-            { name: 'SoftwareView', label: 'Software Packages', permission: 'software' },
-            // { name: 'OtaReleasesView', label: 'OTA Releases', permission: 'ota-releases' },
+            { name: 'SoftwareView', label: 'Software', permission: 'software' },
         ],
     },
     {

@@ -3,7 +3,9 @@ import { DATA_CENTER_TABLES, DATA_LOOKUP_TABLES } from '@/configs/data'
 export type Bot = {
     id: string
     ownerId: string
-    platform: string
+    model: string
+    serialNumber: string
+    manufacturer: string
     status: string
     metadata: Record<string, unknown>
     registeredAt: string | null
@@ -86,7 +88,6 @@ export type UserBehaviorValueCount = {
 }
 
 export type UserBehaviorLogAggregateBase = {
-    platforms: UserBehaviorValue[]
     userAgents: UserBehaviorValue[]
     screenSizes: UserBehaviorValue[]
     languages: UserBehaviorValue[]

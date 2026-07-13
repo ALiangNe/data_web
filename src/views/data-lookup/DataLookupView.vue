@@ -47,7 +47,7 @@ const columns = computed(() => rows.value[0] ? Object.keys(rows.value[0]) : [])
 
 const filterFields = computed(() => {
     if (selectValues.value.entity === 'monitorLogs') return ['spanId']
-    if (selectValues.value.entity === 'userBehaviorLogs') return ['userId']
+    if (selectValues.value.entity === 'userBehaviorLogs') return ['sessionId']
     return ['ids']
 })
 

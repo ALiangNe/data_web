@@ -59,12 +59,12 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { BarChart } from 'echarts/charts'
+import { BarChart, PieChart } from 'echarts/charts'
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components'
 import { use, init, type ECharts } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 
-use([BarChart, GridComponent, LegendComponent, TooltipComponent, CanvasRenderer])
+use([BarChart, PieChart, GridComponent, LegendComponent, TooltipComponent, CanvasRenderer])
 
 const props = defineProps<{
     loading: boolean
@@ -96,7 +96,20 @@ const getCssVar = (name: string) => getComputedStyle(document.documentElement).g
 
 const chartColors = computed(() => [
     getCssVar('--color-primary'),
-    getCssVar('--color-text-secondary'),
+    '#6B7CF0',
+])
+
+const pieChartColors = computed(() => [
+    '#4B7BF5',
+    '#6B7CF0',
+    '#8B8CF8',
+    '#4DBFBF',
+    '#52C9A5',
+    '#6BC5F0',
+    '#E8B84A',
+    '#E8956F',
+    '#E87BA0',
+    '#7B9CF5',
 ])
 
 const baseTextStyle = computed(() => ({
@@ -179,48 +192,82 @@ const visitChartOption = computed(() => ({
     ],
 }))
 
-const regionChartOption = computed(() => ({
-    color: [chartColors.value[0]],
-    grid: {
-        top: 24,
-        right: 16,
-        bottom: 32,
-        left: 44,
-        containLabel: true,
+const mediaChartOption = computed(() => ({
+    color: pieChartColors.value,
+    legend: {
+        top: 0,
+        right: 0,
+        type: 'scroll',
     },
-    tooltip: { trigger: 'axis' },
+    tooltip: {
+        trigger: 'item',
+        formatter: '{b}: {c} ({d}%)',
+    },
     textStyle: baseTextStyle.value,
-    xAxis: buildCategoryAxis(props.regionLabels),
-    yAxis: buildValueAxis(),
     series: [
         {
-            type: 'bar',
-            data: props.regionValues,
-            barMaxWidth: 28,
-            itemStyle: { borderRadius: [4, 4, 0, 0] },
+            type: 'pie',
+            radius: ['0%', '62%'],
+            center: ['50%', '58%'],
+            avoidLabelOverlap: true,
+            itemStyle: {
+                borderRadius: 4,
+                borderColor: getCssVar('--color-surface'),
+                borderWidth: 2,
+            },
+            label: {
+                formatter: '{b}\n{d}% ({c})',
+                color: getCssVar('--color-text'),
+            },
+            labelLine: {
+                lineStyle: {
+                    color: getCssVar('--color-border-strong'),
+                },
+            },
+            data: props.mediaChartLabels.map((name, index) => ({
+                name,
+                value: props.mediaChartValues[index] ?? 0,
+            })),
         },
     ],
 }))
 
-const mediaChartOption = computed(() => ({
-    color: [chartColors.value[0]],
-    grid: {
-        top: 24,
-        right: 16,
-        bottom: 32,
-        left: 44,
-        containLabel: true,
+const regionChartOption = computed(() => ({
+    color: pieChartColors.value,
+    legend: {
+        top: 0,
+        right: 0,
+        type: 'scroll',
     },
-    tooltip: { trigger: 'axis' },
+    tooltip: {
+        trigger: 'item',
+        formatter: '{b}: {c} ({d}%)',
+    },
     textStyle: baseTextStyle.value,
-    xAxis: buildCategoryAxis(props.mediaChartLabels),
-    yAxis: buildValueAxis(),
     series: [
         {
-            type: 'bar',
-            data: props.mediaChartValues,
-            barMaxWidth: 28,
-            itemStyle: { borderRadius: [4, 4, 0, 0] },
+            type: 'pie',
+            radius: ['0%', '62%'],
+            center: ['50%', '58%'],
+            avoidLabelOverlap: true,
+            itemStyle: {
+                borderRadius: 4,
+                borderColor: getCssVar('--color-surface'),
+                borderWidth: 2,
+            },
+            label: {
+                formatter: '{b}\n{d}% ({c})',
+                color: getCssVar('--color-text'),
+            },
+            labelLine: {
+                lineStyle: {
+                    color: getCssVar('--color-border-strong'),
+                },
+            },
+            data: props.regionLabels.map((name, index) => ({
+                name,
+                value: props.regionValues[index] ?? 0,
+            })),
         },
     ],
 }))

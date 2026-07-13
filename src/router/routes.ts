@@ -38,6 +38,12 @@ export const routes: RouteRecordRaw[] = [
                 component: () => import('@/views/bots/BotsView.vue'),
             },
             {
+                path: 'software',
+                name: 'SoftwareView',
+                meta: { permission: 'software' },
+                component: () => import('@/views/software/SoftwareView.vue'),
+            },
+            {
                 path: 'knowledge',
                 name: 'KnowledgeView',
                 meta: { permission: 'knowledge' },

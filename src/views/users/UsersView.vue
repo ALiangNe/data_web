@@ -159,7 +159,7 @@ const targetSubmitDisabled = computed(() => {
     if (targetIsSelf.value || targetEditForbidden.value) return true
     return targetSelectedRole.value <= editedByRole.value
 })
-const columns = [...filterFields, 'providers']
+const columns = [...filterFields, 'soulId', 'providers']
 const chatDateFormatter = new Intl.DateTimeFormat('en-CA', {
     year: 'numeric',
     month: '2-digit',
