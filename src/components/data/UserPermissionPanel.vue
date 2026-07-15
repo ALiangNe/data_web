@@ -1,28 +1,36 @@
 <template>
     <div class="user-permission-panel">
-        <p class="user-permission-panel__text">Username: {{ username }}</p>
-        <p class="user-permission-panel__text">Current Role: {{ formatRole(currentRole) }}</p>
-        <label class="user-permission-panel__field">
-            <span>Target Role</span>
-            <ElSelect
-                :model-value="selectedRole"
-                class="user-permission-panel__select"
-                :disabled="saving"
-                @update:model-value="onRoleChange"
-            >
-                <ElOption
-                    v-for="role in props.roleOptions"
-                    :key="role"
-                    :label="formatRole(role)"
-                    :value="role"
-                    :disabled="disabledRoles.includes(role)"
-                />
-            </ElSelect>
-        </label>
+        <div class="user-permission-panel__content">
+            <div class="user-permission-panel__item">
+                <p class="user-permission-panel__label">Username</p>
+                <p class="user-permission-panel__text">{{ username }}</p>
+            </div>
+            <div class="user-permission-panel__item">
+                <p class="user-permission-panel__label">Current Role</p>
+                <p class="user-permission-panel__text">{{ formatRole(currentRole) }}</p>
+            </div>
+            <div class="user-permission-panel__item">
+                <p class="user-permission-panel__label">Target Role</p>
+                <ElSelect
+                    :model-value="selectedRole"
+                    class="user-permission-panel__select"
+                    :disabled="saving"
+                    @update:model-value="onRoleChange"
+                >
+                    <ElOption
+                        v-for="role in props.roleOptions"
+                        :key="role"
+                        :label="formatRole(role)"
+                        :value="role"
+                        :disabled="disabledRoles.includes(role)"
+                    />
+                </ElSelect>
+            </div>
+        </div>
         <div class="user-permission-panel__actions">
             <button
                 type="button"
-                class="user-permission-panel__button user-permission-panel__button--primary"
+                class="user-permission-panel__button"
                 :disabled="saving || submitDisabled"
                 @click="emit('submit')"
             >
@@ -62,24 +70,53 @@ const onRoleChange = (value: number) => {
 .user-permission-panel {
     display: flex;
     flex-direction: column;
-    gap: 0.875rem;
+    gap: 1rem;
+}
+
+.user-permission-panel__content {
+    display: flex;
+    flex-direction: column;
+    height: 28rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.user-permission-panel__item {
+    margin: 1.25rem;
+    margin-bottom: 0;
+    padding: 0.875rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-hover);
+
+    &:last-child {
+        margin-bottom: 1.25rem;
+    }
+}
+
+.user-permission-panel__label {
+    margin: 0 0 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--color-text-secondary);
 }
 
 .user-permission-panel__text {
     margin: 0;
     font-size: 0.875rem;
-    line-height: 1.5;
+    line-height: 1.65;
     color: var(--color-text);
     word-break: break-word;
-}
-
-.user-permission-panel__field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--color-text-secondary);
 }
 
 .user-permission-panel__select {
@@ -89,7 +126,6 @@ const onRoleChange = (value: number) => {
 .user-permission-panel__actions {
     display: flex;
     justify-content: flex-end;
-    gap: 0.5rem;
 }
 
 .user-permission-panel__button {
@@ -99,37 +135,24 @@ const onRoleChange = (value: number) => {
     min-width: 5rem;
     height: 2.25rem;
     padding: 0 0.875rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-primary);
     border-radius: var(--radius-sm);
-    background: var(--color-surface);
+    background: var(--color-primary);
     font: inherit;
     font-size: 0.8125rem;
     font-weight: 500;
-    color: var(--color-text-secondary);
+    color: #fff;
     cursor: pointer;
-    transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+    transition: background 150ms ease, border-color 150ms ease;
 
     &:hover:not(:disabled) {
-        background: var(--color-hover);
-        border-color: var(--color-border-strong);
-        color: var(--color-text);
+        border-color: var(--color-primary-hover);
+        background: var(--color-primary-hover);
     }
 
     &:disabled {
         opacity: 0.5;
         cursor: not-allowed;
-    }
-}
-
-.user-permission-panel__button--primary {
-    border-color: var(--color-primary);
-    background: var(--color-primary);
-    color: #fff;
-
-    &:hover:not(:disabled) {
-        border-color: var(--color-primary-hover);
-        background: var(--color-primary-hover);
-        color: #fff;
     }
 }
 </style>

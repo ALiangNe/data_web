@@ -1,22 +1,65 @@
 <template>
     <div class="data-list-view">
-        <DataFilter v-model:filter-values="filterValues" :fields="filterFields" :time-range-fields="[]"
-            :time-range-values="{}" :show-time-range="false" :loading="loading" @search="search"
-            @reset="resetFilters" />
-        <DataTable :columns="columns" :rows="rows" :sortable-fields="sortableFields" :sort-field="sortField"
-            :sort-order="sortOrder" :loading="loading" :actions="tableActions" @sort-column="onSortColumn"
-            @action="onTableAction" />
-        <DataPagination :page="page" :page-size="pageSize" :page-size-options="pageSizeOptions" :total="total"
-            :loading="loading" @update:page="onPageChange" @update:page-size="onPageSizeChange" />
-        <DataModal :open="modalOpen" :title="modalTitle" max-width="32rem" @close="closeModal">
-            <ChatHistoryPanel v-if="modalType === 'chat'" v-model:date="selectedDate" :dates-loading="chatDatesLoading"
-                :disabled-date="disabledDate" :loading="chatMessagesLoading" :messages="chatMessages"
-                @panel-change="onChatPanelChange" />
+        <DataFilter
+            v-model:filter-values="filterValues"
+            v-model:select-values="selectValues"
+            :fields="filterFields"
+            :select-fields="selectFields"
+            :time-range-fields="[]"
+            :time-range-values="{}"
+            :show-time-range="false"
+            :loading="loading"
+            @search="search"
+            @reset="resetFilters"
+        />
+        <DataTable
+            :columns="columns"
+            :rows="rows"
+            :sortable-fields="sortableFields"
+            :sort-field="sortField"
+            :sort-order="sortOrder"
+            :loading="loading"
+            :actions="tableActions"
+            @sort-column="onSortColumn"
+            @action="onTableAction"
+        />
+        <DataPagination
+            :page="page"
+            :page-size="pageSize"
+            :page-size-options="pageSizeOptions"
+            :total="total"
+            :loading="loading"
+            @update:page="onPageChange"
+            @update:page-size="onPageSizeChange"
+        />
+        <DataModal
+            :open="modalOpen"
+            :title="modalTitle"
+            max-width="32rem"
+            @close="closeModal"
+        >
+            <ChatHistoryPanel
+                v-if="modalType === 'chat'"
+                v-model:date="selectedDate"
+                :dates-loading="chatDatesLoading"
+                :disabled-date="disabledDate"
+                :loading="chatMessagesLoading"
+                :messages="chatMessages"
+                @panel-change="onChatPanelChange"
+            />
             <UserMemoryPanel v-else-if="modalType === 'memory'" :loading="userMemoryLoading" :memory="userMemory" />
-            <UserPermissionPanel v-else-if="modalType === 'permission'" v-model:selected-role="targetSelectedRole"
-                :username="targetUsername" :current-role="targetCurrentRole" :role-options="roleOptions"
-                :role-labels="roleLabels" :saving="roleEditSaving" :disabled-roles="targetDisabledRoles"
-                :submit-disabled="targetSubmitDisabled" @submit="submitPermission" />
+            <UserPermissionPanel
+                v-else-if="modalType === 'permission'"
+                v-model:selected-role="targetSelectedRole"
+                :username="targetUsername"
+                :current-role="targetCurrentRole"
+                :role-options="roleOptions"
+                :role-labels="roleLabels"
+                :saving="roleEditSaving"
+                :disabled-roles="targetDisabledRoles"
+                :submit-disabled="targetSubmitDisabled"
+                @submit="submitPermission"
+            />
         </DataModal>
     </div>
 </template>
@@ -45,7 +88,7 @@ const roleLabels: Record<number, string> = {
     0: 'Super Admin',
     1: 'Platform Developer',
     2: 'Technical Staff',
-    3: 'Reserved',
+    3: 'Marketing Staff',
     4: 'Reserved',
     5: 'User',
     6: 'Reserved',
@@ -56,8 +99,19 @@ const roleLabels: Record<number, string> = {
 const roleOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 const pageSizeOptions = [5, 10, 20]
 const filterFields = table.filter
+const selectFields = {
+    role: {
+        label: 'role',
+        default: '',
+        options: roleOptions.map((role) => ({
+            label: `${role} - ${roleLabels[role]}`,
+            value: String(role),
+        })),
+    },
+}
 const sortableFields = table.sortFields
 const filterValues = ref<Record<string, string>>({})
+const selectValues = ref({ role: selectFields.role.default })
 const sortField = ref<DataCenterSortFieldFor<'users'>>(table.sortFields[0])
 const sortOrder = ref<'asc' | 'desc'>('desc')
 const page = ref(1)
@@ -89,7 +143,7 @@ const tableActions = computed(() => {
         { key: 'viewChat', label: 'ViewChat' },
         { key: 'viewMemory', label: 'ViewMemory' },
     ]
-    if (editedByRole.value != null && editedByRole.value <= 2) {
+    if (editedByRole.value != null && editedByRole.value <= 1) {
         actions.push({ key: 'EditPermissions', label: 'EditPermissions' })
     }
     return actions
@@ -115,7 +169,7 @@ const targetSubmitDisabled = computed(() => {
     if (targetIsSelf.value || targetEditForbidden.value) return true
     return targetSelectedRole.value <= editedByRole.value
 })
-const columns = ['id', ...filterFields, 'soulId', 'providers']
+const columns = ['id', 'username', 'email', 'role', 'status', 'soulId', 'providers']
 const chatDateFormatter = new Intl.DateTimeFormat('en-CA', {
     year: 'numeric',
     month: '2-digit',
@@ -134,6 +188,7 @@ const fetchData = async () => {
         if (!v) continue
         filters[key] = v
     }
+    if (selectValues.value.role) filters.role = selectValues.value.role
 
     const params = {
         ...filters,
@@ -164,6 +219,7 @@ const fetchData = async () => {
         for (const [key, value] of Object.entries(row)) {
             if (value == null) formatted[key] = '-'
             else if (key === 'createdAt' || key === 'updatedAt') formatted[key] = new Date(value as string).toLocaleString()
+            else if (key === 'role') formatted[key] = `${value} - ${roleLabels[Number(value)] ?? value}`
             else if (Array.isArray(value)) formatted[key] = value.length ? value.join(', ') : '-'
             else formatted[key] = String(value)
         }
@@ -289,8 +345,8 @@ const openMemoryModal = async (payload: { row: Record<string, string> }) => {
 const openPermissionModal = (payload: { row: Record<string, string> }) => {
     targetUserId.value = payload.row.id
     targetUsername.value = payload.row.username
-    targetCurrentRole.value = Number(payload.row.role)
-    targetSelectedRole.value = Number(payload.row.role)
+    targetCurrentRole.value = parseInt(payload.row.role, 10)
+    targetSelectedRole.value = parseInt(payload.row.role, 10)
     roleEditSaving.value = false
     modalType.value = 'permission'
     modalOpen.value = true
@@ -362,6 +418,7 @@ const search = () => {
 
 const resetFilters = () => {
     filterValues.value = {}
+    selectValues.value = { role: selectFields.role.default }
     sortField.value = table.sortFields[0]
     sortOrder.value = 'desc'
     page.value = 1

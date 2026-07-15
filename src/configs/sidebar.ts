@@ -1,6 +1,8 @@
 export const DATA_CONSOLE_PERMISSIONS: Record<number, string[]> = {
+    0: ['users', 'bots', 'software', 'user-behavior-logs', 'knowledge', 'mcp-capabilities', 'monitor-logs', 'data-lookup'],
     1: ['users', 'bots', 'software', 'user-behavior-logs', 'knowledge', 'mcp-capabilities', 'monitor-logs', 'data-lookup'],
-    5: ['users', 'bots', 'software', 'user-behavior-logs', 'knowledge', 'mcp-capabilities', 'monitor-logs', 'data-lookup'],
+    2: ['software'],
+    3: ['users', 'user-behavior-logs', 'knowledge'],
 }
 
 export const APP_SIDEBAR = [

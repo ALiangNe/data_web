@@ -41,7 +41,7 @@ export const DATA_CENTER_TABLES = {
         timeRangeFields: ['createdAt'],
     },
     users: {
-        filter: ['username', 'email', 'role', 'status'],
+        filter: ['username', 'email', 'status'],
         sortFields: ['createdAt', 'updatedAt'],
         timeRangeFields: ['createdAt', 'updatedAt'],
     },

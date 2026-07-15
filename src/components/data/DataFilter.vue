@@ -3,11 +3,7 @@
         <form class="data-filter__form" @submit.prevent="emit('search')">
             <div class="data-filter__input-grid">
                 <template v-if="selectFields">
-                    <label
-                        v-for="(config, key) in selectFields"
-                        :key="key"
-                        class="data-filter__field"
-                    >
+                    <label v-for="(config, key) in selectFields" :key="key" class="data-filter__field">
                         <span class="data-filter__label">{{ config.label }}</span>
                         <ElSelect
                             :model-value="selectValues![key]"
@@ -26,11 +22,7 @@
                     </label>
                 </template>
 
-                <label
-                    v-for="field in fields"
-                    :key="field"
-                    class="data-filter__field"
-                >
+                <label v-for="field in fields" :key="field" class="data-filter__field">
                     <span class="data-filter__label">{{ field }}</span>
                     <ElInput
                         :model-value="filterValues[field] ?? ''"
@@ -43,11 +35,7 @@
             </div>
 
             <div v-if="showTimeRange && timeRangeFields" class="data-filter__time-grid">
-                <label
-                    v-for="field in timeRangeFields"
-                    :key="field"
-                    class="data-filter__field"
-                >
+                <label v-for="field in timeRangeFields" :key="field" class="data-filter__field">
                     <span class="data-filter__label">{{ field }}</span>
                     <ElDatePicker
                         class="data-filter__datetime"
@@ -74,11 +62,7 @@
                 >
                     Reset
                 </button>
-                <button
-                    type="submit"
-                    class="data-filter__button data-filter__button--submit"
-                    :disabled="loading"
-                >
+                <button type="submit" class="data-filter__button data-filter__button--submit" :disabled="loading">
                     {{ loading ? 'Querying…' : 'Query' }}
                 </button>
             </div>
@@ -119,7 +103,7 @@ const updateField = (key: string, value: string) => {
 const updateSelect = (key: string, value: string) => {
     emit('update:selectValues', {
         ...(props.selectValues ?? {}),
-        [key]: value,
+        [key]: value ?? '',
     })
 }
 
