@@ -1,67 +1,22 @@
 <template>
     <div class="data-list-view">
-        <DataFilter
-            v-model:filter-values="filterValues"
-            :fields="filterFields"
-            :time-range-fields="[]"
-            :time-range-values="{}"
-            :show-time-range="false"
-            :loading="loading"
-            @search="search"
-            @reset="resetFilters"
-        />
-        <DataTable
-            :columns="columns"
-            :rows="rows"
-            :sortable-fields="sortableFields"
-            :sort-field="sortField"
-            :sort-order="sortOrder"
-            :loading="loading"
-            :actions="tableActions"
-            @sort-column="onSortColumn"
-            @action="onTableAction"
-        />
-        <DataPagination
-            :page="page"
-            :page-size="pageSize"
-            :page-size-options="pageSizeOptions"
-            :total="total"
-            :loading="loading"
-            @update:page="onPageChange"
-            @update:page-size="onPageSizeChange"
-        />
-        <DataModal
-            :open="modalOpen"
-            :title="modalTitle"
-            max-width="32rem"
-            @close="closeModal"
-        >
-            <ChatHistoryPanel
-                v-if="modalType === 'chat'"
-                v-model:date="selectedDate"
-                :dates-loading="chatDatesLoading"
-                :disabled-date="disabledDate"
-                :loading="chatMessagesLoading"
-                :messages="chatMessages"
-                @panel-change="onChatPanelChange"
-            />
-            <UserMemoryPanel
-                v-else-if="modalType === 'memory'"
-                :loading="userMemoryLoading"
-                :memory="userMemory"
-            />
-            <UserPermissionPanel
-                v-else-if="modalType === 'permission'"
-                v-model:selected-role="targetSelectedRole"
-                :username="targetUsername"
-                :current-role="targetCurrentRole"
-                :role-options="roleOptions"
-                :role-labels="roleLabels"
-                :saving="roleEditSaving"
-                :disabled-roles="targetDisabledRoles"
-                :submit-disabled="targetSubmitDisabled"
-                @submit="submitPermission"
-            />
+        <DataFilter v-model:filter-values="filterValues" :fields="filterFields" :time-range-fields="[]"
+            :time-range-values="{}" :show-time-range="false" :loading="loading" @search="search"
+            @reset="resetFilters" />
+        <DataTable :columns="columns" :rows="rows" :sortable-fields="sortableFields" :sort-field="sortField"
+            :sort-order="sortOrder" :loading="loading" :actions="tableActions" @sort-column="onSortColumn"
+            @action="onTableAction" />
+        <DataPagination :page="page" :page-size="pageSize" :page-size-options="pageSizeOptions" :total="total"
+            :loading="loading" @update:page="onPageChange" @update:page-size="onPageSizeChange" />
+        <DataModal :open="modalOpen" :title="modalTitle" max-width="32rem" @close="closeModal">
+            <ChatHistoryPanel v-if="modalType === 'chat'" v-model:date="selectedDate" :dates-loading="chatDatesLoading"
+                :disabled-date="disabledDate" :loading="chatMessagesLoading" :messages="chatMessages"
+                @panel-change="onChatPanelChange" />
+            <UserMemoryPanel v-else-if="modalType === 'memory'" :loading="userMemoryLoading" :memory="userMemory" />
+            <UserPermissionPanel v-else-if="modalType === 'permission'" v-model:selected-role="targetSelectedRole"
+                :username="targetUsername" :current-role="targetCurrentRole" :role-options="roleOptions"
+                :role-labels="roleLabels" :saving="roleEditSaving" :disabled-roles="targetDisabledRoles"
+                :submit-disabled="targetSubmitDisabled" @submit="submitPermission" />
         </DataModal>
     </div>
 </template>
@@ -160,7 +115,7 @@ const targetSubmitDisabled = computed(() => {
     if (targetIsSelf.value || targetEditForbidden.value) return true
     return targetSelectedRole.value <= editedByRole.value
 })
-const columns = [...filterFields, 'soulId', 'providers']
+const columns = ['id', ...filterFields, 'soulId', 'providers']
 const chatDateFormatter = new Intl.DateTimeFormat('en-CA', {
     year: 'numeric',
     month: '2-digit',

@@ -2,11 +2,8 @@
     <div class="data-list-view">
         <DataFilter
             v-model:filter-values="filterValues"
-            v-model:time-range-values="timeRangeValues"
             :fields="filterFields"
-            :time-range-fields="timeRangeFields"
             :loading="loading"
-            show-time-range
             @search="search"
             @reset="resetFilters"
         >
@@ -67,7 +64,7 @@ import { useAlert } from '@/composables'
 import { DATA_CENTER_TABLES } from '@/configs/data'
 import { ApiError } from '@/types/api'
 import semver from 'semver'
-import type { DataCenterSortFieldFor, DataTimeRangeFieldValues, SoftwareUploadPostParams } from '@/types/data'
+import type { DataCenterSortFieldFor, SoftwareUploadPostParams } from '@/types/data'
 
 type DependencyPackage = {
     name: string
@@ -81,9 +78,7 @@ const table = DATA_CENTER_TABLES.software
 const pageSizeOptions = [5, 10, 20]
 const filterFields = table.filter
 const sortableFields = table.sortFields
-const timeRangeFields = table.timeRangeFields
 const filterValues = ref<Record<string, string>>({})
-const timeRangeValues = ref<Record<string, DataTimeRangeFieldValues>>({})
 const sortField = ref<DataCenterSortFieldFor<'software'>>(table.sortFields[0])
 const sortOrder = ref<'asc' | 'desc'>('desc')
 const page = ref(1)
@@ -131,25 +126,10 @@ const fetchData = async () => {
         filters[key] = v
     }
 
-    const timeRangeFilters: Record<string, [string, string]> = {}
-    for (const [field, range] of Object.entries(timeRangeValues.value)) {
-        if (!range) continue
-        const [start, end] = range
-        const startTrim = start.trim()
-        const endTrim = end.trim()
-        if (!startTrim && !endTrim) continue
-
-        timeRangeFilters[field] = [
-            startTrim ? new Date(startTrim).toISOString() : '',
-            endTrim ? new Date(endTrim).toISOString() : '',
-        ]
-    }
-
     let data
     try {
         data = await listSoftware({
             ...filters,
-            ...timeRangeFilters,
             page: page.value,
             pageSize: pageSize.value,
             sortBy: sortField.value,
@@ -171,9 +151,10 @@ const fetchData = async () => {
     rows.value = data.list.map((row) => {
         const formatted: Record<string, string> = {}
         for (const [key, value] of Object.entries(row)) {
+            if (key === 'metadata' || key === 'uploadedBy') continue
             if (value == null) formatted[key] = '-'
             else if (key === 'createdAt' || key === 'updatedAt') formatted[key] = new Date(value as string).toLocaleString()
-            else if (key === 'dependencies' || key === 'metadata') formatted[key] = JSON.stringify(value)
+            else if (key === 'dependencies') formatted[key] = JSON.stringify(value)
             else formatted[key] = String(value)
         }
         return formatted
@@ -197,7 +178,6 @@ const search = () => {
 
 const resetFilters = () => {
     filterValues.value = {}
-    timeRangeValues.value = {}
     sortField.value = table.sortFields[0]
     sortOrder.value = 'desc'
     page.value = 1

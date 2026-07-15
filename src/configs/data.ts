@@ -1,24 +1,24 @@
 /* Per-table filter, sort, and time-range configuration */
 export const DATA_CENTER_TABLES = {
     bots: {
-        filter: ['id', 'ownerId', 'model', 'serialNumber', 'manufacturer', 'status', 'metadata'],
+        filter: ['model', 'serialNumber', 'manufacturer', 'status'],
         sortFields: ['createdAt', 'updatedAt', 'registeredAt', 'activatedAt'],
-        timeRangeFields: ['createdAt', 'updatedAt', 'registeredAt', 'activatedAt'],
+        timeRangeFields: [],
     },
     knowledge: {
-        filter: ['id', 'document', 'metadata'],
+        filter: ['document'],
         sortFields: ['createdAt', 'updatedAt'],
-        timeRangeFields: ['createdAt', 'updatedAt'],
+        timeRangeFields: [],
     },
     mcpCapabilities: {
-        filter: ['id', 'document', 'metadata'],
+        filter: ['document'],
         sortFields: ['createdAt', 'updatedAt'],
-        timeRangeFields: ['createdAt', 'updatedAt'],
+        timeRangeFields: [],
     },
     software: {
-        filter: ['id', 'type', 'name', 'version', 'status', 'uploadedBy', 'metadata'],
+        filter: ['type', 'name', 'version', 'status'],
         sortFields: ['createdAt', 'updatedAt', 'sizeBytes'],
-        timeRangeFields: ['createdAt', 'updatedAt'],
+        timeRangeFields: [],
     },
     monitorLogs: {
         filter: ['traceId'],
@@ -41,7 +41,7 @@ export const DATA_CENTER_TABLES = {
         timeRangeFields: ['createdAt'],
     },
     users: {
-        filter: ['id', 'username', 'email', 'role', 'status'],
+        filter: ['username', 'email', 'role', 'status'],
         sortFields: ['createdAt', 'updatedAt'],
         timeRangeFields: ['createdAt', 'updatedAt'],
     },

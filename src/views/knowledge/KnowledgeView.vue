@@ -2,11 +2,8 @@
     <div class="data-list-view">
         <DataFilter
             v-model:filter-values="filterValues"
-            v-model:time-range-values="timeRangeValues"
             :fields="filterFields"
-            :time-range-fields="timeRangeFields"
             :loading="loading"
-            show-time-range
             @search="search"
             @reset="resetFilters"
         />
@@ -40,7 +37,7 @@ import DataTable from '@/components/data/DataTable.vue'
 import { useAlert } from '@/composables'
 import { DATA_CENTER_TABLES } from '@/configs/data'
 import { ApiError } from '@/types/api'
-import type { DataCenterSortFieldFor, DataTimeRangeFieldValues } from '@/types/data'
+import type { DataCenterSortFieldFor } from '@/types/data'
 
 const { show } = useAlert()
 
@@ -48,9 +45,7 @@ const table = DATA_CENTER_TABLES.knowledge
 const pageSizeOptions = [5, 10, 20]
 const filterFields = table.filter
 const sortableFields = table.sortFields
-const timeRangeFields = table.timeRangeFields
 const filterValues = ref<Record<string, string>>({})
-const timeRangeValues = ref<Record<string, DataTimeRangeFieldValues>>({})
 const sortField = ref<DataCenterSortFieldFor<'knowledge'>>(table.sortFields[0])
 const sortOrder = ref<'asc' | 'desc'>('desc')
 const page = ref(1)
@@ -70,25 +65,10 @@ const fetchData = async () => {
         filters[key] = v
     }
 
-    const timeRangeFilters: Record<string, [string, string]> = {}
-    for (const [field, range] of Object.entries(timeRangeValues.value)) {
-        if (!range) continue
-        const [start, end] = range
-        const startTrim = start.trim()
-        const endTrim = end.trim()
-        if (!startTrim && !endTrim) continue
-
-        timeRangeFilters[field] = [
-            startTrim ? new Date(startTrim).toISOString() : '',
-            endTrim ? new Date(endTrim).toISOString() : '',
-        ]
-    }
-
     let data
     try {
         data = await getKnowledge({
             ...filters,
-            ...timeRangeFilters,
             page: page.value,
             pageSize: pageSize.value,
             sortBy: sortField.value,
@@ -137,7 +117,6 @@ const search = () => {
 
 const resetFilters = () => {
     filterValues.value = {}
-    timeRangeValues.value = {}
     sortField.value = table.sortFields[0]
     sortOrder.value = 'desc'
     page.value = 1
