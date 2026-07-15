@@ -65,6 +65,7 @@
             </div>
 
             <div class="data-filter__actions">
+                <slot name="actions-before" />
                 <button
                     type="button"
                     class="data-filter__button data-filter__button--reset"
@@ -188,7 +189,8 @@ const updateTimeRange = (field: string, value: DataTimeRangeFieldValues) => {
     margin-top: 0.75rem;
 }
 
-.data-filter__button {
+.data-filter__button,
+:slotted(button) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -214,17 +216,17 @@ const updateTimeRange = (field: string, value: DataTimeRangeFieldValues) => {
         opacity: 0.5;
         cursor: not-allowed;
     }
+}
 
-    &--submit {
-        border-color: var(--color-primary);
-        background: var(--color-primary);
+.data-filter__button--submit {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: #fff;
+
+    &:hover:not(:disabled) {
+        background: var(--color-primary-hover);
+        border-color: var(--color-primary-hover);
         color: #fff;
-
-        &:hover:not(:disabled) {
-            background: var(--color-primary-hover);
-            border-color: var(--color-primary-hover);
-            color: #fff;
-        }
     }
 }
 </style>

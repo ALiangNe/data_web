@@ -78,6 +78,24 @@ export type User = {
     updatedAt: string
 }
 
+export type Software = {
+    id: string
+    type: string
+    name: string
+    version: string
+    dependencies: Record<string, unknown>
+    changelog: string
+    storageKey: string
+    sizeBytes: number
+    checksum: string
+    signature: string | null
+    status: string
+    metadata: Record<string, unknown>
+    uploadedBy: string
+    createdAt: string
+    updatedAt: string
+}
+
 export type UserBehaviorValue = {
     value: string
 }
@@ -194,16 +212,22 @@ export interface DataLookupQuery {
 
 export type DataLookupResult = Record<string, unknown>
 
-export type CreateSoftwareParams = {
+export type SoftwareUploadPostParams = {
     type: string
     name: string
     version: string
-    dependencies: string
+    dependencies: Record<string, string>
     changelog: string
-    file_size_bytes: number
-    file_checksum: string
+    fileName: string
+    mimeType: string
+    sizeBytes: number
+    checksum: string
 }
 
-export type SoftwareUploadResult = {
-    uploadUrl: string
+export type SoftwareUploadPostResult = {
+    id: string
+    uploadPost: {
+        url: string
+        fields: Record<string, string>
+    }
 }

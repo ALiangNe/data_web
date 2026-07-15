@@ -1,11 +1,24 @@
 <template>
     <div v-if="open" class="data-modal" @click.self="emit('close')">
-        <div class="data-modal__panel" role="dialog" aria-modal="true">
+        <div
+            class="data-modal__panel"
+            :style="{ maxWidth }"
+            role="dialog"
+            aria-modal="true"
+        >
             <div class="data-modal__header">
                 <h2 v-if="title" class="data-modal__title">{{ title }}</h2>
-                <button type="button" class="data-modal__close" aria-label="Close" @click="emit('close')">
-                    ×
-                </button>
+                <div class="data-modal__actions">
+                    <ElTooltip v-if="help" placement="bottom">
+                        <template #content>
+                            <span class="data-modal__help-content">{{ help }}</span>
+                        </template>
+                        <button type="button" class="data-modal__help" aria-label="Help">?</button>
+                    </ElTooltip>
+                    <button type="button" class="data-modal__close" aria-label="Close" @click="emit('close')">
+                        ×
+                    </button>
+                </div>
             </div>
             <div class="data-modal__body">
                 <slot />
@@ -15,9 +28,13 @@
 </template>
 
 <script setup lang="ts">
+import { ElTooltip } from 'element-plus'
+
 defineProps<{
     open: boolean
     title?: string
+    help?: string
+    maxWidth: string
 }>()
 
 const emit = defineEmits<{
@@ -41,7 +58,6 @@ const emit = defineEmits<{
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 32rem;
     max-height: calc(100vh - 2 * var(--content-padding));
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
@@ -55,7 +71,6 @@ const emit = defineEmits<{
     align-items: center;
     justify-content: center;
     padding: 0.625rem 3rem;
-    border-bottom: 1px solid var(--color-border);
 }
 
 .data-modal__title {
@@ -67,12 +82,18 @@ const emit = defineEmits<{
     color: var(--color-text-secondary);
 }
 
-.data-modal__close {
+.data-modal__actions {
     position: absolute;
     top: 50%;
     right: 1rem;
-    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
     transform: translateY(-50%);
+}
+
+.data-modal__help,
+.data-modal__close {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -95,9 +116,23 @@ const emit = defineEmits<{
     }
 }
 
+.data-modal__help {
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: default;
+}
+
 .data-modal__body {
     display: flex;
     flex-direction: column;
+    overflow: auto;
     padding: 0.875rem 1.25rem 1.25rem;
+}
+
+:global(.data-modal__help-content) {
+    display: block;
+    max-width: 24rem;
+    line-height: 1.5;
+    white-space: pre-line;
 }
 </style>

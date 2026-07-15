@@ -15,6 +15,11 @@ export const DATA_CENTER_TABLES = {
         sortFields: ['createdAt', 'updatedAt'],
         timeRangeFields: ['createdAt', 'updatedAt'],
     },
+    software: {
+        filter: ['id', 'type', 'name', 'version', 'status', 'uploadedBy', 'metadata'],
+        sortFields: ['createdAt', 'updatedAt', 'sizeBytes'],
+        timeRangeFields: ['createdAt', 'updatedAt'],
+    },
     monitorLogs: {
         filter: ['traceId'],
         sortFields: ['startTimeMs'],
@@ -53,6 +58,7 @@ export const DATA_LOOKUP_TABLES = {
     media: {},
     monitorLogs: {},
     souls: {},
+    software: {},
     users: {},
     userBehaviorLogs: {},
     userMemories: {},

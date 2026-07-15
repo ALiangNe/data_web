@@ -33,6 +33,7 @@
         <DataModal
             :open="modalOpen"
             :title="modalTitle"
+            max-width="32rem"
             @close="closeModal"
         >
             <ChatHistoryPanel

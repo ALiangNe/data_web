@@ -14,8 +14,6 @@ import type {
     UserBehaviorStatsResult,
     DataLookupQuery,
     DataLookupResult,
-    CreateSoftwareParams,
-    SoftwareUploadResult,
 } from '@/types/data'
 
 const baseURL = { baseURL: import.meta.env.VITE_DATA_API_BASE_URL }
@@ -66,8 +64,4 @@ export const getChatHistories = async (params: { userId: string; soulId: string;
 
 export const getDataLookup = async (params: DataLookupQuery): Promise<DataLookupResult[]> => {
     return apiClient.post<unknown, DataLookupResult[]>('/data/getDataLookup', params, baseURL)
-}
-
-export const createSoftware = async (params: CreateSoftwareParams): Promise<SoftwareUploadResult> => {
-    return apiClient.post<unknown, SoftwareUploadResult>('/data/createSoftware', params, baseURL)
 }
