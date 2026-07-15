@@ -46,6 +46,7 @@
                 :dependency-packages="dependencyPackages"
                 @request-version="onRequestVersion"
                 @request-dependency-versions="onRequestDependencyVersions"
+                @load-more-packages="loadDependencyPackages"
                 @submit="onSubmit"
             />
         </DataModal>
@@ -103,6 +104,10 @@ const uploadHelp = [
 const columns = computed(() => rows.value[0] ? Object.keys(rows.value[0]) : [])
 
 const dependencyPackages = ref<DependencyPackage[]>([])
+const dependencyPage = ref(0)
+const dependencyPageSize = 10
+const dependencyHasMore = ref(true)
+const dependencyLoadingMore = ref(false)
 
 const getNextVersionOptions = (latestVersion: string) => {
     const version = semver.valid(latestVersion)
@@ -212,31 +217,47 @@ const onSortColumn = (col: string) => {
 
 const openUploadModal = async () => {
     uploadModalOpen.value = true
+    dependencyPackages.value = []
+    dependencyPage.value = 0
+    dependencyHasMore.value = true
+    await loadDependencyPackages()
+}
+
+const loadDependencyPackages = async () => {
+    if (!dependencyHasMore.value || dependencyLoadingMore.value) return
+
+    const nextPage = dependencyPage.value + 1
+    dependencyLoadingMore.value = true
 
     let softwareResult
     try {
         softwareResult = await listSoftware({
-            page: 1,
-            pageSize: 100,
+            page: nextPage,
+            pageSize: dependencyPageSize,
             sortBy: 'createdAt',
             order: 'desc',
         })
     } catch (error) {
         console.error('SoftwareView listSoftware dependency packages failed:', error)
-        dependencyPackages.value = []
         const message = error instanceof ApiError && error.message
             ? error.message
             : 'Failed to load dependency packages. Please try again.'
         show(message, 'error')
+        dependencyLoadingMore.value = false
         return
     }
 
-    const names = [...new Set(
-        softwareResult.list
-            .map((software) => software.name.trim())
-            .filter(Boolean),
-    )]
-    dependencyPackages.value = names.map((name) => ({ name, versionOptions: [], publishedVersions: [] }))
+    const existing = new Set(dependencyPackages.value.map((item) => item.name))
+    for (const software of softwareResult.list) {
+        const name = software.name.trim()
+        if (!name || existing.has(name)) continue
+        existing.add(name)
+        dependencyPackages.value.push({ name, versionOptions: [], publishedVersions: [] })
+    }
+
+    dependencyPage.value = nextPage
+    dependencyHasMore.value = softwareResult.list.length >= dependencyPageSize
+    dependencyLoadingMore.value = false
 }
 
 const closeUploadModal = () => {
@@ -246,6 +267,9 @@ const closeUploadModal = () => {
     allowCustomVersion.value = false
     loadingVersion.value = false
     dependencyPackages.value = []
+    dependencyPage.value = 0
+    dependencyHasMore.value = true
+    dependencyLoadingMore.value = false
 }
 
 const onRequestVersion = async (name: string) => {

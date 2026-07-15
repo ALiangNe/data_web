@@ -60,6 +60,7 @@
                                     clearable
                                     :disabled="locked"
                                     @change="onDependencyNameChange(group)"
+                                    @end-reached="onPackageEndReached"
                                 >
                                     <ElOption
                                         v-for="pkg in dependencyPackages"
@@ -229,6 +230,7 @@ const emit = defineEmits<{
     'submit': [params: SoftwareUploadPostParams, file: File]
     'request-version': [name: string]
     'request-dependency-versions': [name: string]
+    'load-more-packages': []
 }>()
 
 const { show } = useAlert()
@@ -308,6 +310,11 @@ const onFileExceed = (files: File[]) => {
 const requestVersionOptions = () => {
     form.value.version = ''
     emit('request-version', form.value.name.trim())
+}
+
+const onPackageEndReached = (direction: 'top' | 'bottom' | 'left' | 'right') => {
+    if (direction !== 'bottom') return
+    emit('load-more-packages')
 }
 
 const onDependencyNameChange = (group: DependencyGroup) => {
