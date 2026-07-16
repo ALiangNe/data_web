@@ -1,10 +1,9 @@
 <template>
     <header class="app-header">
-        <div class="app-header__spacer" />
         <ElSelect
             :model-value="regionStore.region"
             class="app-header__region"
-            size="small"
+            size="default"
             @update:model-value="onRegionChange"
         >
             <ElOption
@@ -14,6 +13,7 @@
                 :value="region.value"
             />
         </ElSelect>
+        <div class="app-header__spacer" />
         <span v-if="displayName" class="app-header__user">{{ displayName }}</span>
         <button type="button" class="app-header__logout" @click="onLogout">
             Sign out
@@ -63,16 +63,15 @@ const onLogout = async () => {
     flex: 1 1 auto;
 }
 
+.app-header__region {
+    width: 8.75rem;
+}
+
 .app-header__user {
     margin-right: 0.75rem;
     font-size: 0.8125rem;
     font-weight: 500;
     color: var(--color-text);
-}
-
-.app-header__region {
-    width: 8.75rem;
-    margin-right: 0.75rem;
 }
 
 .app-header__logout {
