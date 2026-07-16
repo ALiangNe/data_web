@@ -1,7 +1,7 @@
 <template>
     <section class="data-filter">
         <form class="data-filter__form" @submit.prevent="emit('search')">
-            <div class="data-filter__input-grid">
+            <div class="data-filter__field-grid">
                 <template v-if="selectFields">
                     <label v-for="(config, key) in selectFields" :key="key" class="data-filter__field">
                         <span class="data-filter__label">{{ config.label }}</span>
@@ -32,24 +32,28 @@
                         @update:model-value="updateField(field, $event)"
                     />
                 </label>
-            </div>
 
-            <div v-if="showTimeRange && timeRangeFields" class="data-filter__time-grid">
-                <label v-for="field in timeRangeFields" :key="field" class="data-filter__field">
-                    <span class="data-filter__label">{{ field }}</span>
-                    <ElDatePicker
-                        class="data-filter__datetime"
-                        type="datetimerange"
-                        :model-value="timeRangeValues?.[field] ?? null"
-                        :disabled="loading"
-                        format="YYYY-MM-DD HH:mm:ss"
-                        value-format="YYYY-MM-DD HH:mm:ss"
-                        range-separator="-"
-                        start-placeholder="Start"
-                        end-placeholder="End"
-                        @update:model-value="updateTimeRange(field, $event)"
-                    />
-                </label>
+                <template v-if="showTimeRange && timeRangeFields">
+                    <label
+                        v-for="field in timeRangeFields"
+                        :key="field"
+                        class="data-filter__field data-filter__field--time"
+                    >
+                        <span class="data-filter__label">{{ field }}</span>
+                        <ElDatePicker
+                            class="data-filter__datetime"
+                            type="datetimerange"
+                            :model-value="timeRangeValues?.[field] ?? null"
+                            :disabled="loading"
+                            format="YYYY-MM-DD HH:mm:ss"
+                            value-format="YYYY-MM-DD HH:mm:ss"
+                            range-separator="-"
+                            start-placeholder="Start"
+                            end-placeholder="End"
+                            @update:model-value="updateTimeRange(field, $event)"
+                        />
+                    </label>
+                </template>
             </div>
 
             <div class="data-filter__actions">
@@ -129,17 +133,10 @@ const updateTimeRange = (field: string, value: DataTimeRangeFieldValues) => {
     padding: 1rem 1.25rem;
 }
 
-.data-filter__input-grid {
+.data-filter__field-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap: 0.75rem 1rem;
-}
-
-.data-filter__time-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem 1rem;
-    margin-top: 0.75rem;
 }
 
 .data-filter__field {
@@ -159,6 +156,10 @@ const updateTimeRange = (field: string, value: DataTimeRangeFieldValues) => {
     :deep(.el-date-editor) {
         width: 100%;
     }
+}
+
+.data-filter__field--time {
+    grid-column: span 2;
 }
 
 .data-filter__label {
