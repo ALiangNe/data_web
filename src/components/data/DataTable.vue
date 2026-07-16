@@ -43,7 +43,7 @@
                         trigger="click"
                         @command="emit('action', { key: $event as string, row })"
                     >
-                        <ElButton size="small" @click.stop>
+                        <ElButton @click.stop>
                             Actions
                             <ElIcon class="el-icon--right">
                                 <ArrowDown />
