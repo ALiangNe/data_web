@@ -1,6 +1,11 @@
 <template>
     <div class="dashboard-view">
+        <template v-if="loading">
+            <DataSkeleton :rows="1" :columns="4" height="7rem" />
+            <DataSkeleton :rows="2" :columns="2" height="22rem" />
+        </template>
         <DataChartPanel
+            v-else
             :loading="loading"
             :total-users="totalUsers"
             :today-new="todayNew"
@@ -23,6 +28,7 @@
 import { onMounted, ref, watch } from 'vue'
 import { getUserBehaviorStats, getUsers } from '@/api/data'
 import DataChartPanel from '@/components/data/DataChartPanel.vue'
+import DataSkeleton from '@/components/data/DataSkeleton.vue'
 import { MEDIA_PLATFORMS } from '@/configs/data'
 import { useAlert } from '@/composables'
 import { useRegionStore } from '@/stores'
@@ -76,7 +82,7 @@ const fetchData = async () => {
     const rangeEnd = new Date(todayStart)
     rangeEnd.setDate(rangeEnd.getDate() + 1)
     const recentCreatedAt = [days[0].toISOString(), rangeEnd.toISOString()] as [string, string]
-    const chartLabels = days.map((day) => day.toLocaleDateString())
+    const chartLabels = days.map((day) => `${day.getMonth() + 1}/${day.getDate()}`)
 
     let totalData: DataListResult<User>
     try {
@@ -190,6 +196,9 @@ watch(() => regionStore.region, () => {
 
 <style scoped lang="scss">
 .dashboard-view {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     padding: var(--content-padding);
 }
 </style>

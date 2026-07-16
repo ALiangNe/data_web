@@ -59,7 +59,7 @@ const groups = computed(() => {
     align-items: center;
     flex-shrink: 0;
     height: var(--header-height);
-    padding: 0 1.5rem;
+    padding: 0 1.5rem 0 2rem;
     box-sizing: border-box;
     border-bottom: 1px solid var(--color-border);
     text-decoration: none;

@@ -145,7 +145,7 @@ const userChartOption = computed(() => ({
     },
     tooltip: { trigger: 'axis' },
     textStyle: baseTextStyle.value,
-    xAxis: buildCategoryAxis(props.userChartLabels, 30),
+    xAxis: buildCategoryAxis(props.userChartLabels),
     yAxis: buildValueAxis(),
     series: [
         {
@@ -172,7 +172,7 @@ const visitChartOption = computed(() => ({
     },
     tooltip: { trigger: 'axis' },
     textStyle: baseTextStyle.value,
-    xAxis: buildCategoryAxis(props.visitChartLabels, 30),
+    xAxis: buildCategoryAxis(props.visitChartLabels),
     yAxis: buildValueAxis(),
     series: [
         {
@@ -216,13 +216,10 @@ const mediaChartOption = computed(() => ({
                 borderWidth: 2,
             },
             label: {
-                formatter: '{b}\n{d}% ({c})',
-                color: getCssVar('--color-text'),
+                show: false,
             },
             labelLine: {
-                lineStyle: {
-                    color: getCssVar('--color-border-strong'),
-                },
+                show: false,
             },
             data: props.mediaChartLabels.map((name, index) => ({
                 name,
@@ -256,13 +253,10 @@ const regionChartOption = computed(() => ({
                 borderWidth: 2,
             },
             label: {
-                formatter: '{b}\n{d}% ({c})',
-                color: getCssVar('--color-text'),
+                show: false,
             },
             labelLine: {
-                lineStyle: {
-                    color: getCssVar('--color-border-strong'),
-                },
+                show: false,
             },
             data: props.regionLabels.map((name, index) => ({
                 name,
