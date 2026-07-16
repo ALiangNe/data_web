@@ -67,6 +67,8 @@ const stepStatus = (row: Record<string, string>): 'success' | 'error' =>
 
 <style scoped lang="scss">
 .monitor-log-card {
+    flex: 1 1 auto;
+    min-height: 0;
     overflow: auto;
     width: 100%;
 }

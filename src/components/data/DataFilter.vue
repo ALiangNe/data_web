@@ -117,6 +117,7 @@ const updateTimeRange = (field: string, value: DataTimeRangeFieldValues) => {
 
 <style scoped lang="scss">
 .data-filter {
+    flex: 0 0 auto;
     margin-bottom: 1rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);

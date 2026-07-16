@@ -30,6 +30,7 @@ defineProps<{
 
 <style scoped lang="scss">
 .data-skeleton {
+    min-height: 0;
     display: grid;
     gap: 1rem;
 }

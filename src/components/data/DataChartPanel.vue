@@ -342,21 +342,26 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .data-chart-panel {
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    min-height: 0;
 }
 
 .data-chart-panel__stats {
+    flex: 0 0 auto;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1rem;
 }
 
 .data-chart-panel__row {
+    flex: 1 1 0;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
+    min-height: 0;
 }
 
 .data-chart-panel__stat,
@@ -387,11 +392,15 @@ onBeforeUnmount(() => {
 }
 
 .data-chart-panel__panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     min-width: 0;
     padding: 1rem;
 }
 
 .data-chart-panel__header {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -408,8 +417,9 @@ onBeforeUnmount(() => {
 }
 
 .data-chart-panel__chart {
+    flex: 1 1 auto;
+    min-height: 0;
     width: 100%;
-    height: 20rem;
 }
 
 @media (width <=640px) {

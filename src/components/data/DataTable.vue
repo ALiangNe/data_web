@@ -3,6 +3,7 @@
         <ElTable
             v-if="columns.length"
             :data="rows"
+            height="100%"
             :default-sort="sortField ? {
                 prop: sortField,
                 order: sortOrder === 'desc' ? 'descending' : 'ascending',
@@ -84,6 +85,8 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .data-table {
+    flex: 1 1 auto;
+    min-height: 0;
     overflow: hidden;
     max-width: 100%;
     border: 1px solid var(--color-border);
@@ -93,6 +96,7 @@ const emit = defineEmits<{
 }
 
 .data-table__grid {
+    height: 100%;
     width: 100%;
     font-size: 0.8125rem;
 }

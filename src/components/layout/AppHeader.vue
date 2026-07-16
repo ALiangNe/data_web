@@ -49,6 +49,7 @@ const onLogout = async () => {
 
 <style scoped lang="scss">
 .app-header {
+    flex: 0 0 var(--header-height);
     display: flex;
     align-items: center;
     justify-content: flex-end;

@@ -199,6 +199,9 @@ watch(() => regionStore.region, () => {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
     padding: var(--content-padding);
 }
 </style>

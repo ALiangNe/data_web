@@ -20,8 +20,9 @@ import AppSidebar from '@/components/layout/AppSidebar.vue'
     display: flex;
     align-items: stretch;
     width: 100%;
-    min-height: 100vh;
-    min-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
     background: var(--color-bg);
 }
 
@@ -30,13 +31,14 @@ import AppSidebar from '@/components/layout/AppSidebar.vue'
     display: flex;
     flex-direction: column;
     min-width: 0;
-    min-height: 100%;
+    min-height: 0;
+    height: 100%;
 }
 
 .main-layout__main {
     flex: 1 1 auto;
     min-width: 0;
     min-height: 0;
-    overflow: auto;
+    overflow: hidden;
 }
 </style>

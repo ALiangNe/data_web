@@ -53,9 +53,14 @@ select:focus-visible {
 }
 
 .data-list-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    max-width: 100%;
+    overflow: hidden;
     padding: var(--content-padding);
     box-sizing: border-box;
-    max-width: 100%;
 }
 
 .el-input__inner:focus-visible {

@@ -43,6 +43,7 @@ const onSizeChange = (value: number) => {
 
 <style scoped lang="scss">
 .data-pagination {
+    flex: 0 0 auto;
     display: flex;
     justify-content: flex-end;
     margin-top: 1rem;
