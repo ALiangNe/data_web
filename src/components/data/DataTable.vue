@@ -1,76 +1,65 @@
 <template>
     <section class="data-table">
-        <p v-if="loading" class="data-table__status">Loading...</p>
-        <table v-else-if="columns.length" class="data-table__grid">
-            <thead>
-                <tr>
-                    <th
-                        v-for="col in columns"
-                        :key="col"
-                        class="data-table__head"
+        <ElTable
+            v-if="columns.length"
+            :data="rows"
+            :default-sort="sortField ? {
+                prop: sortField,
+                order: sortOrder === 'desc' ? 'descending' : 'ascending',
+            } : undefined"
+            :empty-text="loading ? 'Loading...' : 'No data'"
+            :row-class-name="clickable ? 'data-table__row--clickable' : ''"
+            class="data-table__grid"
+            @row-click="clickable ? emit('rowClick', $event) : undefined"
+            @sort-change="$event.prop ? emit('sortColumn', $event.prop) : undefined"
+        >
+            <ElTableColumn
+                v-for="col in columns"
+                :key="col"
+                :prop="col"
+                :label="col"
+                :sortable="sortableFields?.includes(col) ? 'custom' : false"
+                :sort-orders="['ascending', 'descending']"
+            >
+                <template #default="{ row }">
+                    <ElTooltip
+                        :content="row[col]"
+                        placement="top"
+                        :show-after="300"
+                        :disabled="!row[col]"
+                        popper-class="data-table__tooltip"
                     >
+                        <div class="data-table__cell-content">{{ row[col] }}</div>
+                    </ElTooltip>
+                </template>
+            </ElTableColumn>
+            <ElTableColumn
+                v-if="actions?.length"
+                label="actions"
+            >
+                <template #default="{ row }">
+                    <div class="data-table__actions">
                         <button
-                            v-if="sortableFields?.includes(col)"
+                            v-for="action in actions"
+                            :key="action.key"
                             type="button"
-                            class="data-table__sort"
-                            :disabled="loading"
-                            @click="emit('sortColumn', col)"
+                            class="data-table__action"
+                            @click.stop="emit('action', { key: action.key, row })"
                         >
-                            <span class="data-table__sort-field">{{ col }}</span>
-                            <span v-if="col === sortField" class="data-table__sort-icon">
-                                {{ sortOrder === 'desc' ? '↓' : '↑' }}
-                            </span>
+                            {{ action.label }}
                         </button>
-                        <template v-else>{{ col }}</template>
-                    </th>
-                    <th v-if="actions?.length" class="data-table__head">actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr
-                    v-for="(row, index) in rows"
-                    :key="index"
-                    class="data-table__row"
-                    :class="{ 'data-table__row--clickable': clickable }"
-                    @click="clickable ? emit('rowClick', row) : undefined"
-                >
-                    <td
-                        v-for="col in columns"
-                        :key="col"
-                        class="data-table__cell"
-                    >
-                        <ElTooltip
-                            :content="row[col]"
-                            placement="top"
-                            :show-after="300"
-                            :disabled="!row[col]"
-                            popper-class="data-table__tooltip"
-                        >
-                            <div class="data-table__cell-content">{{ row[col] }}</div>
-                        </ElTooltip>
-                    </td>
-                    <td v-if="actions?.length" class="data-table__cell">
-                        <div class="data-table__actions">
-                            <button
-                                v-for="action in actions"
-                                :key="action.key"
-                                type="button"
-                                class="data-table__action"
-                                @click="emit('action', { key: action.key, row })"
-                            >
-                                {{ action.label }}
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <p v-else class="data-table__empty">No data</p>
+                    </div>
+                </template>
+            </ElTableColumn>
+        </ElTable>
+        <p v-else class="data-table__empty">
+            {{ loading ? 'Loading...' : 'No data' }}
+        </p>
     </section>
 </template>
 
 <script setup lang="ts">
-import { ElTooltip } from 'element-plus'
+import { ElTable, ElTableColumn, ElTooltip } from 'element-plus'
 
 defineProps<{
     columns: string[]
@@ -95,7 +84,8 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .data-table {
-    overflow: auto;
+    overflow: hidden;
+    max-width: 100%;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     background: var(--color-surface);
@@ -104,64 +94,33 @@ const emit = defineEmits<{
 
 .data-table__grid {
     width: 100%;
-    border-collapse: collapse;
     font-size: 0.8125rem;
 }
 
-.data-table__head {
-    padding: 0.625rem 0.875rem;
-    border-bottom: 1px solid var(--color-border);
+:deep(.el-table__inner-wrapper) {
+    max-width: 100%;
+}
+
+:deep(.el-table__header th) {
     background: var(--color-table-head);
-    text-align: left;
+    color: var(--color-text-secondary);
+}
+
+:deep(.el-table__header .cell) {
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--color-text-secondary);
     white-space: nowrap;
 }
 
-.data-table__sort {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0;
-    border: none;
-    background: transparent;
-    font: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    color: inherit;
-    cursor: pointer;
-    border-radius: var(--radius-sm);
-
-    &:hover:not(:disabled) {
-        color: var(--color-primary);
-    }
-
-    &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
-}
-
-.data-table__sort-field,
-.data-table__sort-icon {
-    pointer-events: none;
-}
-
-.data-table__sort-icon {
-    font-size: 0.75rem;
-    line-height: 1;
-    color: var(--color-primary);
-}
-
-.data-table__cell {
-    padding: 0.625rem 0.875rem;
-    border-bottom: 1px solid var(--color-border);
-    text-align: left;
-    vertical-align: top;
-    max-width: 18rem;
+:deep(.el-table__cell) {
     color: var(--color-text);
     font-variant-numeric: tabular-nums;
+}
+
+:deep(.el-table__body tr:hover > td.el-table__cell) {
+    background: var(--color-table-row-hover);
 }
 
 .data-table__cell-content {
@@ -209,20 +168,11 @@ const emit = defineEmits<{
     }
 }
 
-.data-table__row:hover .data-table__cell {
-    background: var(--color-table-row-hover);
-}
-
-.data-table__row--clickable {
+:deep(.data-table__row--clickable) {
     cursor: pointer;
 }
 
-.data-table__row:last-child .data-table__cell {
-    border-bottom: none;
-}
-
-.data-table__empty,
-.data-table__status {
+.data-table__empty {
     margin: 0;
     padding: 2rem 1.5rem;
     font-size: 0.875rem;
