@@ -51,7 +51,8 @@ apiClient.interceptors.request.use(async config => {
     } catch (e) {
         console.warn('[API] Failed to fetch access token:', e)
     }
-    if (accessToken) {
+    const hasAuthorization = !!(config.headers?.Authorization || config.headers?.authorization)
+    if (accessToken && !hasAuthorization) {
         config.headers['Authorization'] = 'Bearer ' + accessToken
     }
     return config

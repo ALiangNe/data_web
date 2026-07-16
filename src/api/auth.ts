@@ -9,7 +9,7 @@ export const login = async (email: string, password: string): Promise<LoginResul
 export const refreshToken = async (refreshToken: string): Promise<RefreshTokenResult> => {
     const response = await apiClient.post<unknown, RefreshTokenResult>('/auth/refresh-token', {}, {
         headers: {
-            'authorization': 'Refresh ' + refreshToken,
+            'Authorization': 'Refresh ' + refreshToken,
         },
     })
     return response
