@@ -1,4 +1,9 @@
 /* Per-table filter, sort, and time-range configuration */
+export const DATA_REGIONS = [
+    { label: 'US West', value: 'usw1' },
+    { label: 'EU Central', value: 'euc1' },
+] as const
+
 export const DATA_CENTER_TABLES = {
     bots: {
         filter: ['model', 'serialNumber', 'manufacturer', 'status'],

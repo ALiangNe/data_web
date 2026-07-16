@@ -1,5 +1,11 @@
 import { DATA_CENTER_TABLES, DATA_LOOKUP_TABLES } from '@/configs/data'
 
+export type DataRegion = 'usw1' | 'euc1'
+
+export type DataRegionQuery<T> = T & {
+    region: DataRegion
+}
+
 export type Bot = {
     id: string
     ownerId: string

@@ -18,16 +18,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { getDataLookup } from '@/api/data'
 import DataFilter from '@/components/data/DataFilter.vue'
 import DataTable from '@/components/data/DataTable.vue'
 import { useAlert } from '@/composables'
 import { DATA_LOOKUP_TABLES } from '@/configs/data'
+import { useRegionStore } from '@/stores'
 import { ApiError } from '@/types/api'
 import type { DataLookupEntity, DataSelectFieldConfig } from '@/types/data'
 
 const { show } = useAlert()
+const regionStore = useRegionStore()
 
 const selectFields: Record<string, DataSelectFieldConfig> = {
     entity: {
@@ -69,6 +71,7 @@ const fetchData = async () => {
     let data
     try {
         data = await getDataLookup({
+            region: regionStore.region,
             entity: entity as DataLookupEntity,
             ids,
         })
@@ -107,4 +110,8 @@ const resetFilters = () => {
     selectValues.value = { entity: selectFields.entity.default }
     rows.value = []
 }
+
+watch(() => regionStore.region, () => {
+    rows.value = []
+})
 </script>

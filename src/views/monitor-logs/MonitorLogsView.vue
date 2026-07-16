@@ -16,16 +16,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { getMonitorLogsTrace } from '@/api/data'
 import DataFilter from '@/components/data/DataFilter.vue'
 import MonitorLogCard from '@/components/data/MonitorLogCard.vue'
 import { useAlert } from '@/composables'
 import { DATA_CENTER_TABLES } from '@/configs/data'
+import { useRegionStore } from '@/stores'
 import { ApiError } from '@/types/api'
 import type { MonitorSpan } from '@/types/data'
 
 const { show } = useAlert()
+const regionStore = useRegionStore()
 
 const table = DATA_CENTER_TABLES.monitorLogs
 const filterFields = table.filter
@@ -42,7 +44,10 @@ const fetchData = async () => {
 
     let data
     try {
-        data = await getMonitorLogsTrace(id)
+        data = await getMonitorLogsTrace({
+            region: regionStore.region,
+            traceId: id,
+        })
     } catch (error) {
         console.error('MonitorLogsView fetch failed:', error)
         rows.value = []
@@ -110,4 +115,8 @@ const resetFilters = () => {
     filterValues.value = {}
     rows.value = []
 }
+
+watch(() => regionStore.region, () => {
+    rows.value = []
+})
 </script>

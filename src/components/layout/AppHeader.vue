@@ -1,6 +1,19 @@
 <template>
     <header class="app-header">
         <div class="app-header__spacer" />
+        <ElSelect
+            :model-value="regionStore.region"
+            class="app-header__region"
+            size="small"
+            @update:model-value="onRegionChange"
+        >
+            <ElOption
+                v-for="region in DATA_REGIONS"
+                :key="region.value"
+                :label="region.label"
+                :value="region.value"
+            />
+        </ElSelect>
         <span v-if="displayName" class="app-header__user">{{ displayName }}</span>
         <button type="button" class="app-header__logout" @click="onLogout">
             Sign out
@@ -11,14 +24,22 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElOption, ElSelect } from 'element-plus'
 import { useAuth } from '@/composables'
-import { useUserStore } from '@/stores'
+import { DATA_REGIONS } from '@/configs/data'
+import { useRegionStore, useUserStore } from '@/stores'
+import type { DataRegion } from '@/types/data'
 
 const router = useRouter()
 const { logout } = useAuth()
 const userStore = useUserStore()
+const regionStore = useRegionStore()
 
 const displayName = computed(() => userStore.user?.username)
+
+const onRegionChange = (value: DataRegion) => {
+    regionStore.setRegion(value)
+}
 
 const onLogout = async () => {
     logout()
@@ -47,6 +68,11 @@ const onLogout = async () => {
     font-size: 0.8125rem;
     font-weight: 500;
     color: var(--color-text);
+}
+
+.app-header__region {
+    width: 8.75rem;
+    margin-right: 0.75rem;
 }
 
 .app-header__logout {

@@ -34,17 +34,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { getUserBehaviorLogs } from '@/api/data'
 import DataFilter from '@/components/data/DataFilter.vue'
 import DataPagination from '@/components/data/DataPagination.vue'
 import DataTable from '@/components/data/DataTable.vue'
 import { useAlert } from '@/composables'
 import { DATA_CENTER_TABLES } from '@/configs/data'
+import { useRegionStore } from '@/stores'
 import { ApiError } from '@/types/api'
 import type { DataCenterSortFieldFor, DataTimeRangeFieldValues, UserBehaviorLogAggregateBy } from '@/types/data'
 
 const { show } = useAlert()
+const regionStore = useRegionStore()
 
 const table = DATA_CENTER_TABLES.userBehaviorLogs
 const pageSizeOptions = [5, 10, 20]
@@ -94,6 +96,7 @@ const fetchData = async () => {
             aggregateBy: selectValues.value.aggregateBy,
             ...filters,
             ...timeRangeFilters,
+            region: regionStore.region,
             page: page.value,
             pageSize: pageSize.value,
             order: sortOrder.value,
@@ -184,6 +187,11 @@ const onSortColumn = (col: string) => {
 }
 
 onMounted(() => {
+    fetchData()
+})
+
+watch(() => regionStore.region, () => {
+    page.value = 1
     fetchData()
 })
 </script>

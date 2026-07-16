@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { completeUpload, getSoftwareVersions, getUploadPost, listSoftware } from '@/api/software'
 import DataFilter from '@/components/data/DataFilter.vue'
 import DataModal from '@/components/data/DataModal.vue'
@@ -63,6 +63,7 @@ import DataTable from '@/components/data/DataTable.vue'
 import SoftwareForm from '@/components/data/SoftwareForm.vue'
 import { useAlert } from '@/composables'
 import { DATA_CENTER_TABLES } from '@/configs/data'
+import { useRegionStore } from '@/stores'
 import { ApiError } from '@/types/api'
 import semver from 'semver'
 import type { DataCenterSortFieldFor, SoftwareUploadPostParams } from '@/types/data'
@@ -74,6 +75,7 @@ type DependencyPackage = {
 }
 
 const { show } = useAlert()
+const regionStore = useRegionStore()
 
 const table = DATA_CENTER_TABLES.software
 const pageSizeOptions = [5, 10, 20]
@@ -135,6 +137,7 @@ const fetchData = async () => {
     try {
         data = await listSoftware({
             ...filters,
+            region: regionStore.region,
             page: page.value,
             pageSize: pageSize.value,
             sortBy: sortField.value,
@@ -232,6 +235,7 @@ const loadDependencyPackages = async () => {
     let softwareResult
     try {
         softwareResult = await listSoftware({
+            region: regionStore.region,
             page: nextPage,
             pageSize: dependencyPageSize,
             sortBy: 'createdAt',
@@ -288,7 +292,10 @@ const onRequestVersion = async (name: string) => {
 
     let softwareResult
     try {
-        softwareResult = await getSoftwareVersions(name)
+        softwareResult = await getSoftwareVersions({
+            region: regionStore.region,
+            name,
+        })
     } catch (error) {
         console.error('SoftwareView getSoftwareVersions failed:', error)
         const message = error instanceof ApiError && error.message
@@ -318,7 +325,10 @@ const onRequestDependencyVersions = async (name: string) => {
 
     let versions
     try {
-        versions = await getSoftwareVersions(name)
+        versions = await getSoftwareVersions({
+            region: regionStore.region,
+            name,
+        })
     } catch (error) {
         console.error('SoftwareView getSoftwareVersions dependency versions failed:', error)
         const message = error instanceof ApiError && error.message
@@ -352,7 +362,10 @@ const onSubmit = async (params: SoftwareUploadPostParams, file: File) => {
 
     let softwareUpload
     try {
-        softwareUpload = await getUploadPost(params)
+        softwareUpload = await getUploadPost({
+            ...params,
+            region: regionStore.region,
+        })
     } catch (error) {
         console.error('SoftwareView getUploadPost failed:', error)
         const message = error instanceof ApiError && error.message
@@ -390,6 +403,7 @@ const onSubmit = async (params: SoftwareUploadPostParams, file: File) => {
 
     try {
         await completeUpload({
+            region: regionStore.region,
             id: softwareUpload.id,
             checksum: params.checksum,
         })
@@ -410,6 +424,12 @@ const onSubmit = async (params: SoftwareUploadPostParams, file: File) => {
 }
 
 onMounted(() => {
+    fetchData()
+})
+
+watch(() => regionStore.region, () => {
+    closeUploadModal()
+    page.value = 1
     fetchData()
 })
 </script>

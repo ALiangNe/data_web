@@ -3,7 +3,13 @@
         <RouterLink :to="{ name: 'DashboardView' }" class="app-sidebar__brand">
             <span class="app-sidebar__title">Data Console</span>
         </RouterLink>
-        <ElMenu v-if="groups.length" class="app-sidebar__menu" :default-active="route.path" :default-openeds="groups.map((g) => g.key)" router>
+        <ElMenu
+            v-if="groups.length"
+            class="app-sidebar__menu"
+            :default-active="route.path"
+            :default-openeds="groups.map((g) => g.key)"
+            router
+        >
             <ElSubMenu v-for="group in groups" :key="group.key" :index="group.key">
                 <template #title>{{ group.label }}</template>
                 <ElMenuItem v-for="item in group.children" :key="item.name" :index="`/${item.permission}`">

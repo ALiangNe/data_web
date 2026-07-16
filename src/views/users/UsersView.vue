@@ -76,11 +76,12 @@ import UserPermissionPanel from '@/components/data/UserPermissionPanel.vue'
 import UserMemoryPanel from '@/components/data/UserMemoryPanel.vue'
 import { useAlert } from '@/composables'
 import { DATA_CENTER_TABLES } from '@/configs/data'
-import { useUserStore } from '@/stores'
+import { useRegionStore, useUserStore } from '@/stores'
 import { ApiError } from '@/types/api'
 import type { ChatHistory, DataCenterSortFieldFor, DataListResult, User } from '@/types/data'
 
 const { show } = useAlert()
+const regionStore = useRegionStore()
 const userStore = useUserStore()
 
 const table = DATA_CENTER_TABLES.users
@@ -192,6 +193,7 @@ const fetchData = async () => {
 
     const params = {
         ...filters,
+        region: regionStore.region,
         page: page.value,
         pageSize: pageSize.value,
         sortBy: sortField.value,
@@ -266,6 +268,7 @@ const openChatModal = async (payload: { key: string; row: Record<string, string>
 
     try {
         chatActiveDates.value = await getChatActiveDates({
+            region: regionStore.region,
             userId: chatUserId.value,
             currentTime: new Date(`${monthKey}-10T00:00:00+08:00`).toISOString(),
         })
@@ -298,6 +301,7 @@ const onChatPanelChange = async (date: Date) => {
 
     try {
         chatActiveDates.value = await getChatActiveDates({
+            region: regionStore.region,
             userId: chatUserId.value,
             currentTime: new Date(`${monthKey}-10T00:00:00+08:00`).toISOString(),
         })
@@ -320,6 +324,7 @@ const openMemoryModal = async (payload: { row: Record<string, string> }) => {
     userMemory.value = ''
 
     const params = {
+        region: regionStore.region,
         userId: payload.row.id,
         soulId: payload.row.soulId,
     }
@@ -356,6 +361,7 @@ const submitPermission = async () => {
     if (targetSubmitDisabled.value) return
 
     const params = {
+        region: regionStore.region,
         userId: targetUserId.value,
         role: targetSelectedRole.value,
     }
@@ -386,6 +392,7 @@ const fetchChatMessages = async (date: string) => {
     chatMessages.value = []
 
     const params = {
+        region: regionStore.region,
         userId: chatUserId.value,
         soulId: chatSoulId.value,
         date,
@@ -480,5 +487,11 @@ watch(selectedDate, (date) => {
     chatMessages.value = []
     if (!date) return
     fetchChatMessages(date)
+})
+
+watch(() => regionStore.region, () => {
+    closeModal()
+    page.value = 1
+    fetchData()
 })
 </script>

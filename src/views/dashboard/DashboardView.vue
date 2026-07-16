@@ -20,15 +20,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { getUserBehaviorStats, getUsers } from '@/api/data'
 import DataChartPanel from '@/components/data/DataChartPanel.vue'
 import { MEDIA_PLATFORMS } from '@/configs/data'
 import { useAlert } from '@/composables'
+import { useRegionStore } from '@/stores'
 import { ApiError } from '@/types/api'
 import type { DataListResult, User, UserBehaviorStatsResult } from '@/types/data'
 
 const { show } = useAlert()
+const regionStore = useRegionStore()
 
 const loading = ref(false)
 const totalUsers = ref('0')
@@ -78,7 +80,11 @@ const fetchData = async () => {
 
     let totalData: DataListResult<User>
     try {
-        totalData = await getUsers({ page: 1, pageSize: 1 })
+        totalData = await getUsers({
+            region: regionStore.region,
+            page: 1,
+            pageSize: 1,
+        })
     } catch (error) {
         console.error('DashboardView total users fetch failed:', error)
         const message = error instanceof ApiError && error.message
@@ -91,7 +97,10 @@ const fetchData = async () => {
 
     let recentData: DataListResult<User>
     try {
-        recentData = await getUsers({ createdAt: recentCreatedAt })
+        recentData = await getUsers({
+            region: regionStore.region,
+            createdAt: recentCreatedAt,
+        })
     } catch (error) {
         console.error('DashboardView recent users fetch failed:', error)
         const message = error instanceof ApiError && error.message
@@ -104,7 +113,10 @@ const fetchData = async () => {
 
     let behaviorData: UserBehaviorStatsResult
     try {
-        behaviorData = await getUserBehaviorStats({ createdAt: recentCreatedAt })
+        behaviorData = await getUserBehaviorStats({
+            region: regionStore.region,
+            createdAt: recentCreatedAt,
+        })
     } catch (error) {
         console.error('DashboardView behavior stats fetch failed:', error)
         const message = error instanceof ApiError && error.message
@@ -168,6 +180,10 @@ const fetchData = async () => {
 }
 
 onMounted(() => {
+    fetchData()
+})
+
+watch(() => regionStore.region, () => {
     fetchData()
 })
 </script>
