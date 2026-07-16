@@ -39,17 +39,28 @@
                 label="actions"
             >
                 <template #default="{ row }">
-                    <div class="data-table__actions">
-                        <button
-                            v-for="action in actions"
-                            :key="action.key"
-                            type="button"
-                            class="data-table__action"
-                            @click.stop="emit('action', { key: action.key, row })"
-                        >
-                            {{ action.label }}
-                        </button>
-                    </div>
+                    <ElDropdown
+                        trigger="click"
+                        @command="emit('action', { key: $event as string, row })"
+                    >
+                        <ElButton size="small" @click.stop>
+                            Actions
+                            <ElIcon class="el-icon--right">
+                                <ArrowDown />
+                            </ElIcon>
+                        </ElButton>
+                        <template #dropdown>
+                            <ElDropdownMenu>
+                                <ElDropdownItem
+                                    v-for="action in actions"
+                                    :key="action.key"
+                                    :command="action.key"
+                                >
+                                    {{ action.label }}
+                                </ElDropdownItem>
+                            </ElDropdownMenu>
+                        </template>
+                    </ElDropdown>
                 </template>
             </ElTableColumn>
         </ElTable>
@@ -60,7 +71,8 @@
 </template>
 
 <script setup lang="ts">
-import { ElTable, ElTableColumn, ElTooltip } from 'element-plus'
+import { ArrowDown } from '@element-plus/icons-vue'
+import { ElButton, ElDropdown, ElDropdownItem, ElDropdownMenu, ElIcon, ElTable, ElTableColumn, ElTooltip } from 'element-plus'
 
 defineProps<{
     columns: string[]
@@ -136,40 +148,6 @@ const emit = defineEmits<{
     text-overflow: ellipsis;
     white-space: pre-wrap;
     word-break: break-word;
-}
-
-.data-table__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.375rem;
-}
-
-.data-table__action {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.375rem 0.75rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    background: var(--color-surface);
-    font: inherit;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--color-text-secondary);
-    white-space: nowrap;
-    cursor: pointer;
-    transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
-
-    &:hover:not(:disabled) {
-        background: var(--color-hover);
-        border-color: var(--color-border-strong);
-        color: var(--color-text);
-    }
-
-    &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
 }
 
 :deep(.data-table__row--clickable) {

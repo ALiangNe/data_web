@@ -141,18 +141,18 @@ const editedByRole = computed(() => userStore.user?.role ?? null)
 const editedByUserId = computed(() => userStore.user?.userId ?? '')
 const tableActions = computed(() => {
     const actions = [
-        { key: 'viewChat', label: 'ViewChat' },
-        { key: 'viewMemory', label: 'ViewMemory' },
+        { key: 'viewChat', label: 'View Chat' },
+        { key: 'viewMemory', label: 'View Memory' },
     ]
     if (editedByRole.value != null && editedByRole.value <= 1) {
-        actions.push({ key: 'EditPermissions', label: 'EditPermissions' })
+        actions.push({ key: 'EditPermissions', label: 'Edit Permissions' })
     }
     return actions
 })
 const modalTitle = computed(() => {
-    if (modalType.value === 'chat') return 'ViewChat'
-    if (modalType.value === 'memory') return 'ViewMemory'
-    if (modalType.value === 'permission') return 'EditPermissions'
+    if (modalType.value === 'chat') return 'View Chat'
+    if (modalType.value === 'memory') return 'View Memory'
+    if (modalType.value === 'permission') return 'Edit Permissions'
     return ''
 })
 const targetIsSelf = computed(() => targetUserId.value === editedByUserId.value)
