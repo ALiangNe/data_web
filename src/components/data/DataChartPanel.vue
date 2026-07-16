@@ -195,9 +195,15 @@ const visitChartOption = computed(() => ({
 const mediaChartOption = computed(() => ({
     color: pieChartColors.value,
     legend: {
-        top: 0,
-        right: 0,
+        orient: 'vertical',
+        top: 'middle',
+        right: 8,
         type: 'scroll',
+        formatter: (name: string) => {
+            const value = props.mediaChartValues[props.mediaChartLabels.indexOf(name)] ?? 0
+            const total = props.mediaChartValues.reduce((sum, item) => sum + item, 0)
+            return `${name}: ${value} (${total ? ((value / total) * 100).toFixed(1).replace(/\.0$/, '') : 0}%)`
+        },
     },
     tooltip: {
         trigger: 'item',
@@ -232,9 +238,15 @@ const mediaChartOption = computed(() => ({
 const regionChartOption = computed(() => ({
     color: pieChartColors.value,
     legend: {
-        top: 0,
-        right: 0,
+        orient: 'vertical',
+        top: 'middle',
+        right: 8,
         type: 'scroll',
+        formatter: (name: string) => {
+            const value = props.regionValues[props.regionLabels.indexOf(name)] ?? 0
+            const total = props.regionValues.reduce((sum, item) => sum + item, 0)
+            return `${name}: ${value} (${total ? ((value / total) * 100).toFixed(1).replace(/\.0$/, '') : 0}%)`
+        },
     },
     tooltip: {
         trigger: 'item',
