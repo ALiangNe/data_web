@@ -171,17 +171,18 @@ const fetchData = async () => {
     regionValues.value = behaviorData.regions.map((item) => item.count)
 
     const eventCountMap = new Map(behaviorData.mediaClickEvents.map((item) => [item.eventName, item.count]))
-    mediaChartLabels.value = MEDIA_PLATFORMS.map((platform) => platform.label)
-
-    const mediaValues: number[] = []
-    for (const platform of MEDIA_PLATFORMS) {
+    const mediaItems = MEDIA_PLATFORMS.map((platform) => {
         let count = 0
         for (const eventName of platform.events) {
             count += eventCountMap.get(eventName) ?? 0
         }
-        mediaValues.push(count)
-    }
-    mediaChartValues.value = mediaValues
+        return {
+            label: platform.label,
+            count,
+        }
+    }).sort((a, b) => b.count - a.count)
+    mediaChartLabels.value = mediaItems.map((item) => item.label)
+    mediaChartValues.value = mediaItems.map((item) => item.count)
     loading.value = false
 }
 
