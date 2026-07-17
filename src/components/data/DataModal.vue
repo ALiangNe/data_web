@@ -1,5 +1,5 @@
 <template>
-    <div v-if="open" class="data-modal" @click.self="emit('close')">
+    <div v-show="open" class="data-modal" @click.self="emit('close')">
         <div
             class="data-modal__panel"
             :style="{ maxWidth }"

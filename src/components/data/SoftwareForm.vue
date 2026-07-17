@@ -29,7 +29,7 @@
                         v-model="form.version"
                         placeholder="version"
                         no-data-text="No Data"
-                        :disabled="locked"
+                        :disabled="locked || !form.name.trim()"
                         :loading="loadingVersion"
                     >
                         <ElOption
@@ -43,7 +43,7 @@
                         v-else
                         v-model="form.version"
                         placeholder="version"
-                        :disabled="locked"
+                        :disabled="locked || !form.name.trim()"
                     />
                 </ElFormItem>
 
@@ -69,15 +69,16 @@
                                         :value="pkg.name"
                                     />
                                 </ElSelect>
-                                <ElSelect
-                                    v-else
-                                    v-model="condition.joiner"
-                                    class="software-form__dependency-joiner"
-                                    :disabled="locked"
-                                >
-                                    <ElOption label="and" value="and" />
-                                    <ElOption label="or" value="or" />
-                                </ElSelect>
+                                <div v-else class="software-form__dependency-joiner-cell">
+                                    <ElSelect
+                                        v-model="condition.joiner"
+                                        class="software-form__dependency-joiner"
+                                        :disabled="locked"
+                                    >
+                                        <ElOption label="and" value="and" />
+                                        <ElOption label="or" value="or" />
+                                    </ElSelect>
+                                </div>
                                 <ElSelect
                                     v-model="condition.operator"
                                     class="software-form__dependency-operator"
@@ -582,8 +583,18 @@ watch(
     color: var(--color-text-secondary);
 }
 
+.software-form__dependency-joiner-cell {
+    display: flex;
+    justify-content: flex-end;
+    min-width: 0;
+}
+
 .software-form__dependency-joiner {
-    width: 100%;
+    width: 5rem;
+}
+
+:deep(.software-form__dependency-joiner.el-select) {
+    width: 5rem;
 }
 
 .software-form__dependency-add {

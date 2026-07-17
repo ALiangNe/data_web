@@ -39,6 +39,7 @@
             @close="closeUploadModal"
         >
             <SoftwareForm
+                :key="uploadFormKey"
                 :disabled="submitting"
                 :loading-version="loadingVersion"
                 :allow-custom-version="allowCustomVersion"
@@ -96,6 +97,7 @@ const loadingVersion = ref(false)
 const allowCustomVersion = ref(false)
 const lastVersionName = ref('')
 const versionOptions = ref<string[]>([])
+const uploadFormKey = ref(0)
 const defaultVersion = 'v1.0.0'
 const uploadHelp = [
     '1. ^ allows compatible updates: ^1.2.3 means >=1.2.3 <2.0.0; ^0.2.3 means >=0.2.3 <0.3.0 (0.x versions are unstable).',
@@ -220,9 +222,7 @@ const onSortColumn = (col: string) => {
 
 const openUploadModal = async () => {
     uploadModalOpen.value = true
-    dependencyPackages.value = []
-    dependencyPage.value = 0
-    dependencyHasMore.value = true
+    if (dependencyPage.value) return
     await loadDependencyPackages()
 }
 
@@ -266,6 +266,9 @@ const loadDependencyPackages = async () => {
 
 const closeUploadModal = () => {
     uploadModalOpen.value = false
+}
+
+const resetUploadState = () => {
     lastVersionName.value = ''
     versionOptions.value = []
     allowCustomVersion.value = false
@@ -274,6 +277,7 @@ const closeUploadModal = () => {
     dependencyPage.value = 0
     dependencyHasMore.value = true
     dependencyLoadingMore.value = false
+    uploadFormKey.value += 1
 }
 
 const onRequestVersion = async (name: string) => {
@@ -419,6 +423,7 @@ const onSubmit = async (params: SoftwareUploadPostParams, file: File) => {
 
     submitting.value = false
     closeUploadModal()
+    resetUploadState()
     show('Software uploaded successfully.', 'success')
     fetchData()
 }
@@ -429,6 +434,7 @@ onMounted(() => {
 
 watch(() => regionStore.region, () => {
     closeUploadModal()
+    resetUploadState()
     page.value = 1
     fetchData()
 })
