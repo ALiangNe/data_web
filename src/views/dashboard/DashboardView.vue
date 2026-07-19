@@ -93,10 +93,7 @@ const fetchData = async () => {
         })
     } catch (error) {
         console.error('DashboardView total users fetch failed:', error)
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to load data. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         loading.value = false
         return
     }
@@ -109,10 +106,7 @@ const fetchData = async () => {
         })
     } catch (error) {
         console.error('DashboardView recent users fetch failed:', error)
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to load data. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         loading.value = false
         return
     }
@@ -125,10 +119,7 @@ const fetchData = async () => {
         })
     } catch (error) {
         console.error('DashboardView behavior stats fetch failed:', error)
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to load data. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         loading.value = false
         return
     }

@@ -51,10 +51,7 @@ const fetchData = async () => {
     } catch (error) {
         console.error('MonitorLogsView fetch failed:', error)
         rows.value = []
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to load spans. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         loading.value = false
         return
     }

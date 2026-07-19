@@ -19,10 +19,7 @@ const onSubmit = async (email: string, password: string) => {
         await login(email, password)
         await router.push({ name: 'DashboardView' })
     } catch (error) {
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Login failed. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
     }
 }
 </script>

@@ -207,10 +207,7 @@ const fetchData = async () => {
         console.error('UsersView fetch failed:', error)
         rows.value = []
         total.value = 0
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to load data. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         loading.value = false
         return
     }
@@ -280,10 +277,7 @@ const openChatModal = async (payload: { key: string; row: Record<string, string>
         chatActiveMonth.value = monthKey
     } catch (error) {
         console.error('UsersView fetchChatActiveDates failed:', error)
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to load chat dates. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         closeModal()
         return
     } finally {
@@ -319,10 +313,7 @@ const onChatPanelChange = async (date: Date) => {
         chatActiveMonth.value = monthKey
     } catch (error) {
         console.error('UsersView fetchChatActiveDates failed:', error)
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to load chat dates. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
     } finally {
         chatDatesLoading.value = false
     }
@@ -343,10 +334,7 @@ const openMemoryModal = async (payload: { row: Record<string, string> }) => {
         })
     } catch (error) {
         console.error('UsersView fetchUserMemories failed:', error)
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to load user memory. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         userMemoryLoading.value = false
         closeModal()
         return
@@ -379,10 +367,7 @@ const submitPermission = async () => {
         })
     } catch (error) {
         console.error('UsersView updateUserPermission failed:', error)
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to update user permission. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         roleEditSaving.value = false
         return
     }
@@ -408,10 +393,7 @@ const fetchChatMessages = async (date: string) => {
         })
     } catch (error) {
         console.error('UsersView fetchChatMessages failed:', error)
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to load chat records. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         chatMessagesLoading.value = false
         return
     }

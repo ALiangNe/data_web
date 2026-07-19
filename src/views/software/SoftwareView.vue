@@ -150,10 +150,7 @@ const fetchData = async () => {
         console.error('SoftwareView fetch failed:', error)
         rows.value = []
         total.value = 0
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to load data. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         loading.value = false
         return
     }
@@ -243,10 +240,7 @@ const loadDependencyPackages = async () => {
         })
     } catch (error) {
         console.error('SoftwareView listSoftware dependency packages failed:', error)
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to load dependency packages. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         dependencyLoadingMore.value = false
         return
     }
@@ -302,10 +296,7 @@ const onRequestVersion = async (name: string) => {
         })
     } catch (error) {
         console.error('SoftwareView getSoftwareVersions failed:', error)
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to load software version. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         lastVersionName.value = ''
         loadingVersion.value = false
         return
@@ -335,10 +326,7 @@ const onRequestDependencyVersions = async (name: string) => {
         })
     } catch (error) {
         console.error('SoftwareView getSoftwareVersions dependency versions failed:', error)
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to load dependency versions. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         return
     }
 
@@ -372,10 +360,7 @@ const onSubmit = async (params: SoftwareUploadPostParams, file: File) => {
         })
     } catch (error) {
         console.error('SoftwareView getUploadPost failed:', error)
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to get upload post. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         submitting.value = false
         return
     }
@@ -394,13 +379,11 @@ const onSubmit = async (params: SoftwareUploadPostParams, file: File) => {
         })
     } catch (error) {
         console.error('SoftwareView upload software file failed:', error)
-        show('Failed to upload software file. Please try again.', 'error')
         submitting.value = false
         return
     }
     if (!uploadResponse.ok) {
         console.error(`SoftwareView upload software file failed: ${uploadResponse.status} ${uploadResponse.statusText}`)
-        show('Failed to upload software file. Please try again.', 'error')
         submitting.value = false
         return
     }
@@ -413,10 +396,7 @@ const onSubmit = async (params: SoftwareUploadPostParams, file: File) => {
         })
     } catch (error) {
         console.error('SoftwareView completeUpload failed:', error)
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to complete software upload. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         submitting.value = false
         return
     }

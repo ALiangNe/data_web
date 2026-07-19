@@ -82,10 +82,7 @@ const fetchData = async () => {
         console.error('KnowledgeView fetch failed:', error)
         rows.value = []
         total.value = 0
-        const message = error instanceof ApiError && error.message
-            ? error.message
-            : 'Failed to load data. Please try again.'
-        show(message, 'error')
+        if (error instanceof ApiError && error.message) show(error.message, 'error')
         loading.value = false
         return
     }

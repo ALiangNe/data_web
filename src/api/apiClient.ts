@@ -63,7 +63,7 @@ apiClient.interceptors.response.use(
     <T>(res: AxiosResponse<ApiResponse<T>>) => {
         const { errno, errmsg, data } = res.data
         if (errno !== 0 || errmsg !== 'OK') {
-            throw new ApiError(500, 500, 'global', 'Invalid API response structure')
+            throw new ApiError(res.status, errno, 'global', errmsg)
         }
         return data
     },
@@ -147,11 +147,7 @@ apiClient.interceptors.response.use(
 
         const apiError = new ApiError(status, errorCode, 'global', errorMsg)
         if (status !== 401 && !skipErrorHandler) {
-            if ([403, 429, 500].includes(status)) {
-                router.push({ name: 'ErrorView', params: { status } })
-            } else {
-                router.push({ name: 'ErrorView', params: { status: 500 } })
-            }
+            router.push({ name: 'ErrorView', params: { status } })
         }
         return Promise.reject(apiError)
     },
