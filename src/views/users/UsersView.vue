@@ -79,6 +79,7 @@ import { DATA_CENTER_TABLES } from '@/configs/data'
 import { useRegionStore, useUserStore } from '@/stores'
 import { ApiError } from '@/types/api'
 import type { ChatHistory, DataCenterSortFieldFor, DataListResult, User } from '@/types/data'
+import { getDateUtcRange, getUtcTime } from '@/utils/date'
 
 const { show } = useAlert()
 const regionStore = useRegionStore()
@@ -191,18 +192,16 @@ const fetchData = async () => {
     }
     if (selectValues.value.role) filters.role = selectValues.value.role
 
-    const params = {
-        ...filters,
-        region: regionStore.region,
-        page: page.value,
-        pageSize: pageSize.value,
-        sortBy: sortField.value,
-        order: sortOrder.value,
-    }
-
     let data: DataListResult<User>
     try {
-        data = await getUsers(params)
+        data = await getUsers({
+            ...filters,
+            region: regionStore.region,
+            page: page.value,
+            pageSize: pageSize.value,
+            sortBy: sortField.value,
+            order: sortOrder.value,
+        })
     } catch (error) {
         console.error('UsersView fetch failed:', error)
         rows.value = []
@@ -264,13 +263,19 @@ const openChatModal = async (payload: { key: string; row: Record<string, string>
     chatMessages.value = []
 
     const monthKey = chatDateFormatter.format(new Date()).slice(0, 7)
+    const [year, month] = monthKey.split('-').map(Number)
+    const monthStart = new Date(year, month - 1, 1)
+    const nextMonthStart = new Date(year, month, 1)
     chatDatesLoading.value = true
 
     try {
         chatActiveDates.value = await getChatActiveDates({
             region: regionStore.region,
             userId: chatUserId.value,
-            currentTime: new Date(`${monthKey}-10T00:00:00+08:00`).toISOString(),
+            createdAt: [
+                getUtcTime(monthStart),
+                getUtcTime(nextMonthStart),
+            ],
         })
         chatActiveMonth.value = monthKey
     } catch (error) {
@@ -290,6 +295,9 @@ const onChatPanelChange = async (date: Date) => {
     if (!modalOpen.value || modalType.value !== 'chat' || !chatUserId.value) return
 
     const monthKey = chatDateFormatter.format(date).slice(0, 7)
+    const [year, month] = monthKey.split('-').map(Number)
+    const monthStart = new Date(year, month - 1, 1)
+    const nextMonthStart = new Date(year, month, 1)
     if (selectedDate.value && !selectedDate.value.startsWith(monthKey)) {
         selectedDate.value = ''
         chatMessages.value = []
@@ -303,7 +311,10 @@ const onChatPanelChange = async (date: Date) => {
         chatActiveDates.value = await getChatActiveDates({
             region: regionStore.region,
             userId: chatUserId.value,
-            currentTime: new Date(`${monthKey}-10T00:00:00+08:00`).toISOString(),
+            createdAt: [
+                getUtcTime(monthStart),
+                getUtcTime(nextMonthStart),
+            ],
         })
         chatActiveMonth.value = monthKey
     } catch (error) {
@@ -323,15 +334,13 @@ const openMemoryModal = async (payload: { row: Record<string, string> }) => {
     userMemoryLoading.value = true
     userMemory.value = ''
 
-    const params = {
-        region: regionStore.region,
-        userId: payload.row.id,
-        soulId: payload.row.soulId,
-    }
-
     let memory: string
     try {
-        memory = await getUserMemory(params)
+        memory = await getUserMemory({
+            region: regionStore.region,
+            userId: payload.row.id,
+            soulId: payload.row.soulId,
+        })
     } catch (error) {
         console.error('UsersView fetchUserMemories failed:', error)
         const message = error instanceof ApiError && error.message
@@ -360,15 +369,14 @@ const openPermissionModal = (payload: { row: Record<string, string> }) => {
 const submitPermission = async () => {
     if (targetSubmitDisabled.value) return
 
-    const params = {
-        region: regionStore.region,
-        userId: targetUserId.value,
-        role: targetSelectedRole.value,
-    }
     roleEditSaving.value = true
 
     try {
-        await updateUserPermission(params)
+        await updateUserPermission({
+            region: regionStore.region,
+            userId: targetUserId.value,
+            role: targetSelectedRole.value,
+        })
     } catch (error) {
         console.error('UsersView updateUserPermission failed:', error)
         const message = error instanceof ApiError && error.message
@@ -391,16 +399,14 @@ const fetchChatMessages = async (date: string) => {
     chatMessagesLoading.value = true
     chatMessages.value = []
 
-    const params = {
-        region: regionStore.region,
-        userId: chatUserId.value,
-        soulId: chatSoulId.value,
-        date,
-    }
-
     let messages: ChatHistory[]
     try {
-        messages = await getChatHistories(params)
+        messages = await getChatHistories({
+            region: regionStore.region,
+            userId: chatUserId.value,
+            soulId: chatSoulId.value,
+            createdAt: getDateUtcRange(date),
+        })
     } catch (error) {
         console.error('UsersView fetchChatMessages failed:', error)
         const message = error instanceof ApiError && error.message

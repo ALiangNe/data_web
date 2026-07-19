@@ -55,12 +55,12 @@ export const getUserMemory = async (params: DataRegionQuery<{ userId: string; so
     return apiClient.get<unknown, string>('/data/getUserMemory', { ...baseURL, params })
 }
 
-export const getChatActiveDates = async (params: DataRegionQuery<{ userId: string; currentTime: string }>): Promise<string[]> => {
-    return apiClient.post<unknown, string[]>('/data/getChatActiveDates', params, baseURL)
+export const getChatActiveDates = async (params: DataRegionQuery<{ userId: string; createdAt: [string, string] }>): Promise<string[]> => {
+    return apiClient.get<unknown, string[]>('/data/getChatActiveDates', { ...baseURL, params })
 }
 
-export const getChatHistories = async (params: DataRegionQuery<{ userId: string; soulId: string; date: string }>): Promise<ChatHistory[]> => {
-    return apiClient.post<unknown, ChatHistory[]>('/data/getChatHistories', params, baseURL)
+export const getChatHistories = async (params: DataRegionQuery<{ userId: string; soulId: string; createdAt: [string, string] }>): Promise<ChatHistory[]> => {
+    return apiClient.get<unknown, ChatHistory[]>('/data/getChatHistories', { ...baseURL, params })
 }
 
 export const getDataLookup = async (params: DataRegionQuery<DataLookupQuery>): Promise<DataLookupResult[]> => {
