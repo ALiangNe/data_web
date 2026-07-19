@@ -117,6 +117,13 @@ const baseTextStyle = computed(() => ({
     fontFamily: getCssVar('--font-sans'),
 }))
 
+const mediaPieItems = computed(() => props.mediaChartLabels
+    .map((name, index) => ({
+        name,
+        value: props.mediaChartValues[index] ?? 0,
+    }))
+    .filter((item) => item.value > 0))
+
 const buildCategoryAxis = (labels: string[], rotate = 0) => ({
     type: 'category' as const,
     data: labels,
@@ -200,8 +207,8 @@ const mediaChartOption = computed(() => ({
         right: 8,
         type: 'scroll',
         formatter: (name: string) => {
-            const value = props.mediaChartValues[props.mediaChartLabels.indexOf(name)] ?? 0
-            const total = props.mediaChartValues.reduce((sum, item) => sum + item, 0)
+            const value = mediaPieItems.value.find((item) => item.name === name)?.value ?? 0
+            const total = mediaPieItems.value.reduce((sum, item) => sum + item.value, 0)
             return `${name}: ${value} (${total ? ((value / total) * 100).toFixed(1).replace(/\.0$/, '') : 0}%)`
         },
     },
@@ -227,10 +234,7 @@ const mediaChartOption = computed(() => ({
             labelLine: {
                 show: false,
             },
-            data: props.mediaChartLabels.map((name, index) => ({
-                name,
-                value: props.mediaChartValues[index] ?? 0,
-            })),
+            data: mediaPieItems.value,
         },
     ],
 }))
