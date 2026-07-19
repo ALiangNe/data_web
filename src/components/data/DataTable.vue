@@ -142,8 +142,8 @@ const emit = defineEmits<{
 .data-table__cell-content {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 6;
-    line-clamp: 6;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: pre-wrap;

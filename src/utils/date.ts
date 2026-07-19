@@ -19,7 +19,7 @@ export const getUtcTime = (time: Date): string => {
  * @param date - China local date in YYYY-MM-DD format.
  * @returns - UTC range from China local day start to next local day start.
  */
-export const getDateUtcRange = (date: string): [string, string] => {
+export const getUtcRange = (date: string): [string, string] => {
     const start = new Date(`${date}T00:00:00+08:00`)
     const end = new Date(`${date}T00:00:00+08:00`)
     end.setDate(end.getDate() + 1)
@@ -27,4 +27,13 @@ export const getDateUtcRange = (date: string): [string, string] => {
         start.toISOString(),
         end.toISOString(),
     ]
+}
+
+/**
+ * Convert a UTC time to browser local time.
+ * @param time - UTC time string.
+ * @returns - Local time string.
+ */
+export const getLocalTime = (time: string): string => {
+    return new Date(time).toLocaleString()
 }

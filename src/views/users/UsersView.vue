@@ -79,7 +79,7 @@ import { DATA_CENTER_TABLES } from '@/configs/data'
 import { useRegionStore, useUserStore } from '@/stores'
 import { ApiError } from '@/types/api'
 import type { ChatHistory, DataCenterSortFieldFor, DataListResult, User } from '@/types/data'
-import { getDateUtcRange, getUtcTime } from '@/utils/date'
+import { getLocalTime, getUtcRange, getUtcTime } from '@/utils/date'
 
 const { show } = useAlert()
 const regionStore = useRegionStore()
@@ -219,7 +219,7 @@ const fetchData = async () => {
         const formatted: Record<string, string> = {}
         for (const [key, value] of Object.entries(row)) {
             if (value == null) formatted[key] = '-'
-            else if (key === 'createdAt' || key === 'updatedAt') formatted[key] = new Date(value as string).toLocaleString()
+            else if (key === 'createdAt' || key === 'updatedAt') formatted[key] = getLocalTime(value as string)
             else if (key === 'role') formatted[key] = `${value} - ${roleLabels[Number(value)] ?? value}`
             else if (Array.isArray(value)) formatted[key] = value.length ? value.join(', ') : '-'
             else formatted[key] = String(value)
@@ -405,7 +405,7 @@ const fetchChatMessages = async (date: string) => {
             region: regionStore.region,
             userId: chatUserId.value,
             soulId: chatSoulId.value,
-            createdAt: getDateUtcRange(date),
+            createdAt: getUtcRange(date),
         })
     } catch (error) {
         console.error('UsersView fetchChatMessages failed:', error)
@@ -419,7 +419,7 @@ const fetchChatMessages = async (date: string) => {
 
     chatMessages.value = messages.map((message) => ({
         ...message,
-        createdAt: new Date(message.createdAt).toLocaleString(),
+        createdAt: getLocalTime(message.createdAt),
     }))
     chatMessagesLoading.value = false
 }

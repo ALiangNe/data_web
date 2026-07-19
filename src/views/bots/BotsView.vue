@@ -39,6 +39,7 @@ import { DATA_CENTER_TABLES } from '@/configs/data'
 import { useRegionStore } from '@/stores'
 import { ApiError } from '@/types/api'
 import type { DataCenterSortFieldFor } from '@/types/data'
+import { getLocalTime } from '@/utils/date'
 
 const { show } = useAlert()
 const regionStore = useRegionStore()
@@ -94,7 +95,7 @@ const fetchData = async () => {
         const formatted: Record<string, string> = {}
         for (const [key, value] of Object.entries(row)) {
             if (value == null) formatted[key] = '-'
-            else if (key === 'createdAt' || key === 'updatedAt' || key === 'registeredAt' || key === 'activatedAt') formatted[key] = new Date(value as string).toLocaleString()
+            else if (key === 'createdAt' || key === 'updatedAt' || key === 'registeredAt' || key === 'activatedAt') formatted[key] = getLocalTime(value as string)
             else if (key === 'metadata') formatted[key] = JSON.stringify(value)
             else formatted[key] = String(value)
         }

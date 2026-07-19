@@ -68,6 +68,7 @@ import { useRegionStore } from '@/stores'
 import { ApiError } from '@/types/api'
 import semver from 'semver'
 import type { DataCenterSortFieldFor, SoftwareUploadPostParams } from '@/types/data'
+import { getLocalTime } from '@/utils/date'
 
 type DependencyPackage = {
     name: string
@@ -163,7 +164,7 @@ const fetchData = async () => {
         for (const [key, value] of Object.entries(row)) {
             if (key === 'metadata' || key === 'uploadedBy') continue
             if (value == null) formatted[key] = '-'
-            else if (key === 'createdAt' || key === 'updatedAt') formatted[key] = new Date(value as string).toLocaleString()
+            else if (key === 'createdAt' || key === 'updatedAt') formatted[key] = getLocalTime(value as string)
             else if (key === 'dependencies') formatted[key] = JSON.stringify(value)
             else formatted[key] = String(value)
         }
