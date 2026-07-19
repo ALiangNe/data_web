@@ -27,8 +27,8 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { getUserBehaviorStats, getUsers } from '@/api/data'
-import DataChartPanel from '@/components/data/DataChartPanel.vue'
-import DataSkeleton from '@/components/data/DataSkeleton.vue'
+import DataChartPanel from '@/components/chart/DataChartPanel.vue'
+import DataSkeleton from '@/components/common/DataSkeleton.vue'
 import { MEDIA_PLATFORMS } from '@/configs/data'
 import { useAlert } from '@/composables'
 import { useRegionStore } from '@/stores'

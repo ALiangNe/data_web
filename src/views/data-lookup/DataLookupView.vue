@@ -20,8 +20,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { getDataLookup } from '@/api/data'
-import DataFilter from '@/components/data/DataFilter.vue'
-import DataTable from '@/components/data/DataTable.vue'
+import DataFilter from '@/components/common/DataFilter.vue'
+import DataTable from '@/components/common/DataTable.vue'
 import { useAlert } from '@/composables'
 import { DATA_LOOKUP_TABLES } from '@/configs/data'
 import { useRegionStore } from '@/stores'

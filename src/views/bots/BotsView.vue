@@ -31,9 +31,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { getBots } from '@/api/data'
-import DataFilter from '@/components/data/DataFilter.vue'
-import DataPagination from '@/components/data/DataPagination.vue'
-import DataTable from '@/components/data/DataTable.vue'
+import DataFilter from '@/components/common/DataFilter.vue'
+import DataPagination from '@/components/common/DataPagination.vue'
+import DataTable from '@/components/common/DataTable.vue'
 import { useAlert } from '@/composables'
 import { DATA_CENTER_TABLES } from '@/configs/data'
 import { useRegionStore } from '@/stores'

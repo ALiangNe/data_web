@@ -18,8 +18,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { getMonitorLogsTrace } from '@/api/data'
-import DataFilter from '@/components/data/DataFilter.vue'
-import MonitorLogCard from '@/components/data/MonitorLogCard.vue'
+import DataFilter from '@/components/common/DataFilter.vue'
+import MonitorLogCard from '@/components/log/MonitorLogCard.vue'
 import { useAlert } from '@/composables'
 import { DATA_CENTER_TABLES } from '@/configs/data'
 import { useRegionStore } from '@/stores'
