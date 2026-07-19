@@ -159,7 +159,7 @@ const fetchData = async () => {
     }
 
     total.value = data.total
-    rows.value = data.list.map((row) => {
+    rows.value = data.items.map((row) => {
         const formatted: Record<string, string> = {}
         for (const [key, value] of Object.entries(row)) {
             if (key === 'metadata' || key === 'uploadedBy') continue
@@ -253,7 +253,7 @@ const loadDependencyPackages = async () => {
     }
 
     const existing = new Set(dependencyPackages.value.map((item) => item.name))
-    for (const software of softwareResult.list) {
+    for (const software of softwareResult.items) {
         const name = software.name.trim()
         if (!name || existing.has(name)) continue
         existing.add(name)
@@ -261,7 +261,7 @@ const loadDependencyPackages = async () => {
     }
 
     dependencyPage.value = nextPage
-    dependencyHasMore.value = softwareResult.list.length >= dependencyPageSize
+    dependencyHasMore.value = softwareResult.items.length >= dependencyPageSize
     dependencyLoadingMore.value = false
 }
 

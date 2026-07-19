@@ -215,7 +215,7 @@ const fetchData = async () => {
     }
 
     total.value = data.total
-    rows.value = data.list.map((row) => {
+    rows.value = data.items.map((row) => {
         const formatted: Record<string, string> = {}
         for (const [key, value] of Object.entries(row)) {
             if (value == null) formatted[key] = '-'

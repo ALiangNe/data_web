@@ -195,7 +195,7 @@ export type DataTimeRangeFieldValues = [string, string] | null
 
 /* Data center API pagination list response. */
 export type DataListResult<T> = {
-    list: T[]
+    items: T[]
     total: number
 }
 

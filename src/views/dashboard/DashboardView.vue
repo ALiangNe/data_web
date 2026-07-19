@@ -134,7 +134,7 @@ const fetchData = async () => {
     }
 
     const userCounts = new Map<number, number>()
-    for (const user of recentData.list) {
+    for (const user of recentData.items) {
         const day = new Date(user.createdAt)
         day.setHours(0, 0, 0, 0)
         const key = day.getTime()
