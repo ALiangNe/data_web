@@ -20,23 +20,23 @@ import type {
 const baseURL = { baseURL: import.meta.env.VITE_DATA_API_BASE_URL }
 
 export const getBots = async (params: DataRegionQuery<DataListQuery<Bot, DataCenterSortFieldFor<'bots'>>>): Promise<DataListResult<Bot>> => {
-    return apiClient.post<unknown, DataListResult<Bot>>('/data/getBots', params, baseURL)
+    return apiClient.get<unknown, DataListResult<Bot>>('/data/getBots', { ...baseURL, params })
 }
 
 export const getKnowledge = async (params: DataRegionQuery<DataListQuery<Knowledge, DataCenterSortFieldFor<'knowledge'>>>): Promise<DataListResult<Knowledge>> => {
-    return apiClient.post<unknown, DataListResult<Knowledge>>('/data/getKnowledge', params, baseURL)
+    return apiClient.get<unknown, DataListResult<Knowledge>>('/data/getKnowledge', { ...baseURL, params })
 }
 
 export const getMcpCapabilities = async (params: DataRegionQuery<DataListQuery<McpCapability, DataCenterSortFieldFor<'mcpCapabilities'>>>): Promise<DataListResult<McpCapability>> => {
-    return apiClient.post<unknown, DataListResult<McpCapability>>('/data/getMcpCapabilities', params, baseURL)
+    return apiClient.get<unknown, DataListResult<McpCapability>>('/data/getMcpCapabilities', { ...baseURL, params })
 }
 
 export const getMonitorLogsTrace = async (params: DataRegionQuery<{ traceId: string }>): Promise<MonitorTraceDetail | null> => {
-    return apiClient.post<unknown, MonitorTraceDetail | null>('/data/getMonitorLogsTrace', params, baseURL)
+    return apiClient.get<unknown, MonitorTraceDetail | null>('/data/getMonitorLogsTrace', { ...baseURL, params })
 }
 
 export const getUsers = async (params: DataRegionQuery<DataListQuery<User, DataCenterSortFieldFor<'users'>>>): Promise<DataListResult<User>> => {
-    return apiClient.post<unknown, DataListResult<User>>('/data/getUsers', params, baseURL)
+    return apiClient.get<unknown, DataListResult<User>>('/data/getUsers', { ...baseURL, params })
 }
 
 export const updateUserPermission = async (params: DataRegionQuery<{ userId: string; role: number }>): Promise<void> => {
@@ -44,15 +44,15 @@ export const updateUserPermission = async (params: DataRegionQuery<{ userId: str
 }
 
 export const getUserBehaviorLogs = async (params: DataRegionQuery<UserBehaviorLogsQuery>): Promise<DataListResult<UserBehaviorLogAggregate>> => {
-    return apiClient.post<unknown, DataListResult<UserBehaviorLogAggregate>>('/data/getUserBehaviorLogs', params, baseURL)
+    return apiClient.get<unknown, DataListResult<UserBehaviorLogAggregate>>('/data/getUserBehaviorLogs', { ...baseURL, params })
 }
 
-export const getUserBehaviorStats = async (params: DataRegionQuery<DataListQuery<{ createdAt: string }>>): Promise<UserBehaviorStatsResult> => {
-    return apiClient.post<unknown, UserBehaviorStatsResult>('/data/getUserBehaviorStats', params, baseURL)
+export const getUserBehaviorStats = async (params: DataRegionQuery<{ createdAt?: [string, string] }>): Promise<UserBehaviorStatsResult> => {
+    return apiClient.get<unknown, UserBehaviorStatsResult>('/data/getUserBehaviorStats', { ...baseURL, params })
 }
 
 export const getUserMemory = async (params: DataRegionQuery<{ userId: string; soulId: string }>): Promise<string> => {
-    return apiClient.post<unknown, string>('/data/getUserMemory', params, baseURL)
+    return apiClient.get<unknown, string>('/data/getUserMemory', { ...baseURL, params })
 }
 
 export const getChatActiveDates = async (params: DataRegionQuery<{ userId: string; currentTime: string }>): Promise<string[]> => {
@@ -64,5 +64,5 @@ export const getChatHistories = async (params: DataRegionQuery<{ userId: string;
 }
 
 export const getDataLookup = async (params: DataRegionQuery<DataLookupQuery>): Promise<DataLookupResult[]> => {
-    return apiClient.post<unknown, DataLookupResult[]>('/data/getDataLookup', params, baseURL)
+    return apiClient.get<unknown, DataLookupResult[]>('/data/getDataLookup', { ...baseURL, params })
 }
