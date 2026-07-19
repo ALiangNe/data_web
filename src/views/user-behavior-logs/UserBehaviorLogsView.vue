@@ -35,20 +35,20 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { getUserBehaviorLogs } from '@/api/data'
+import { getUserBehaviorLogs } from '@/api/user'
 import DataFilter from '@/components/common/DataFilter.vue'
 import DataPagination from '@/components/common/DataPagination.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import { useAlert } from '@/composables'
-import { DATA_CENTER_TABLES } from '@/configs/data'
+import { DATA_TABLES } from '@/configs/data'
 import { useRegionStore } from '@/stores'
 import { ApiError } from '@/types/api'
-import type { DataCenterSortFieldFor, DataTimeRangeFieldValues, UserBehaviorLogAggregateBy } from '@/types/data'
+import type { DataSortFieldFor, DataTimeRangeFieldValues, UserBehaviorLogAggregateBy } from '@/types'
 
 const { show } = useAlert()
 const regionStore = useRegionStore()
 
-const table = DATA_CENTER_TABLES.userBehaviorLogs
+const table = DATA_TABLES.userBehaviorLogs
 const pageSizeOptions = [5, 10, 20]
 const sortableFields = table.sortFields
 const filterFields = table.filter
@@ -57,7 +57,7 @@ const selectFields = table.selectFields
 const filterValues = ref<Record<string, string>>({})
 const selectValues = ref<{ aggregateBy: UserBehaviorLogAggregateBy }>({ aggregateBy: selectFields.aggregateBy.default })
 const timeRangeValues = ref<Record<string, DataTimeRangeFieldValues>>({})
-const sortField = ref<DataCenterSortFieldFor<'userBehaviorLogs'>>(table.sortFields[0])
+const sortField = ref<DataSortFieldFor<'userBehaviorLogs'>>(table.sortFields[0])
 const sortOrder = ref<'asc' | 'desc'>('desc')
 const page = ref(1)
 const pageSize = ref(10)
@@ -142,7 +142,6 @@ const fetchData = async () => {
     }
 
     loading.value = false
-    show('Data loaded successfully.', 'success')
 }
 
 const search = () => {
@@ -175,11 +174,11 @@ const onPageSizeChange = (value: number) => {
 
 const onSortColumn = (col: string) => {
     if (loading.value) return
-    if (!sortableFields.includes(col as DataCenterSortFieldFor<'userBehaviorLogs'>)) return
+    if (!sortableFields.includes(col as DataSortFieldFor<'userBehaviorLogs'>)) return
     if (col === sortField.value) {
         sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc'
     } else {
-        sortField.value = col as DataCenterSortFieldFor<'userBehaviorLogs'>
+        sortField.value = col as DataSortFieldFor<'userBehaviorLogs'>
         sortOrder.value = 'desc'
     }
     page.value = 1

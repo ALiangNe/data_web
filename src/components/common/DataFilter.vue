@@ -76,7 +76,7 @@
 
 <script setup lang="ts">
 import { ElDatePicker, ElInput, ElOption, ElSelect } from 'element-plus'
-import type { DataSelectFieldConfig, DataTimeRangeFieldValues } from '@/types/data'
+import type { DataSelectFieldConfig, DataTimeRangeFieldValues } from '@/types'
 
 const props = defineProps<{
     fields: string[]

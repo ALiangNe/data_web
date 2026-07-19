@@ -63,11 +63,11 @@ import DataPagination from '@/components/common/DataPagination.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import SoftwareForm from '@/components/software/SoftwareForm.vue'
 import { useAlert } from '@/composables'
-import { DATA_CENTER_TABLES } from '@/configs/data'
+import { DATA_TABLES } from '@/configs/data'
 import { useRegionStore } from '@/stores'
 import { ApiError } from '@/types/api'
 import semver from 'semver'
-import type { DataCenterSortFieldFor, SoftwareUploadPostParams } from '@/types/data'
+import type { DataSortFieldFor, SoftwareUploadPostParams } from '@/types'
 import { getLocalTime } from '@/utils/date'
 
 type DependencyPackage = {
@@ -79,12 +79,12 @@ type DependencyPackage = {
 const { show } = useAlert()
 const regionStore = useRegionStore()
 
-const table = DATA_CENTER_TABLES.software
+const table = DATA_TABLES.software
 const pageSizeOptions = [5, 10, 20]
 const filterFields = table.filter
 const sortableFields = table.sortFields
 const filterValues = ref<Record<string, string>>({})
-const sortField = ref<DataCenterSortFieldFor<'software'>>(table.sortFields[0])
+const sortField = ref<DataSortFieldFor<'software'>>(table.sortFields[0])
 const sortOrder = ref<'asc' | 'desc'>('desc')
 const page = ref(1)
 const pageSize = ref(10)
@@ -179,7 +179,6 @@ const fetchData = async () => {
     }
 
     loading.value = false
-    show('Data loaded successfully.', 'success')
 }
 
 const search = () => {
@@ -210,11 +209,11 @@ const onPageSizeChange = (value: number) => {
 
 const onSortColumn = (col: string) => {
     if (loading.value) return
-    if (!sortableFields.includes(col as DataCenterSortFieldFor<'software'>)) return
+    if (!sortableFields.includes(col as DataSortFieldFor<'software'>)) return
     if (col === sortField.value) {
         sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc'
     } else {
-        sortField.value = col as DataCenterSortFieldFor<'software'>
+        sortField.value = col as DataSortFieldFor<'software'>
         sortOrder.value = 'desc'
     }
     page.value = 1
@@ -425,7 +424,6 @@ const onSubmit = async (params: SoftwareUploadPostParams, file: File) => {
     submitting.value = false
     closeUploadModal()
     resetUploadState()
-    show('Software uploaded successfully.', 'success')
     fetchData()
 }
 

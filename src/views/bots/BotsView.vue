@@ -30,26 +30,26 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { getBots } from '@/api/data'
+import { getBots } from '@/api/hardware'
 import DataFilter from '@/components/common/DataFilter.vue'
 import DataPagination from '@/components/common/DataPagination.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import { useAlert } from '@/composables'
-import { DATA_CENTER_TABLES } from '@/configs/data'
+import { DATA_TABLES } from '@/configs/data'
 import { useRegionStore } from '@/stores'
 import { ApiError } from '@/types/api'
-import type { DataCenterSortFieldFor } from '@/types/data'
+import type { DataSortFieldFor } from '@/types'
 import { getLocalTime } from '@/utils/date'
 
 const { show } = useAlert()
 const regionStore = useRegionStore()
 
-const table = DATA_CENTER_TABLES.bots
+const table = DATA_TABLES.bots
 const pageSizeOptions = [5, 10, 20]
 const filterFields = table.filter
 const sortableFields = table.sortFields
 const filterValues = ref<Record<string, string>>({})
-const sortField = ref<DataCenterSortFieldFor<'bots'>>(table.sortFields[0])
+const sortField = ref<DataSortFieldFor<'bots'>>(table.sortFields[0])
 const sortOrder = ref<'asc' | 'desc'>('desc')
 const page = ref(1)
 const pageSize = ref(10)
@@ -110,7 +110,6 @@ const fetchData = async () => {
     }
 
     loading.value = false
-    show('Data loaded successfully.', 'success')
 }
 
 const search = () => {
@@ -141,11 +140,11 @@ const onPageSizeChange = (value: number) => {
 
 const onSortColumn = (col: string) => {
     if (loading.value) return
-    if (!sortableFields.includes(col as DataCenterSortFieldFor<'bots'>)) return
+    if (!sortableFields.includes(col as DataSortFieldFor<'bots'>)) return
     if (col === sortField.value) {
         sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc'
     } else {
-        sortField.value = col as DataCenterSortFieldFor<'bots'>
+        sortField.value = col as DataSortFieldFor<'bots'>
         sortOrder.value = 'desc'
     }
     page.value = 1

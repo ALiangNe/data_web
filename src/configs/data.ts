@@ -4,7 +4,7 @@ export const DATA_REGIONS = [
     { label: 'EU Central', value: 'euc1' },
 ] as const
 
-export const DATA_CENTER_TABLES = {
+export const DATA_TABLES = {
     bots: {
         filter: ['model', 'serialNumber', 'manufacturer', 'status'],
         sortFields: ['createdAt', 'updatedAt', 'registeredAt', 'activatedAt'],

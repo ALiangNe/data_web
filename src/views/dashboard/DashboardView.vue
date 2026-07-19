@@ -26,14 +26,14 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
-import { getUserBehaviorStats, getUsers } from '@/api/data'
+import { getUserBehaviorStats, getUsers } from '@/api/user'
 import DataChartPanel from '@/components/chart/DataChartPanel.vue'
 import DataSkeleton from '@/components/common/DataSkeleton.vue'
 import { MEDIA_PLATFORMS } from '@/configs/data'
 import { useAlert } from '@/composables'
 import { useRegionStore } from '@/stores'
 import { ApiError } from '@/types/api'
-import type { DataListResult, User, UserBehaviorStatsResult } from '@/types/data'
+import type { DataListResult, User, UserBehaviorStatsResult } from '@/types'
 
 const { show } = useAlert()
 const regionStore = useRegionStore()

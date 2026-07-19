@@ -30,26 +30,26 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { getKnowledge } from '@/api/data'
+import { getKnowledge } from '@/api/resource'
 import DataFilter from '@/components/common/DataFilter.vue'
 import DataPagination from '@/components/common/DataPagination.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import { useAlert } from '@/composables'
-import { DATA_CENTER_TABLES } from '@/configs/data'
+import { DATA_TABLES } from '@/configs/data'
 import { useRegionStore } from '@/stores'
 import { ApiError } from '@/types/api'
-import type { DataCenterSortFieldFor } from '@/types/data'
+import type { DataSortFieldFor } from '@/types'
 import { getLocalTime } from '@/utils/date'
 
 const { show } = useAlert()
 const regionStore = useRegionStore()
 
-const table = DATA_CENTER_TABLES.knowledge
+const table = DATA_TABLES.knowledge
 const pageSizeOptions = [5, 10, 20]
 const filterFields = table.filter
 const sortableFields = table.sortFields
 const filterValues = ref<Record<string, string>>({})
-const sortField = ref<DataCenterSortFieldFor<'knowledge'>>(table.sortFields[0])
+const sortField = ref<DataSortFieldFor<'knowledge'>>(table.sortFields[0])
 const sortOrder = ref<'asc' | 'desc'>('desc')
 const page = ref(1)
 const pageSize = ref(10)
@@ -111,7 +111,6 @@ const fetchData = async () => {
     }
 
     loading.value = false
-    show('Data loaded successfully.', 'success')
 }
 
 const search = () => {
@@ -142,11 +141,11 @@ const onPageSizeChange = (value: number) => {
 
 const onSortColumn = (col: string) => {
     if (loading.value) return
-    if (!sortableFields.includes(col as DataCenterSortFieldFor<'knowledge'>)) return
+    if (!sortableFields.includes(col as DataSortFieldFor<'knowledge'>)) return
     if (col === sortField.value) {
         sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc'
     } else {
-        sortField.value = col as DataCenterSortFieldFor<'knowledge'>
+        sortField.value = col as DataSortFieldFor<'knowledge'>
         sortOrder.value = 'desc'
     }
     page.value = 1

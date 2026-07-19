@@ -1,4 +1,4 @@
-import { DATA_CENTER_TABLES, DATA_LOOKUP_TABLES } from '@/configs/data'
+import { DATA_TABLES, DATA_LOOKUP_TABLES } from '@/configs/data'
 
 export type DataRegion = 'usw1' | 'euc1'
 
@@ -178,11 +178,11 @@ export type UserBehaviorStatsResult = {
     }[]
 }
 
-export type DataTableKey = keyof typeof DATA_CENTER_TABLES
+export type DataTableKey = keyof typeof DATA_TABLES
 
-export type DataCenterSortFieldFor<K extends DataTableKey> = (typeof DATA_CENTER_TABLES)[K]['sortFields'][number]
+export type DataSortFieldFor<K extends DataTableKey> = (typeof DATA_TABLES)[K]['sortFields'][number]
 
-export type DataCenterSortField = DataCenterSortFieldFor<DataTableKey>
+export type DataSortField = DataSortFieldFor<DataTableKey>
 
 export type DataSelectFieldConfig = {
     label: string
@@ -200,7 +200,7 @@ export type DataListResult<T> = {
 }
 
 /* Data center list pagination, filter query parameters. */
-export type DataListQuery<T, S extends DataCenterSortField = DataCenterSortField> = {
+export type DataListQuery<T, S extends DataSortField = DataSortField> = {
     [K in keyof T]?: T[K] | [string, string]
 } & {
     page?: number

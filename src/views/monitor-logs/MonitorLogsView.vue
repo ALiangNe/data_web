@@ -17,19 +17,19 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { getMonitorLogsTrace } from '@/api/data'
+import { getMonitorLogsTrace } from '@/api/log'
 import DataFilter from '@/components/common/DataFilter.vue'
 import MonitorLogCard from '@/components/log/MonitorLogCard.vue'
 import { useAlert } from '@/composables'
-import { DATA_CENTER_TABLES } from '@/configs/data'
+import { DATA_TABLES } from '@/configs/data'
 import { useRegionStore } from '@/stores'
 import { ApiError } from '@/types/api'
-import type { MonitorSpan } from '@/types/data'
+import type { MonitorSpan } from '@/types'
 
 const { show } = useAlert()
 const regionStore = useRegionStore()
 
-const table = DATA_CENTER_TABLES.monitorLogs
+const table = DATA_TABLES.monitorLogs
 const filterFields = table.filter
 const columns = ['traceId', 'spanId', 'parentSpanId', 'env', 'service', 'instanceId', 'eventName', 'status', 'startTimeMs', 'durationMs', 'error', 'traceAttributes', 'metadata']
 const filterValues = ref<Record<string, string>>({})
@@ -62,7 +62,6 @@ const fetchData = async () => {
     if (!data || !Array.isArray(data.spans) || data.spans.length === 0) {
         rows.value = []
         loading.value = false
-        show('Query successful.', 'success')
         return
     }
 
@@ -104,7 +103,6 @@ const fetchData = async () => {
     }))
 
     loading.value = false
-    show('Query successful.', 'success')
 }
 
 const search = () => {

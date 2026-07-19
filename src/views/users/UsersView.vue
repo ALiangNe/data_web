@@ -66,7 +66,8 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { getChatActiveDates, getChatHistories, getUserMemory, getUsers, updateUserPermission } from '@/api/data'
+import { getChatActiveDates, getChatHistories } from '@/api/chat'
+import { getUserMemory, getUsers, updateUserPermission } from '@/api/user'
 import ChatHistoryPanel from '@/components/user/ChatHistoryPanel.vue'
 import DataFilter from '@/components/common/DataFilter.vue'
 import DataModal from '@/components/common/DataModal.vue'
@@ -75,17 +76,17 @@ import DataTable from '@/components/common/DataTable.vue'
 import UserPermissionPanel from '@/components/user/UserPermissionPanel.vue'
 import UserMemoryPanel from '@/components/user/UserMemoryPanel.vue'
 import { useAlert } from '@/composables'
-import { DATA_CENTER_TABLES } from '@/configs/data'
+import { DATA_TABLES } from '@/configs/data'
 import { useRegionStore, useUserStore } from '@/stores'
 import { ApiError } from '@/types/api'
-import type { ChatHistory, DataCenterSortFieldFor, DataListResult, User } from '@/types/data'
+import type { ChatHistory, DataSortFieldFor, DataListResult, User } from '@/types'
 import { getLocalTime, getUtcRange, getUtcTime } from '@/utils/date'
 
 const { show } = useAlert()
 const regionStore = useRegionStore()
 const userStore = useUserStore()
 
-const table = DATA_CENTER_TABLES.users
+const table = DATA_TABLES.users
 const roleLabels: Record<number, string> = {
     0: 'Super Admin',
     1: 'Platform Developer',
@@ -114,7 +115,7 @@ const selectFields = {
 const sortableFields = table.sortFields
 const filterValues = ref<Record<string, string>>({})
 const selectValues = ref({ role: selectFields.role.default })
-const sortField = ref<DataCenterSortFieldFor<'users'>>(table.sortFields[0])
+const sortField = ref<DataSortFieldFor<'users'>>(table.sortFields[0])
 const sortOrder = ref<'asc' | 'desc'>('desc')
 const page = ref(1)
 const pageSize = ref(10)
@@ -235,7 +236,6 @@ const fetchData = async () => {
     }
 
     loading.value = false
-    show('Data loaded successfully.', 'success')
 }
 
 const onTableAction = (payload: { key: string; row: Record<string, string> }) => {
@@ -388,7 +388,6 @@ const submitPermission = async () => {
     }
 
     roleEditSaving.value = false
-    show('Permission updated successfully.', 'success')
     closeModal()
     fetchData()
 }
@@ -473,11 +472,11 @@ const closeModal = () => {
 
 const onSortColumn = (col: string) => {
     if (loading.value) return
-    if (!sortableFields.includes(col as DataCenterSortFieldFor<'users'>)) return
+    if (!sortableFields.includes(col as DataSortFieldFor<'users'>)) return
     if (col === sortField.value) {
         sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc'
     } else {
-        sortField.value = col as DataCenterSortFieldFor<'users'>
+        sortField.value = col as DataSortFieldFor<'users'>
         sortOrder.value = 'desc'
     }
     page.value = 1

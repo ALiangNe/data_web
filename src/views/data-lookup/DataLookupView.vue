@@ -19,14 +19,14 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { getDataLookup } from '@/api/data'
+import { getDataLookup } from '@/api/common'
 import DataFilter from '@/components/common/DataFilter.vue'
 import DataTable from '@/components/common/DataTable.vue'
 import { useAlert } from '@/composables'
 import { DATA_LOOKUP_TABLES } from '@/configs/data'
 import { useRegionStore } from '@/stores'
 import { ApiError } from '@/types/api'
-import type { DataLookupEntity, DataSelectFieldConfig } from '@/types/data'
+import type { DataLookupEntity, DataSelectFieldConfig } from '@/types'
 
 const { show } = useAlert()
 const regionStore = useRegionStore()
@@ -98,7 +98,6 @@ const fetchData = async () => {
     })
 
     loading.value = false
-    show('Data loaded successfully.', 'success')
 }
 
 const search = () => {

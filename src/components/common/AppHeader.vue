@@ -28,7 +28,7 @@ import { ElOption, ElSelect } from 'element-plus'
 import { useAuth } from '@/composables'
 import { DATA_REGIONS } from '@/configs/data'
 import { useRegionStore, useUserStore } from '@/stores'
-import type { DataRegion } from '@/types/data'
+import type { DataRegion } from '@/types'
 
 const router = useRouter()
 const { logout } = useAuth()

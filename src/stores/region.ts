@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { DataRegion } from '@/types/data'
+import type { DataRegion } from '@/types'
 
 export const useRegionStore = defineStore('regionStore', () => {
     const region = ref<DataRegion>('usw1')

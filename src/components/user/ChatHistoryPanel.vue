@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { ElDatePicker } from 'element-plus'
-import type { ChatHistory } from '@/types/data'
+import type { ChatHistory } from '@/types'
 
 const props = defineProps<{
     date: string

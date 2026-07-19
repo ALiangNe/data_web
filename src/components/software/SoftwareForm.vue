@@ -196,7 +196,7 @@ import type { UploadFile, UploadInstance, UploadRawFile } from 'element-plus'
 import { useAlert } from '@/composables'
 import { formatBytes } from '@/utils/format'
 import semver from 'semver'
-import type { SoftwareUploadPostParams } from '@/types/data'
+import type { SoftwareUploadPostParams } from '@/types'
 
 type DependencyPackage = {
     name: string

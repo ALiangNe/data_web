@@ -1,17 +1,17 @@
 import apiClient from './apiClient'
 import type {
-    DataCenterSortFieldFor,
+    DataSortFieldFor,
     DataListQuery,
     DataListResult,
     DataRegionQuery,
     Software,
     SoftwareUploadPostParams,
     SoftwareUploadPostResult,
-} from '@/types/data'
+} from '@/types'
 
 const baseURL = { baseURL: import.meta.env.VITE_DATA_API_BASE_URL }
 
-export const listSoftware = async (params: DataRegionQuery<DataListQuery<Software, DataCenterSortFieldFor<'software'>>>): Promise<DataListResult<Software>> => {
+export const listSoftware = async (params: DataRegionQuery<DataListQuery<Software, DataSortFieldFor<'software'>>>): Promise<DataListResult<Software>> => {
     return apiClient.get<unknown, DataListResult<Software>>('/software/list', { ...baseURL, params })
 }
 
